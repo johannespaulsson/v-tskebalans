@@ -389,26 +389,7 @@
             margin-top: 4px;
             display: block;
         }
-
-        /* Stil för temperaturinmatningsgrupper */
-        .temp-input-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            gap: 5px;
-        }
-        .temp-input-group label {
-            flex-basis: 60px;
-            text-align: right;
-            margin-right: 5px;
-        }
-        /* Changed input type from number to text */
-        .temp-input-group input[type="text"] {
-            width: 60px;
-            text-align: center;
-            padding: 4px;
-        }
-
+        
         /* NYA STYLING REGLER */
         /* Flexbox för att placera Beräknad Perspiratio-input och knapp på samma rad */
         .calculated-perspiratio-group {
@@ -432,17 +413,6 @@
             padding: 6px 12px;
             font-size: 0.85rem;
         }
-
-        /* Tvåkolumns layout för temperaturtimmar */
-        .temp-grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px 10px;
-        }
-        /* Ingen marginal längst ner för temp-input-group när den är i grid */
-        .temp-grid-container .temp-input-group {
-            margin-bottom: 0;
-        }
         
         /* Nytt: Stil för Spara/Ladda-knapparna */
         .file-buttons-group {
@@ -453,6 +423,14 @@
         .file-buttons-group .add-button {
             margin-top: 0;
             flex-grow: 1; /* Får knapparna att ta upp lika mycket plats */
+        }
+
+        #perspiratioWarning {
+            font-size: 0.75rem;
+            color: #dc3545;
+            margin-top: 4px;
+            display: block;
+            min-height: 1em;
         }
 
         /* --- Modal Specifika Stilar --- */
@@ -925,7 +903,12 @@
                     <option value="Kvinna">Kvinna</option>
                 </select>
             </div>
-            <!-- Ny ruta för Idealvikt -->
+            <!-- Nytt fält för Ålder -->
+            <div class="grid-item">
+                <label for="age">Ålder (år):</label>
+                <input type="text" id="age" class="important-input" placeholder="t.ex. 40">
+            </div>
+            <!-- Idealvikt (kg) -->
             <div class="grid-item">
                 <label for="idealWeight">Idealvikt (kg):</label>
                 <input type="text" id="idealWeight" readonly class="calculated-output" value="Var god ange längd och kön">
@@ -1057,34 +1040,17 @@
                 <div class="grid-item">
                     <label for="breathingSupport">Andningsstöd:</label>
                     <select id="breathingSupport">
-                        <option value="none">Inget andningsstöd</option>
+                        <option value="standard">Standard/Inget</option>
                         <option value="niv_hmef">NIV med HMEF</option>
+                        <option value="intub_hmef">Intuberad med HMEF</option>
                         <option value="niv_humid">NIV med aktiv befuktning</option>
                         <option value="hfnc">HFNC</option>
-                        <option value="intub_hmef">Intuberad med HMEF</option>
                         <option value="intub_humid">Intuberad med aktiv befuktning</option>
                     </select>
                 </div>
                 <div class="grid-item">
-                    <label>Temperatur över norm (timmar):</label>
-                    <div class="temp-grid-container"> <!-- Ny container för två kolumner -->
-                        <div class="temp-input-group">
-                            <label for="temp37Hours">>37°C:</label>
-                            <input type="text" id="temp37Hours" value="0" min="0" placeholder="t.ex. 0 eller =5+1"> timmar
-                        </div>
-                        <div class="temp-input-group">
-                            <label for="temp38Hours">>38°C:</label>
-                            <input type="text" id="temp38Hours" value="0" min="0" placeholder="t.ex. 0 eller =5+1"> timmar
-                        </div>
-                        <div class="temp-input-group">
-                            <label for="temp39Hours">>39°C:</label>
-                            <input type="text" id="temp39Hours" value="0" min="0" placeholder="t.ex. 0 eller =5+1"> timmar
-                        </div>
-                        <div class="temp-input-group">
-                            <label for="temp40Hours">>40°C:</label>
-                            <input type="text" id="temp40Hours" value="0" min="0" placeholder="t.ex. 0 eller =5+1"> timmar
-                        </div>
-                    </div>
+                    <label for="maxTemp">Maxtemperatur under dygnet (°C):</label>
+                    <input type="text" id="maxTemp" value="37.0" placeholder="t.ex. 38.5">
                 </div>
                 <div class="grid-item">
                     <label id="calculatedPerspiratioLabel" for="calculatedPerspiratio">Beräknad Perspiratio (ml):</label>
@@ -1092,6 +1058,7 @@
                         <input type="text" id="calculatedPerspiratio" readonly class="calculated-output" value="0">
                         <button id="transferPerspiratioButton" data-action="transferPerspiratio" class="add-button">För över till förlust</button>
                     </div>
+                    <span id="perspiratioWarning"></span>
                 </div>
             </div>
 
@@ -1169,16 +1136,15 @@
             <div class="grid-container modal-three-column-grid">
                 <div class="grid-column-item">
                     <h3>Perspiratioberäkning</h3>
-                    <p>Perspiratio beräknas baserat på patientens <strong>aktuella vikt</strong>, det <strong>valda tidsintervallet</strong> och typ av <strong>andningsstöd</strong>. En extra mängd läggs till för varje timme patienten har feber över 37°C.</p>
+                    <p>Perspiratio beräknas utifrån en fast grundförlust per dygn som justeras med en temperaturfaktor. Det slutgiltiga värdet anpassas till den valda tidsperioden.</p>
+                    <p><strong>Grundförlust (per 24 timmar):</strong></p>
                     <ul>
-                        <li>Inget andningsstöd: 0.5</li>
-                        <li>NIV med HMEF: 0.55</li>
-                        <li>NIV med aktiv befuktning: 0.4</li>
-                        <li>HFNC: 0.3</li>
-                        <li>Intuberad med HMEF: 0.75</li>
-                        <li>Intuberad med aktiv befuktning: 0.2</li>
+                        <li><strong>700 ml:</strong> Standard (Inget andningsstöd, NIV/HMEF, Intuberad/HMEF)</li>
+                        <li><strong>500 ml:</strong> Vid viss befuktning (NIV/aktiv befuktning, HFNC)</li>
+                        <li><strong>400 ml:</strong> Vid optimal befuktning (Intuberad/aktiv befuktning)</li>
                     </ul>
-                    <p><strong>Feberjustering:</strong> Ytterligare 0.1 ml/kg/timme per grad över 37°C.</p>
+                    <p><strong>Temperaturjustering:</strong><br>Beräkningen baseras på patientens maxtemperatur under dygnet. En faktor beräknas enligt `1 + (Maxtemp - 37) * 0.25`. Vid extrem kroppstemperatur används en fast faktor (0.5 vid &lt;35°C och 2.0 vid &gt;41°C).</p>
+                    <p><strong>Gränsvärden:</strong><br>Beräkning sker ej om patientens ålder är under 15 år eller vikt är under 50 kg. Perspiratio sätts då till 0 ml.</p>
                 </div>
                 <div class="grid-column-item">
                     <h3>Idealvikt & Justerad Idealvikt</h3>
@@ -1444,6 +1410,13 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
+            <h3>Version 1.3</h3>
+            <ul>
+                <li>Bytt beräkningsmodell för perspiratio till att baseras på en fast grundförlust per dygn som justeras med en temperaturfaktor.</li>
+                <li>Lagt till fält för "Ålder" och "Maxtemperatur" för den nya beräkningen.</li>
+                <li>Lagt till varningstext om perspiratio inte kan beräknas (ålder &lt;15 eller vikt &lt;50).</li>
+                <li>Uppdaterat informationstexten under "Beräkningar & Referensvärden".</li>
+            </ul>
             <h3>Version 1.2</h3>
             <ul>
                 <li>Lade till "Blödning" som ett alternativ under "Förluster".</li>
@@ -1460,15 +1433,13 @@
              <h3>Version 1.0</h3>
             <ul>
                 <li>Initial version av applikationen.</li>
-                <li>Optimerad kodstruktur för bättre prestanda och underhåll.</li>
-                <li>Korrigerat diverse mindre buggar relaterade till beräkningar och visning.</li>
             </ul>
         </div>
     </div>
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 1.2 - Ändringslogg
+            Version 1.3 - Ändringslogg
         </span>
     </footer>
 
@@ -1477,11 +1448,12 @@
             state: {
                 totalIntakeMl: 0, totalIntakeKcal: 0, totalLossMl: 0, netBalanceMl: 0, cumulativeBalanceMl: 0,
                 weightDifferenceKg: 0, totalDiuresisMl: 0, totalPerspiratioMl: 0, totalOtherLossMl: 0,
-                dailyWeight: 0, height: 0, gender: '', breathingSupport: 'none', temp37Hours: 0, temp38Hours: 0,
-                temp39Hours: 0, temp40Hours: 0, mainAppStartTime: '06:00', mainAppEndTime: '06:00',
+                dailyWeight: 0, height: 0, gender: '', age: 0, maxTemp: 37.0, breathingSupport: 'standard',
+                mainAppStartTime: '06:00', mainAppEndTime: '06:00',
                 patientDate: '', patientTimePeriod: '', patientLocation: '', initialWeight: 0, idealWeight: 0,
                 adjustedWeight: false,
                 avgHourlyDiuresis: 0,
+                perspiratioWarning: '',
                 medicineCategoryTotals: { Sedering: 0, Antibiotika: 0, Vasoaktiva: 0, Övrigt: 0 },
                 kcalSummary: { peroralt: 0, sondmat: 0, tpn: 0, ivMedicine: 0, intravenousTotal: 0 }
             },
@@ -1555,6 +1527,7 @@
                     dateInput: document.getElementById('dateInput'),
                     otherLocationInput: document.getElementById('otherLocationInput'),
                     loadFromFileInput: document.getElementById('loadFromFileInput'),
+                    perspiratioWarning: document.getElementById('perspiratioWarning'),
                     containers: {
                         fluid: document.getElementById('fluidEntriesContainer'),
                         medicine: document.getElementById('medicineEntriesContainer'),
@@ -1784,6 +1757,7 @@
                 const dailyWeight = parseFloat(document.getElementById('dailyWeight').value);
                 const idealWeightInput = document.getElementById('idealWeight');
                 const notice = document.getElementById('adjustedWeightNotice');
+                if (!idealWeightInput || !notice) return; // Guard clause
                 if (!height || !gender) {
                     idealWeightInput.value = "Var god ange längd och kön";
                     notice.style.display = 'none';
@@ -1800,54 +1774,56 @@
                 idealWeightInput.value = (Math.round(displayWeight * 10) / 10).toFixed(1);
                 notice.style.display = isAdjusted ? 'inline' : 'none';
             },
-            calculatePerspiratio(durationHoursOverride = null, dailyWeightOverride = null) {
-                const dailyWeight = dailyWeightOverride ?? parseFloat(document.getElementById('dailyWeight').value);
+            calculatePerspiratio() {
+                const age = parseFloat(document.getElementById('age').value) || 0;
+                const weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
+                const ventilationStatus = document.getElementById('breathingSupport').value;
+                const temperature = parseFloat(document.getElementById('maxTemp').value) || 37.0;
                 const outputEl = document.getElementById('calculatedPerspiratio');
-                const labelEl = document.getElementById('calculatedPerspiratioLabel');
-                const startTime = document.getElementById('startTime').value;
-                const endTime = document.getElementById('endTime').value;
-
-                if (isNaN(dailyWeight)) {
-                    if (outputEl) outputEl.value = "Ange dagens vikt";
-                    return 0;
-                }
-
-                if (dailyWeight <= 0) {
-                    if (durationHoursOverride === null) {
-                        if (outputEl) outputEl.value = "0 ml";
-                        if (labelEl) labelEl.textContent = `Beräknad Perspiratio (ml ${startTime}-${endTime}):`;
-                    }
-                    return 0;
-                }
-
-                const breathingSupport = document.getElementById('breathingSupport').value;
-                const tempHours = {
-                    37: parseFloat(document.getElementById('temp37Hours').value) || 0, 38: parseFloat(document.getElementById('temp38Hours').value) || 0,
-                    39: parseFloat(document.getElementById('temp39Hours').value) || 0, 40: parseFloat(document.getElementById('temp40Hours').value) || 0,
-                };
                 
-                const totalHours = durationHoursOverride ?? this.calculateDurationInHours(startTime, endTime);
-                
-                const baseRates = { none: 0.5, niv_hmef: 0.55, niv_humid: 0.4, hfnc: 0.3, intub_hmef: 0.75, intub_humid: 0.2 };
-                const baseRate = baseRates[breathingSupport] || 0.5;
-                const feverRate = 0.1;
-                let totalLoss = 0, coveredHours = 0;
-                for (let temp = 40; temp >= 37; temp--) {
-                    let hoursAtTemp = Math.min(tempHours[temp], totalHours - coveredHours);
-                    if (hoursAtTemp > 0) {
-                        const tempFactor = temp === 37 ? 0.5 : (temp - 37);
-                        totalLoss += hoursAtTemp * (baseRate + tempFactor * feverRate) * dailyWeight;
-                        coveredHours += hoursAtTemp;
-                    }
+                this.state.perspiratioWarning = ''; // Reset warning
+
+                if (age < 15 && weight < 50) {
+                    this.state.perspiratioWarning = "Ålder < 15 & vikt < 50 kg. Beräknas ej.";
+                } else if (age < 15) {
+                    this.state.perspiratioWarning = "Ålder < 15 år. Beräknas ej.";
+                } else if (weight < 50) {
+                    this.state.perspiratioWarning = "Vikt < 50 kg. Beräknas ej.";
                 }
-                let normalHours = totalHours - coveredHours;
-                if (normalHours > 0) totalLoss += normalHours * baseRate * dailyWeight;
-                const roundedLoss = Math.round(totalLoss);
-                if (durationHoursOverride === null) {
-                    outputEl.value = `${roundedLoss} ml`;
-                    labelEl.textContent = `Beräknad Perspiratio (ml ${startTime}-${endTime}):`;
+
+                if (this.state.perspiratioWarning) {
+                    outputEl.value = '0 ml';
+                    this.dom.perspiratioWarning.textContent = this.state.perspiratioWarning;
+                    return;
                 }
-                return roundedLoss;
+
+                let lBasicPerspiratio = 700;
+                switch(ventilationStatus) {
+                    case 'niv_humid':
+                    case 'hfnc':
+                        lBasicPerspiratio = 500;
+                        break;
+                    case 'intub_humid':
+                        lBasicPerspiratio = 400;
+                        break;
+                }
+
+                let sTempFactor = 1;
+                const sTempDifference = temperature - 37;
+                if (temperature < 35) { // Corresponds to < -2 difference
+                    sTempFactor = 0.5;
+                } else if (temperature > 41) { // Corresponds to > 4 difference
+                    sTempFactor = 2;
+                } else {
+                    sTempFactor = 1 + (sTempDifference * 0.25);
+                }
+
+                const perspiratio24h = lBasicPerspiratio * sTempFactor;
+                const duration = this.calculateDurationInHours(document.getElementById('startTime').value, document.getElementById('endTime').value);
+                const finalPerspiratio = perspiratio24h * (duration / 24);
+
+                outputEl.value = `${Math.round(finalPerspiratio)} ml`;
+                this.dom.perspiratioWarning.textContent = '';
             },
             transferPerspiratioToLoss() {
                 const perspiratioValue = parseFloat(document.getElementById('calculatedPerspiratio').value) || 0;
@@ -2076,7 +2052,7 @@
             },
             collectFormData() {
                 const data = { patientInfo: {}, fluidEntries: [], medicineEntries: [], bloodProductEntries: [], tpnSondmatEntries: [], lossEntries: [], perspiratioCalc: {}, diuresisCalc: {} };
-                ['dateInput', 'startTime', 'endTime', 'bedSelect', 'otherLocationInput', 'initialWeight', 'dailyWeight', 'height', 'gender', 'cumulativeBalancePrev', 'naclSyringes', 'pressureSets'].forEach(id => data.patientInfo[id] = document.getElementById(id).value);
+                ['dateInput', 'startTime', 'endTime', 'bedSelect', 'otherLocationInput', 'initialWeight', 'dailyWeight', 'height', 'gender', 'age', 'cumulativeBalancePrev', 'naclSyringes', 'pressureSets'].forEach(id => data.patientInfo[id] = document.getElementById(id).value);
                 
                 document.querySelectorAll('#fluidEntriesContainer [data-id]').forEach(row => data.fluidEntries.push({ selectValue: row.querySelector('.select-main').value, mlValue: row.querySelector('.ml-input').value, kcalValue: row.querySelector('.kcal-output').value, customValue: row.querySelector('.custom-input').value }));
                 document.querySelectorAll('#medicineEntriesContainer [data-id]').forEach(row => data.medicineEntries.push({ selectValue: row.querySelector('.select-main').value, mlValue: row.querySelector('.ml-input').value, kcalValue: row.querySelector('.kcal-output').value, customValue: row.querySelector('.custom-input').value }));
@@ -2087,7 +2063,7 @@
                 });
                 data.lossEntries.push({ selectValue: 'Perspiratio', mlValue: document.getElementById('lossMlInput_perspiratio_static').value }); // Add static perspiratio
                 
-                data.perspiratioCalc = { breathingSupport: document.getElementById('breathingSupport').value, temp37Hours: document.getElementById('temp37Hours').value, temp38Hours: document.getElementById('temp38Hours').value, temp39Hours: document.getElementById('temp39Hours').value, temp40Hours: document.getElementById('temp40Hours').value };
+                data.perspiratioCalc = { breathingSupport: document.getElementById('breathingSupport').value, maxTemp: document.getElementById('maxTemp').value };
                 data.diuresisCalc = { desiredBalanceTomorrow: document.getElementById('desiredBalanceTomorrow').value, diuresisCalcTime: document.getElementById('diuresisCalcTime').value, plannedSingleIntake: document.getElementById('plannedSingleIntake').value, plannedHourlyIntake: document.getElementById('plannedHourlyIntake').value, plannedSingleLosses: document.getElementById('plannedSingleLosses').value };
                 return data;
             },
@@ -2157,8 +2133,18 @@
                 });
 
                 // Populate calculator sections
-                for(const id in data.perspiratioCalc) document.getElementById(id).value = data.perspiratioCalc[id];
-                for(const id in data.diuresisCalc) document.getElementById(id).value = data.diuresisCalc[id];
+                if (data.perspiratioCalc) {
+                    for(const id in data.perspiratioCalc) {
+                        const el = document.getElementById(id);
+                        if(el) el.value = data.perspiratioCalc[id];
+                    }
+                }
+                if (data.diuresisCalc) {
+                    for(const id in data.diuresisCalc) {
+                        const el = document.getElementById(id);
+                        if(el) el.value = data.diuresisCalc[id];
+                    }
+                }
 
                 this.checkInitialInputColors();
                 this.updateAllCalculations();
