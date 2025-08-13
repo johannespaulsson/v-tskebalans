@@ -1,0 +1,820 @@
+/* Grundläggande stil för body */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 5px;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+/* Ny stil för att förhindra scrolling på body när modal är öppen */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Stil för huvudbehållaren som centrerar innehållet */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Stil för rubriker */
+h2 {
+    color: #1a73e8;
+    border-bottom: 1px solid #1a73e8;
+    padding-bottom: 4px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+/* Rutnätslayout för patientinformationsfälten (3 kolumner) */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+}
+
+/* Ny stil för 2-kolumns rutnät (används för Balansräkning) */
+.grid-container.two-column-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Stil för varje rutnätsartikel (enkel inmatningsgrupp) */
+.grid-item {
+    margin-bottom: 8px;
+    background-color: #fcfcfc;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+}
+
+/* Stil för de yttre kolumnerna inom 2-kolumns rutnät */
+.grid-column-item {
+    background-color: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.grid-column-item h3 {
+    color: #1a73e8;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 1.1em;
+}
+
+
+/* Stil för etiketter (labels) */
+.grid-item label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.85rem;
+}
+
+/* Stil för alla inmatningsfält och select-menyer */
+.grid-item input[type="date"],
+.grid-item input[type="time"],
+.grid-item input[type="text"], /* Changed from type="number" to type="text" for formula input */
+.grid-item select {
+    width: calc(100% - 10px);
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    transition-property: background-color, border-color, box-shadow;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+}
+
+.grid-item input:focus,
+.grid-item select:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    outline: none;
+}
+
+/* Stil för inmatningsgrupper med knapp (t.ex. tid + "Nu"-knapp) */
+.input-group {
+    display: flex;
+    align-items: center;
+}
+.input-group input[type="time"] {
+    flex-grow: 1;
+    margin-right: 6px;
+}
+.input-group button {
+    padding: 6px 10px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition-property: background-color, transform;
+    transition-duration: 0.3s, 0.2s;
+    transition-timing-function: ease, ease;
+}
+.input-group button:hover {
+    background-color: #0d47a1;
+    transform: translateY(-1px);
+}
+.input-group button:active {
+    transform: translateY(0);
+}
+
+/* Stil för "viktigt input"-markering (ljusrosa bakgrund) */
+.important-input {
+    background-color: #fff5f5;
+    border-color: #ffdddd;
+}
+/* Stil för "fyllt input"-markering (ljusgrön bakgrund) */
+.filled-input {
+    background-color: #f5fff5;
+    border-color: #ddffdd;
+}
+
+/* Stil för numeriska inmatningar med plus/minus-knappar */
+.number-input-buttons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+/* Changed from type="number" to type="text" */
+.number-input-buttons input[type="text"] {
+    flex-grow: 1;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.number-input-buttons button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    transition-property: background-color, transform;
+    transition-duration: 0.3s, 0.2s;
+    transition-timing-function: ease, ease;
+}
+.number-input-buttons button:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+.number-input-buttons button:active {
+    transform: translateY(0);
+}
+
+/* Stil för "Annan plats" inmatningsfält när det visas */
+#otherLocationInput {
+    margin-top: 6px;
+    width: calc(100% - 10px);
+}
+
+/* Stil för det automatiskt beräknade Kcal-fältet */
+.calculated-output {
+    background-color: #ffffff;
+    border-color: #ccc;
+}
+
+/* Stil för enskild vätskerad (Kristalloider/Kolloider & Läkemedelsvätskor) */
+.fluid-entry-row {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr auto;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 0;
+}
+
+/* Ny stil för blodprodukt rad (utan Kcal) */
+.blood-product-entry-row {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr auto;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 0;
+}
+/* Ny stil för TPN/Sondmat rad (med Kcal) */
+.tpn-sondmat-entry-row {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr auto;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 0;
+}
+/* Ny stil för förlust rad (utan Kcal) */
+.loss-entry-row {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr auto;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 0;
+}
+
+
+.fluid-entry-row .grid-item,
+.blood-product-entry-row .grid-item,
+.tpn-sondmat-entry-row .grid-item,
+.loss-entry-row .grid-item {
+    margin-bottom: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fluid-entry-row input,
+.fluid-entry-row select,
+.blood-product-entry-row input,
+.blood-product-entry-row select,
+.tpn-sondmat-entry-row input,
+.tpn-sondmat-entry-row select,
+.loss-entry-row input,
+.loss-entry-row select {
+    width: 100%;
+    padding: 3px;
+    font-size: 0.8rem;
+}
+
+/* Stil för den egna vätskan/läkemedlet */
+.custom-input {
+    width: 100%;
+    padding: 3px;
+    font-size: 0.8rem;
+}
+
+.remove-fluid-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 6px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition-property: background-color;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+    height: fit-content;
+    align-self: center;
+    line-height: 1;
+}
+.remove-fluid-button:hover {
+    background-color: #c82333;
+}
+/* Stil för knappen som inte ska kunna tas bort */
+.remove-fluid-button.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.remove-fluid-button.disabled:hover {
+    background-color: #cccccc;
+    transform: none;
+}
+
+
+.add-button {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition-property: background-color, transform;
+    transition-duration: 0.3s, 0.2s;
+    transition-timing-function: ease, ease;
+}
+.add-button:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+/* Stil för tabellrubrikerna */
+.fluid-table-header {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr auto;
+    gap: 6px;
+    font-weight: bold;
+    padding: 4px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 3px;
+    font-size: 0.85rem;
+    color: #444;
+}
+/* Ny stil för blodprodukter tabellrubriker (utan Kcal) */
+.blood-product-table-header {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr auto;
+    gap: 6px;
+    font-weight: bold;
+    padding: 4px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 3px;
+    font-size: 0.85rem;
+    color: #444;
+}
+/* Ny stil för TPN/Sondmat tabellrubriker (med Kcal) */
+.tpn-sondmat-table-header {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1fr auto;
+    gap: 6px;
+    font-weight: bold;
+    padding: 4px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 3px;
+    font-size: 0.85rem;
+    color: #444;
+}
+/* Ny stil för förlust tabellrubriker (utan Kcal) */
+.loss-table-header {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr auto;
+    gap: 6px;
+    font-weight: bold;
+    padding: 4px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 3px;
+    font-size: 0.85rem;
+    color: #444;
+}
+.fluid-table-header div,
+.blood-product-table-header div,
+.tpn-sondmat-table-header div,
+.loss-table-header div {
+    text-align: left;
+}
+/* Justera för att papperskorgskolumnen ska vara tom i headern */
+.fluid-table-header div:last-child,
+.blood-product-table-header div:last-child,
+.tpn-sondmat-table-header div:last-child,
+.loss-table-header div:last-child {
+    width: 25px;
+}
+
+/* Stil för notis om justerad idealvikt */
+.adjusted-weight-notice {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 4px;
+    display: block;
+}
+
+/* NYA STYLING REGLER */
+/* Flexbox för att placera Beräknad Perspiratio-input och knapp på samma rad */
+.calculated-perspiratio-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Justera bredd för input i den nya gruppen */
+.calculated-perspiratio-group input[type="text"] {
+    flex-grow: 1;
+    max-width: 150px;
+    text-align: center;
+}
+
+/* Justera knappen i den nya gruppen */
+.calculated-perspiratio-group button {
+    width: fit-content; /* KORRIGERING: Återställer bredden för denna specifika knapp */
+    margin-top: 0 !important;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+/* Nytt: Stil för Spara/Ladda-knapparna */
+.file-buttons-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+.file-buttons-group .add-button {
+    margin-top: 0;
+    flex-grow: 1; /* Får knapparna att ta upp lika mycket plats */
+}
+
+#perspiratioWarning {
+    font-size: 0.75rem;
+    color: #dc3545;
+    margin-top: 4px;
+    display: block;
+    min-height: 1em;
+}
+
+/* --- Modal Specifika Stilar --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* High z-index to appear on top */
+    visibility: hidden; /* Hidden by default */
+    opacity: 0;
+    transition-property: visibility, opacity;
+    transition-duration: 0.3s, 0.3s;
+    transition-timing-function: ease, ease;
+}
+.modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+.modal-content {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    max-width: 950px; /* Increased max-width for 3 columns */
+    width: 90%; /* Responsive width */
+    position: relative;
+    transform: translateY(-20px); /* Small animation effect */
+    transition-property: transform;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+    /* För att modal-content ska anpassa sin höjd efter innehållet och ha egen scroll */
+    max-height: 90vh; /* Sätter maxhöjden till 90% av viewportens höjd */
+    overflow-y: auto; /* Lägger till scroll om innehållet överskrider maxhöjden */
+    box-sizing: border-box; /* Inkluderar padding i höjden */
+}
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+/* Adjusted grid for modal content to be 3 columns */
+.modal-content .grid-container.modal-three-column-grid { /* New class for specific modal grid */
+    display: grid;
+    /* Using minmax(0, 1fr) to ensure columns don't grow beyond 1fr due to content */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    /* Säkerställer att alla grid-items sträcker sig till samma höjd */
+    align-items: stretch;
+}
+/* Added to explicitly make grid-column-items fill their grid cells */
+.modal-content .grid-container.modal-three-column-grid > .grid-column-item {
+    width: 100%; /* Ensure it takes full width of its grid cell */
+    height: 100%; /* Ensure it takes full height of its grid cell */
+    box-sizing: border-box; /* Ensures padding/border are included in width/height */
+}
+.modal-content h3 {
+    color: #1a73e8;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 1.1em;
+}
+/* Justerad font-storlek för modal-p och modal-ul */
+.modal-content p {
+    font-size: 0.7rem; /* Något mindre */
+    margin-bottom: 5px;
+    line-height: 1.4;
+    word-wrap: break-word; /* Lägg till för att tvinga radbrytning */
+    overflow-wrap: break-word; /* Fallback för word-wrap */
+}
+.modal-content ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 0.8rem;
+}
+.modal-content ul li {
+    margin-bottom: 8px;
+    padding-left: 1em;
+    text-indent: -1em;
+}
+.modal-content ul li::before {
+    content: "• ";
+    color: #1a73e8;
+    padding-right: 5px;
+}
+.modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem; /* Smaller text for tables to fit 3 columns */
+}
+.modal-content th, .modal-content td {
+    border: 1px solid #eee;
+    padding: 4px; /* Reduced padding for table cells */
+    text-align: left;
+}
+.modal-content th {
+    background-color: #e9e9e9;
+    font-weight: 600;
+}
+.modal-content tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+.modal-content .category-heading {
+    font-weight: bold;
+    background-color: #e0e0e0;
+    padding: 4px 6px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    border-radius: 3px;
+    font-size: 0.75rem; /* Smaller category heading */
+}
+.modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    transition-property: color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+}
+.modal-close-button:hover {
+    color: #333;
+}
+/* Stil för den statiska Perspiratio-selecten för att säkerställa att den syns tydligt */
+#lossSelect_perspiratio_static {
+    color: #333 !important; /* Force a darker color */
+    font-weight: bold; /* Make it bold */
+    opacity: 1; /* Ensure full opacity */
+}
+
+/* Specific styles for Diuresis Calculator modal */
+#diuresisCalculatorModalOverlay .modal-content {
+    max-width: 800px; /* Slightly narrower for this calculator */
+}
+#diuresisCalculatorModalOverlay .grid-container {
+    grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    gap: 15px; /* Consistent gap */
+}
+#diuresisCalculatorModalOverlay .grid-container.two-column-diuresis {
+    grid-template-columns: 1fr 1fr; /* Two columns for sections */
+    gap: 15px;
+}
+#diuresisCalculatorModalOverlay .grid-column-item {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+#diuresisCalculatorModalOverlay .diuresis-summary-table td,
+#diuresisCalculatorModalOverlay .diuresis-summary-table th {
+    padding: 5px; /* Adjusted padding for summary table */
+    font-size: 0.8rem;
+}
+#diuresisCalculatorModalOverlay .diuresis-summary-table .detail-row {
+    font-size: 0.75rem;
+    color: #555;
+    padding-left: 15px;
+}
+.highlight-row {
+    background-color: #e6ffe6; /* Light green for highlight */
+    font-weight: bold;
+}
+
+/* Stilar för patientetikett-rutan i detaljerad sammanställning */
+.patient-label-box {
+    width: 9.5cm;
+    height: 4.5cm;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Vänsterjustera innehållet */
+    text-align: left; /* Vänsterjustera texten */
+    font-size: 0.9rem;
+    margin: 15px 0 25px 0; /* Ingen auto-marginal för att möjliggöra vänsterjustering av rutan */
+    box-sizing: border-box; /* Inkluderar padding/border i storleken */
+    padding-left: 10px; /* Lägg till lite padding på vänster sida */
+}
+
+/* Stilar för allmän information i detaljerad sammanställning */
+.summary-info {
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+.summary-info p {
+    margin: 0;
+}
+
+/* Stilar för tabellerna i detaljerad sammanställning modalen */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.8rem; /* Anpassa storlek för utskrift */
+    table-layout: fixed; /* Nytt för jämna kolumner */
+}
+.summary-table th, .summary-table td {
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    text-align: left;
+    width: 50%; /* Nytt för jämna kolumner */
+}
+.summary-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+.summary-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.summary-table .numeric-value {
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Nytt: Stil för sidfot och ändringslogg */
+.app-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 0.8rem;
+    color: #888;
+}
+.changelog-link {
+    color: #1a73e8;
+    text-decoration: none;
+    cursor: pointer;
+}
+.changelog-link:hover {
+    text-decoration: underline;
+}
+
+/* Nytt: Stil för låg diures */
+.low-diuresis {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Mediafråga för mindre skärmar (staplar kolumnerna) */
+@media (max-width: 768px) {
+    .grid-container, .grid-container.two-column-grid {
+        grid-template-columns: 1fr;
+    }
+    .container {
+        margin: 5px;
+        padding: 10px;
+    }
+    body {
+        font-size: 0.85rem;
+    }
+    .grid-column-item {
+        padding: 10px;
+    }
+    .fluid-entry-row, .fluid-table-header {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+    .blood-product-entry-row, .blood-product-table-header {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+    .tpn-sondmat-entry-row, .tpn-sondmat-table-header {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+    .loss-entry-row, .loss-table-header {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+    .fluid-entry-row input,
+    .fluid-entry-row select,
+    .blood-product-entry-row input,
+    .blood-product-entry-row select,
+    .tpn-sondmat-entry-row input,
+    .tpn-sondmat-entry-row select,
+    .loss-entry-row input,
+    .loss-entry-row select {
+        width: calc(100% - 6px);
+    }
+    .fluid-table-header div,
+    .blood-product-table-header div,
+    .tpn-sondmat-table-header div,
+    .loss-table-header div {
+        text-align: center;
+    }
+    /* Återställ temp-grid-container till en kolumn på små skärmar */
+    .temp-grid-container {
+        grid-template-columns: 1fr;
+    }
+    /* Justera perspiratio-gruppen på små skärmar */
+    .calculated-perspiratio-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .calculated-perspiratio-group input[type="text"] {
+        max-width: 100%;
+    }
+    /* Modal justeringar för små skärmar */
+    .modal-content .grid-container.modal-three-column-grid,
+    #diuresisCalculatorModalOverlay .grid-container.two-column-diuresis { /* Applies to modal's inner grids */
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+    }
+    .modal-content p {
+        font-size: 0.8rem;
+    }
+    .modal-content ul {
+        font-size: 0.75rem;
+    }
+    .modal-content table {
+        font-size: 0.7rem;
+    }
+
+    /* Justera patientetikettboxen på små skärmar för att behålla dimensionerna */
+    .patient-label-box {
+        width: 9.5cm; /* Behåll specifik bredd */
+        height: 4.5cm; /* Behåll specifik höjd */
+        margin: 15px auto 25px auto; /* Centrera på små skärmar igen */
+        justify-content: center; /* Centrera innehåll på små skärmar */
+        text-align: center; /* Centrera text på små skärmar */
+        padding-left: 0; /* Ta bort extra padding på små skärmar */
+    }
+}
+
+/* --- Print-specifika stilar --- */
+@media print {
+    body > *:not(#printDetailedSummaryModalOverlay) {
+        display: none; /* Hide everything except the print modal overlay */
+    }
+
+    #printDetailedSummaryModalOverlay {
+        position: static; /* Remove fixed positioning for print */
+        top: auto;
+        left: auto;
+        width: 100%;
+        height: auto;
+        background-color: transparent; /* No dimmed background on print */
+        display: block; /* Ensure it's visible */
+        visibility: visible;
+        opacity: 1;
+        box-shadow: none; /* No shadow on print */
+    }
+
+    #printDetailedSummaryModalOverlay .modal-content {
+        max-width: 100%; /* Use full width for print */
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0; /* No padding on content for full use of paper */
+        transform: none; /* Remove translation */
+        max-height: none; /* No max height for print */
+        overflow-y: visible; /* Allow content to flow */
+        background-color: transparent; /* No background on print */
+    }
+
+    .modal-close-button, .add-button, .app-footer {
+        display: none; /* Hide close button, add buttons, and footer on print */
+    }
+
+    .patient-label-box {
+        border: 1px solid #000; /* Ensure border is visible on print */
+    }
+
+    .summary-table {
+        border: 1px solid #000; /* Ensure table borders are visible */
+    }
+    .summary-table th, .summary-table td {
+        border: 1px solid #000; /* Ensure cell borders are visible */
+        padding: 4px; /* Adjust padding for print if needed */
+    }
+
+    /* Adjust font sizes for better print readability */
+    .modal-content h2 {
+        font-size: 1.2em;
+    }
+    .modal-content h3 {
+        font-size: 1em;
+    }
+    .summary-info p,
+    .summary-table,
+    .summary-table th,
+    .summary-table td {
+        font-size: 0.75em; /* Slightly larger for print */
+    }
+
+    /* Page breaks for tables if necessary */
+    .summary-table {
+        page-break-inside: avoid;
+    }
+}
