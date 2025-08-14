@@ -612,19 +612,25 @@
             justify-content: flex-start; /* Vänsterjustera innehållet */
             text-align: left; /* Vänsterjustera texten */
             font-size: 0.9rem;
-            margin: 15px 0 25px 0; /* Ingen auto-marginal för att möjliggöra vänsterjustering av rutan */
-            box-sizing: border-box; /* Inkluderar padding/border i storleken */
             padding-left: 10px; /* Lägg till lite padding på vänster sida */
         }
 
         /* Stilar för allmän information i detaljerad sammanställning */
         .summary-info {
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-            line-height: 1.5;
+            font-size: 1rem; /* Större text */
+            line-height: 1.6;
         }
         .summary-info p {
             margin: 0;
+        }
+
+        /* Nytt: Grid för sidhuvudet i utskriften */
+        .summary-header-grid {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px; /* Mellanrum mellan etikett och text */
+            margin-bottom: 25px;
         }
 
         /* Stilar för tabellerna i detaljerad sammanställning modalen */
@@ -652,6 +658,43 @@
             text-align: right;
             font-weight: 500;
         }
+        .summary-table .highlight-row-print {
+            background-color: #e9e9e9;
+            font-weight: bold;
+        }
+        .summary-table .category-row td {
+            font-weight: bold;
+            padding-top: 10px;
+            background-color: #f8f8f8;
+        }
+        .summary-table .subcategory-row td {
+            font-style: italic;
+            padding-left: 20px;
+        }
+        .summary-table .item-row td {
+            padding-left: 30px;
+        }
+        
+        /* Nytt: Grid för summary-tabeller */
+        .summary-grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+        .summary-grid-container .summary-table {
+            margin-bottom: 0;
+        }
+        
+        /* Nytt: Grid för detalj-tabeller */
+        .details-grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
 
         /* Nytt: Stil för sidfot och ändringslogg */
         .app-footer {
@@ -797,15 +840,22 @@
             }
 
             .patient-label-box {
-                border: 1px solid #000; /* Ensure border is visible on print */
+                border: 1px solid #ccc; /* Ensure border is visible on print */
             }
 
             .summary-table {
-                border: 1px solid #000; /* Ensure table borders are visible */
+                border: none;
             }
             .summary-table th, .summary-table td {
-                border: 1px solid #000; /* Ensure cell borders are visible */
+                border: none;
+                border-bottom: 1px solid #eee;
                 padding: 4px; /* Adjust padding for print if needed */
+            }
+            .summary-table th {
+                border-bottom: 2px solid #ccc;
+            }
+            .summary-table tr:last-child td {
+                border-bottom: none;
             }
 
             /* Adjust font sizes for better print readability */
@@ -814,6 +864,7 @@
             }
             .modal-content h3 {
                 font-size: 1em;
+                margin-top: 20px;
             }
             .summary-info p,
             .summary-table,
@@ -892,27 +943,30 @@
             <!-- Längd -->
             <div class="grid-item">
                 <label for="height">Längd (cm):</label>
-                <input type="text" id="height" class="important-input" placeholder="t.ex. 175.0">
+                <input type="text" id="height" placeholder="t.ex. 175.0">
             </div>
             <!-- Kön -->
             <div class="grid-item">
                 <label for="gender">Kön:</label>
-                <select id="gender" class="important-input">
+                <select id="gender">
                     <option value="">Välj kön</option>
                     <option value="Man">Man</option>
                     <option value="Kvinna">Kvinna</option>
                 </select>
-            </div>
-            <!-- Nytt fält för Ålder -->
-            <div class="grid-item">
-                <label for="age">Ålder (år):</label>
-                <input type="text" id="age" class="important-input" placeholder="t.ex. 40">
             </div>
             <!-- Idealvikt (kg) -->
             <div class="grid-item">
                 <label for="idealWeight">Idealvikt (kg):</label>
                 <input type="text" id="idealWeight" readonly class="calculated-output" value="Var god ange längd och kön">
                 <span id="adjustedWeightNotice" class="adjusted-weight-notice" style="display: none;">(Justerad vikt)</span>
+            </div>
+            <!-- Nytt fält för Ålder -->
+            <div class="grid-item">
+                <label for="isUnder15">Patient under 15 år?</label>
+                <select id="isUnder15">
+                    <option value="no" selected>Nej</option>
+                    <option value="yes">Ja</option>
+                </select>
             </div>
             <!-- Kumulativ balans föregående dygn -->
             <div class="grid-item">
@@ -1302,102 +1356,76 @@
             <button class="modal-close-button" data-action="closeModal" data-target="printDetailedSummaryModalOverlay">×</button>
             <h2>Vätskebalansräkning</h2>
 
-            <!-- Ruta för patientetikett -->
-            <div class="patient-label-box">
-                Plats för patientetikett
+            <div class="summary-header-grid">
+                <div class="patient-label-box">
+                    Plats för patientetikett
+                </div>
+                <div class="summary-info">
+                    <p><strong>Datum:</strong> <span id="summaryDate"></span></p>
+                    <p><strong>Tidsperiod:</strong> <span id="summaryTimePeriod"></span></p>
+                    <p><strong>Plats:</strong> <span id="summaryLocation"></span></p>
+                </div>
             </div>
 
-            <!-- Allmän information om patient och tidsperiod -->
-            <div class="summary-info">
-                <p><strong>Datum:</strong> <span id="summaryDate"></span></p>
-                <p><strong>Tidsperiod:</strong> <span id="summaryTimePeriod"></span></p>
-                <p><strong>Plats:</strong> <span id="summaryLocation"></span></p>
+            <div class="summary-grid-container">
+                <div>
+                    <h3>Vikter</h3>
+                    <table class="summary-table">
+                        <tr>
+                            <td>Utgångsvikt/torrvikt:</td>
+                            <td id="printInitialWeight" class="numeric-value"></td>
+                        </tr>
+                        <tr>
+                            <td>Dagens vikt:</td>
+                            <td id="printDailyWeight" class="numeric-value"></td>
+                        </tr>
+                        <tr>
+                            <td>Idealvikt (beräknad/justerad):</td>
+                            <td id="printIdealWeight" class="numeric-value"></td>
+                        </tr>
+                        <tr>
+                            <td>Differens mot utgångsvikt:</td>
+                            <td id="printWeightDifference" class="numeric-value"></td>
+                        </tr>
+                        <tr>
+                            <td>Kumulativ balans föregående dygn:</td>
+                            <td id="printCumulativeBalancePrev" class="numeric-value"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>Sammanställning</h3>
+                    <table class="summary-table">
+                        <tr>
+                            <td>Totalt vätskeintag:</td>
+                            <td id="printTotalIntakeMl" class="numeric-value"></td>
+                        </tr>
+                        <tr>
+                            <td>Total vätskeförlust:</td>
+                            <td id="printTotalLossMl" class="numeric-value"></td>
+                        </tr>
+                        <tr class="highlight-row-print">
+                            <td>Nettobalans:</td>
+                            <td id="printNetBalanceMl" class="numeric-value"></td>
+                        </tr>
+                        <tr class="highlight-row-print">
+                            <td>Kumulativ balans:</td>
+                            <td id="printCumulativeBalanceMl" class="numeric-value"></td>
+                        </tr>
+                        <tr class="highlight-row-print">
+                            <td>Totalt kaloriintag:</td>
+                            <td id="printTotalKcalIntake" class="numeric-value"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Ny sektion för detaljerad lista -->
+            <div id="print-details-container" class="details-grid-container">
+                <div id="print-details-intake"></div>
+                <div id="print-details-loss"></div>
             </div>
 
-            <!-- Vikter -->
-            <h3>Vikter</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Utgångsvikt/torrvikt:</td>
-                    <td id="printInitialWeight" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Dagens vikt:</td>
-                    <td id="printDailyWeight" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Idealvikt (beräknad/justerad):</td>
-                    <td id="printIdealWeight" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Differens mot utgångsvikt:</td>
-                    <td id="printWeightDifference" class="numeric-value"></td>
-                </tr>
-            </table>
-
-            <!-- Vätskebalansberäkningar -->
-            <h3>Vätskebalans</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Totalt intag:</td>
-                    <td id="printTotalIntakeMl" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Totalt förlust:</td>
-                    <td id="printTotalLossMl" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Netto balans:</td>
-                    <td id="printNetBalanceMl" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Kumulativ balans:</td>
-                    <td id="printCumulativeBalanceMl" class="numeric-value"></td>
-                </tr>
-            </table>
-
-            <!-- Läkemedelsvolymer (subkategoriserade) -->
-            <h3>Läkemedelsvolymer (totalt)</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Sedativa:</td>
-                    <td id="printMedicineSedativeMl" class="numeric-value">0 ml</td>
-                </tr>
-                <tr>
-                    <td>Antibiotika:</td>
-                    <td id="printMedicineAntibioticsMl" class="numeric-value">0 ml</td>
-                </tr>
-                <tr>
-                    <td>Vasoaktiva:</td>
-                    <td id="printMedicineVasoactiveMl" class="numeric-value">0 ml</td>
-                </tr>
-                <tr>
-                    <td>Övriga läkemedel:</td>
-                    <td id="printMedicineOtherMl" class="numeric-value">0 ml</td>
-                </tr>
-            </table>
-
-            <!-- Kcal-intag (uppdelat) -->
-            <h3>Kcal-intag</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Kcal från peroralt intag:</td>
-                    <td id="printKcalPeroral" class="numeric-value">0 Kcal</td>
-                </tr>
-                <tr>
-                    <td>Kcal från sondmat:</td>
-                    <td id="printKcalSondmat" class="numeric-value">0 Kcal</td>
-                </tr>
-                <!-- Förenad rad för IV Läkemedel och TPN -->
-                <tr>
-                    <td>Kcal från intravenös tillförsel:</td>
-                    <td id="printKcalIntravenousTotal" class="numeric-value">0 Kcal</td>
-                </tr>
-                <tr>
-                    <td><strong>Totalt Kcal intag:</strong></td>
-                    <td id="printTotalKcalIntake" class="numeric-value">0 Kcal</td>
-                </tr>
-            </table>
 
             <!-- Utskriftsknapp -->
             <button class="add-button" style="margin-top: 20px;" data-action="print">Skriv ut</button>
@@ -1410,6 +1438,34 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
+            <h3>Version 1.9</h3>
+            <ul>
+                <li>Justerade layouten i utskriftsvyn till en genomgående tvåkolumns-layout för att spara plats.</li>
+            </ul>
+            <h3>Version 1.8</h3>
+            <ul>
+                <li>Justerade layout och design i utskriftsvyn för ett mjukare och mer professionellt utseende.</li>
+                <li>Lade till "Kalium/Kaliumklorid" som ett val under "Läkemedelsvätskor".</li>
+            </ul>
+            <h3>Version 1.7</h3>
+            <ul>
+                <li>Lade till "Kalium/Kaliumklorid" som ett val under "Läkemedelsvätskor".</li>
+            </ul>
+            <h3>Version 1.6</h3>
+            <ul>
+                <li>Justerade layouten i utskriftsvyn för att vara mer kompakt och lättläst.</li>
+                <li>Grupperade detaljerat intag och förluster i egna tabeller.</li>
+            </ul>
+            <h3>Version 1.5</h3>
+            <ul>
+                <li>Justerade layouten i utskriftsvyn för att vara mer kompakt och lättläst.</li>
+                <li>Grupperade detaljerat intag och förluster i egna tabeller.</li>
+            </ul>
+            <h3>Version 1.4</h3>
+            <ul>
+                <li>Ändrade "Ålder (år)" till en Ja/Nej-fråga "Patient under 15 år?" för snabbare ifyllnad.</li>
+                <li>Förbättrade varningstexten för perspiratioberäkning.</li>
+            </ul>
             <h3>Version 1.3</h3>
             <ul>
                 <li>Bytt beräkningsmodell för perspiratio till att baseras på en fast grundförlust per dygn som justeras med en temperaturfaktor.</li>
@@ -1439,7 +1495,7 @@
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 1.3 - Ändringslogg
+            Version 1.9 - Ändringslogg
         </span>
     </footer>
 
@@ -1448,7 +1504,7 @@
             state: {
                 totalIntakeMl: 0, totalIntakeKcal: 0, totalLossMl: 0, netBalanceMl: 0, cumulativeBalanceMl: 0,
                 weightDifferenceKg: 0, totalDiuresisMl: 0, totalPerspiratioMl: 0, totalOtherLossMl: 0,
-                dailyWeight: 0, height: 0, gender: '', age: 0, maxTemp: 37.0, breathingSupport: 'standard',
+                dailyWeight: 0, height: 0, gender: '', isUnder15: 'no', maxTemp: 37.0, breathingSupport: 'standard',
                 mainAppStartTime: '06:00', mainAppEndTime: '06:00',
                 patientDate: '', patientTimePeriod: '', patientLocation: '', initialWeight: 0, idealWeight: 0,
                 adjustedWeight: false,
@@ -1500,7 +1556,7 @@
                         "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 1.1 }, { name: "Propofol 20mg/ml", kcal: 1.33 }, { name: "Remifentanil", kcal: 0 }],
                         "Antibiotika": [{ name: "Pip/Taz 4g x 3", kcal: 0, defaultMl: 60 }, { name: "Övrig Antibiotika", kcal: 0 }, { name: "Kaspofungin", kcal: 0, defaultMl: 250 }],
                         "Vasoaktiva": [{ name: "Adrenalin", kcal: 0 }, { name: "Argipressin", kcal: 0 }, { name: "Dobutamin", kcal: 0 }, { name: "Levosimendan", kcal: 0.2 }, { name: "Milrinon", kcal: 0 }, { name: "Noradrenalin", kcal: 0 }],
-                        "Övrigt": [{ name: "Amiodarone", kcal: 0.2 }, { name: "EDA", kcal: 0 }, { name: "Lispro", kcal: 0 }, { name: "Paracetamol", kcal: 0 }]
+                        "Övrigt": [{ name: "Amiodarone", kcal: 0.2 }, { name: "EDA", kcal: 0 }, { name: "Kalium/Kaliumklorid", kcal: 0 }, { name: "Lispro", kcal: 0 }, { name: "Paracetamol", kcal: 0 }]
                     }
                 },
                 bloodProduct: { placeholder: 'Välj blodprodukt', options: ['Erytrocyter', 'Trombocyter', 'Plasma'] },
@@ -1553,7 +1609,9 @@
                 this.dom.dateInput.value = yesterday.toISOString().split('T')[0];
             },
             addInitialRows() {
-                ['fluid', 'medicine', 'bloodProduct', 'tpnSondmat', 'loss'].forEach(type => this.addRow(type, { isInitial: true }));
+                ['fluid', 'medicine', 'bloodProduct', 'tpnSondmat'].forEach(type => this.addRow(type, { isInitial: true }));
+                this.addRow('loss', { selectValue: 'Diures', isInitial: true }); // Add Diures by default
+                this.addRow('loss', { isInitial: true }); // Add one empty loss row
             },
             checkInitialInputColors() {
                 document.querySelectorAll('.important-input, .filled-input').forEach(input => {
@@ -1632,6 +1690,13 @@
                             const showCustom = target.value === configData.customOption || (configData.customOption2 && target.value === configData.customOption2);
                             customInput.style.display = showCustom ? 'block' : 'none';
                         }
+                        // NYTT: Sätt default-värde för Pip/Taz
+                        const selectedOption = target.options[target.selectedIndex];
+                        const defaultMl = selectedOption.dataset.defaultMl;
+                        const mlInput = row.querySelector('.ml-input');
+                        if (defaultMl && mlInput) {
+                            mlInput.value = defaultMl;
+                        }
                     }
                 }
                 this.updateAllCalculations();
@@ -1667,6 +1732,9 @@
                 const select = newRow.querySelector('.select-main');
                 if (select && config.populateSelect) {
                     config.populateSelect(select);
+                }
+                if (initialData.selectValue) {
+                    select.value = initialData.selectValue;
                 }
                 if (Object.keys(initialData).length > 0 && !initialData.isInitial) {
                     if(select) select.value = initialData.selectValue || '';
@@ -1775,7 +1843,7 @@
                 notice.style.display = isAdjusted ? 'inline' : 'none';
             },
             calculatePerspiratio() {
-                const age = parseFloat(document.getElementById('age').value) || 0;
+                const isUnder15 = document.getElementById('isUnder15').value === 'yes';
                 const weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
                 const ventilationStatus = document.getElementById('breathingSupport').value;
                 const temperature = parseFloat(document.getElementById('maxTemp').value) || 37.0;
@@ -1783,12 +1851,8 @@
                 
                 this.state.perspiratioWarning = ''; // Reset warning
 
-                if (age < 15 && weight < 50) {
-                    this.state.perspiratioWarning = "Ålder < 15 & vikt < 50 kg. Beräknas ej.";
-                } else if (age < 15) {
-                    this.state.perspiratioWarning = "Ålder < 15 år. Beräknas ej.";
-                } else if (weight < 50) {
-                    this.state.perspiratioWarning = "Vikt < 50 kg. Beräknas ej.";
+                if (isUnder15 || weight < 50) {
+                    this.state.perspiratioWarning = "Perspiratioberäkning ej möjligt vid ålder < 15 och/eller vikt < 50 kg";
                 }
 
                 if (this.state.perspiratioWarning) {
@@ -2025,6 +2089,7 @@
             },
             populatePrintModal() {
                 this.updateAllCalculations(); // Ensure state is current
+                
                 document.getElementById('summaryDate').textContent = document.getElementById('dateInput').value;
                 document.getElementById('summaryTimePeriod').textContent = `${document.getElementById('startTime').value} - ${document.getElementById('endTime').value}`;
                 const bedSelect = document.getElementById('bedSelect');
@@ -2034,25 +2099,97 @@
                 document.getElementById('printDailyWeight').textContent = `${this.state.dailyWeight.toFixed(1)} kg`;
                 document.getElementById('printIdealWeight').textContent = `${document.getElementById('idealWeight').value} kg ${this.state.adjustedWeight ? '(Justerad)' : ''}`;
                 document.getElementById('printWeightDifference').textContent = `${this.state.weightDifferenceKg.toFixed(1)} kg`;
+                document.getElementById('printCumulativeBalancePrev').textContent = `${document.getElementById('cumulativeBalancePrev').value} ml`;
 
                 document.getElementById('printTotalIntakeMl').textContent = `${Math.round(this.state.totalIntakeMl)} ml`;
                 document.getElementById('printTotalLossMl').textContent = `${Math.round(this.state.totalLossMl)} ml`;
                 document.getElementById('printNetBalanceMl').textContent = `${Math.round(this.state.netBalanceMl)} ml`;
                 document.getElementById('printCumulativeBalanceMl').textContent = `${Math.round(this.state.cumulativeBalanceMl)} ml`;
-
-                document.getElementById('printMedicineSedativeMl').textContent = `${Math.round(this.state.medicineCategoryTotals.Sedering)} ml`;
-                document.getElementById('printMedicineAntibioticsMl').textContent = `${Math.round(this.state.medicineCategoryTotals.Antibiotika)} ml`;
-                document.getElementById('printMedicineVasoactiveMl').textContent = `${Math.round(this.state.medicineCategoryTotals.Vasoaktiva)} ml`;
-                document.getElementById('printMedicineOtherMl').textContent = `${Math.round(this.state.medicineCategoryTotals.Övrigt)} ml`;
-
-                document.getElementById('printKcalPeroral').textContent = `${Math.round(this.state.kcalSummary.peroralt)} Kcal`;
-                document.getElementById('printKcalSondmat').textContent = `${Math.round(this.state.kcalSummary.sondmat)} Kcal`;
-                document.getElementById('printKcalIntravenousTotal').textContent = `${Math.round(this.state.kcalSummary.intravenousTotal)} Kcal`;
                 document.getElementById('printTotalKcalIntake').textContent = `${Math.round(this.state.totalIntakeKcal)} Kcal`;
+
+                const intakeContainer = document.getElementById('print-details-intake');
+                const lossContainer = document.getElementById('print-details-loss');
+                if(!intakeContainer || !lossContainer) return;
+                
+                let intakeHtml = '';
+                let lossHtml = '';
+
+                // --- INTAKE ---
+                const intakeSections = [
+                    { title: 'Kristalloider/Kolloider', type: 'fluid' },
+                    { title: 'Läkemedelsvätskor', type: 'medicine' },
+                    { title: 'Blodprodukter', type: 'bloodProduct' },
+                    { title: 'TPN/Sondmat/Peroralt', type: 'tpnSondmat' }
+                ];
+                
+                let allIntakeEntries = [];
+                intakeSections.forEach(section => {
+                    const entries = [];
+                    document.querySelectorAll(`#${this.config[section.type].containerId} [data-id]`).forEach(row => {
+                        const mlValue = parseFloat(row.querySelector('.ml-input')?.value) || 0;
+                        if (mlValue > 0) {
+                            const select = row.querySelector('.select-main');
+                            let name = select?.value;
+                            if (select.value.startsWith('Övrig') || select.value.startsWith('Annan')) {
+                                name = row.querySelector('.custom-input')?.value || name;
+                            }
+                            const kcalValue = parseFloat(row.querySelector('.kcal-output')?.value) || 0;
+                            entries.push({ name, ml: mlValue, kcal: kcalValue });
+                        }
+                    });
+                    if (entries.length > 0) {
+                        allIntakeEntries.push({category: section.title, items: entries});
+                    }
+                });
+
+                if (allIntakeEntries.length > 0) {
+                    intakeHtml += '<h3>Vätskeintag</h3><table class="summary-table">';
+                    allIntakeEntries.forEach(section => {
+                        intakeHtml += `<tr class="category-row"><td colspan="2"><strong>${section.category}</strong></td></tr>`;
+                        section.items.forEach(item => {
+                            const kcalText = item.kcal > 0 ? ` (${item.kcal} Kcal)` : '';
+                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${item.ml} ml${kcalText}</td></tr>`;
+                        });
+                    });
+                    intakeHtml += '</table>';
+                }
+
+
+                // --- LOSSES ---
+                const lossEntries = [];
+                // Dynamic losses
+                document.querySelectorAll(`#lossEntriesContainer [data-id]`).forEach(row => {
+                    if (row.dataset.id === 'perspiratio_static') return; // Skip static one for now
+                    const mlValue = parseFloat(row.querySelector('.ml-input')?.value) || 0;
+                    if (mlValue > 0) {
+                        const select = row.querySelector('.select-main');
+                        let name = select?.value;
+                        if (name === 'Annan förlust') {
+                            name = row.querySelector('.custom-input')?.value || name;
+                        }
+                        lossEntries.push({ name, ml: mlValue });
+                    }
+                });
+                // Static perspiratio
+                const perspiratioMl = parseFloat(document.getElementById('lossMlInput_perspiratio_static').value) || 0;
+                if (perspiratioMl > 0) {
+                    lossEntries.push({ name: 'Perspiratio', ml: perspiratioMl });
+                }
+
+                if (lossEntries.length > 0) {
+                    lossHtml += `<h3>Förluster</h3><table class="summary-table">`;
+                    lossEntries.forEach(entry => {
+                        lossHtml += `<tr><td>${entry.name}</td><td class="numeric-value">${entry.ml} ml</td></tr>`;
+                    });
+                    lossHtml += '</table>';
+                }
+
+                intakeContainer.innerHTML = intakeHtml;
+                lossContainer.innerHTML = lossHtml;
             },
             collectFormData() {
                 const data = { patientInfo: {}, fluidEntries: [], medicineEntries: [], bloodProductEntries: [], tpnSondmatEntries: [], lossEntries: [], perspiratioCalc: {}, diuresisCalc: {} };
-                ['dateInput', 'startTime', 'endTime', 'bedSelect', 'otherLocationInput', 'initialWeight', 'dailyWeight', 'height', 'gender', 'age', 'cumulativeBalancePrev', 'naclSyringes', 'pressureSets'].forEach(id => data.patientInfo[id] = document.getElementById(id).value);
+                ['dateInput', 'startTime', 'endTime', 'bedSelect', 'otherLocationInput', 'initialWeight', 'dailyWeight', 'height', 'gender', 'isUnder15', 'cumulativeBalancePrev', 'naclSyringes', 'pressureSets'].forEach(id => data.patientInfo[id] = document.getElementById(id).value);
                 
                 document.querySelectorAll('#fluidEntriesContainer [data-id]').forEach(row => data.fluidEntries.push({ selectValue: row.querySelector('.select-main').value, mlValue: row.querySelector('.ml-input').value, kcalValue: row.querySelector('.kcal-output').value, customValue: row.querySelector('.custom-input').value }));
                 document.querySelectorAll('#medicineEntriesContainer [data-id]').forEach(row => data.medicineEntries.push({ selectValue: row.querySelector('.select-main').value, mlValue: row.querySelector('.ml-input').value, kcalValue: row.querySelector('.kcal-output').value, customValue: row.querySelector('.custom-input').value }));
