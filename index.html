@@ -424,6 +424,26 @@
             margin-top: 0;
             flex-grow: 1; /* Får knapparna att ta upp lika mycket plats */
         }
+        
+        /* Nytt: Stil för Verktygsknappar */
+        .tool-buttons-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 0; /* Tar bort marginalen för den här gruppen */
+        }
+        .tool-buttons-group .add-button {
+            margin-top: 0;
+            flex-grow: 1;
+        }
+        .tool-buttons-group .reset-button {
+            margin-top: 0;
+            flex-grow: 1;
+            background-color: #dc3545;
+        }
+        .tool-buttons-group .reset-button:hover {
+            background-color: #c82333;
+        }
+
 
         #perspiratioWarning {
             font-size: 0.75rem;
@@ -602,37 +622,6 @@
             font-weight: bold;
         }
 
-        /* Stilar för patientetikett-rutan i detaljerad sammanställning */
-        .patient-label-box {
-            width: 9.5cm;
-            height: 4.5cm;
-            border: 1px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start; /* Vänsterjustera innehållet */
-            text-align: left; /* Vänsterjustera texten */
-            font-size: 0.9rem;
-            padding-left: 10px; /* Lägg till lite padding på vänster sida */
-        }
-
-        /* Stilar för allmän information i detaljerad sammanställning */
-        .summary-info {
-            font-size: 1rem; /* Större text */
-            line-height: 1.6;
-        }
-        .summary-info p {
-            margin: 0;
-        }
-
-        /* Nytt: Grid för sidhuvudet i utskriften */
-        .summary-header-grid {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 20px; /* Mellanrum mellan etikett och text */
-            margin-bottom: 25px;
-        }
-
         /* Stilar för tabellerna i detaljerad sammanställning modalen */
         .summary-table {
             width: 100%;
@@ -652,20 +641,21 @@
             font-weight: bold;
         }
         .summary-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #fff;
         }
         .summary-table .numeric-value {
             text-align: right;
             font-weight: 500;
         }
         .summary-table .highlight-row-print {
-            background-color: #e9e9e9;
+            background-color: #f5f5f5;
             font-weight: bold;
         }
         .summary-table .category-row td {
             font-weight: bold;
             padding-top: 10px;
-            background-color: #f8f8f8;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
         }
         .summary-table .subcategory-row td {
             font-style: italic;
@@ -693,6 +683,36 @@
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             align-items: start;
+        }
+
+        /* Nytt: Stil för tomma rutor i sammanställningen */
+        .patient-label-placeholder {
+            border: 1px dashed #ccc;
+            height: 120px;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-style: italic;
+        }
+        .summary-info-box {
+            border: 1px solid #ccc;
+            height: 120px;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        .summary-info-box p {
+            margin: 2px 0;
+            font-size: 0.9rem;
         }
 
 
@@ -792,90 +812,77 @@
             .modal-content table {
                 font-size: 0.7rem;
             }
-
-            /* Justera patientetikettboxen på små skärmar för att behålla dimensionerna */
-            .patient-label-box {
-                width: 9.5cm; /* Behåll specifik bredd */
-                height: 4.5cm; /* Behåll specifik höjd */
-                margin: 15px auto 25px auto; /* Centrera på små skärmar igen */
-                justify-content: center; /* Centrera innehåll på små skärmar */
-                text-align: center; /* Centrera text på små skärmar */
-                padding-left: 0; /* Ta bort extra padding på små skärmar */
-            }
         }
 
         /* --- Print-specifika stilar --- */
         @media print {
             body > *:not(#printDetailedSummaryModalOverlay) {
-                display: none; /* Hide everything except the print modal overlay */
+                display: none !important; /* Hide everything except the print modal overlay */
             }
 
             #printDetailedSummaryModalOverlay {
-                position: static; /* Remove fixed positioning for print */
-                top: auto;
-                left: auto;
-                width: 100%;
-                height: auto;
-                background-color: transparent; /* No dimmed background on print */
-                display: block; /* Ensure it's visible */
-                visibility: visible;
-                opacity: 1;
-                box-shadow: none; /* No shadow on print */
+                position: static !important; /* Remove fixed positioning for print */
+                top: auto !important;
+                left: auto !important;
+                width: 100% !important;
+                height: auto !important;
+                background-color: transparent !important; /* No dimmed background on print */
+                display: flex !important; /* Ändrad till flex för att kunna justera */
+                justify-content: flex-start !important; /* Tvingar allt innehåll till vänster */
+                visibility: visible !important;
+                opacity: 1 !important;
+                box-shadow: none !important; /* No shadow on print */
             }
 
             #printDetailedSummaryModalOverlay .modal-content {
-                max-width: 100%; /* Use full width for print */
-                width: 100%;
-                box-shadow: none;
-                border-radius: 0;
-                padding: 0; /* No padding on content for full use of paper */
-                transform: none; /* Remove translation */
-                max-height: none; /* No max height for print */
-                overflow-y: visible; /* Allow content to flow */
-                background-color: transparent; /* No background on print */
+                max-width: 100% !important; /* Use full width for print */
+                width: 100% !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 0 !important; /* No padding on content for full use of paper */
+                transform: none !important; /* Remove translation */
+                max-height: none !important; /* No max height for print */
+                overflow-y: visible !important; /* Allow content to flow */
+                background-color: transparent !important; /* No background on print */
             }
 
             .modal-close-button, .add-button, .app-footer {
-                display: none; /* Hide close button, add buttons, and footer on print */
-            }
-
-            .patient-label-box {
-                border: 1px solid #ccc; /* Ensure border is visible on print */
+                display: none !important; /* Hide close button, add buttons, and footer on print */
             }
 
             .summary-table {
-                border: none;
+                border: none !important;
             }
             .summary-table th, .summary-table td {
-                border: none;
-                border-bottom: 1px solid #eee;
-                padding: 4px; /* Adjust padding for print if needed */
+                border: none !important;
+                border-bottom: 1px solid #eee !important;
+                padding: 4px !important; /* Adjust padding for print if needed */
             }
             .summary-table th {
-                border-bottom: 2px solid #ccc;
+                border-bottom: 2px solid #ccc !important;
             }
             .summary-table tr:last-child td {
-                border-bottom: none;
+                border-bottom: none !important;
             }
 
             /* Adjust font sizes for better print readability */
             .modal-content h2 {
-                font-size: 1.2em;
+                font-size: 1.2em !important;
             }
             .modal-content h3 {
-                font-size: 1em;
-                margin-top: 20px;
+                font-size: 1em !important;
+                margin-top: 20px !important;
             }
             .summary-info p,
             .summary-table,
             .summary-table th,
             .summary-table td {
-                font-size: 0.75em; /* Slightly larger for print */
+                font-size: 0.75em !important; /* Slightly larger for print */
             }
 
             /* Page breaks for tables if necessary */
             .summary-table {
-                page-break-inside: avoid;
+                page-break-inside: avoid !important;
             }
         }
     </style>
@@ -1119,8 +1126,10 @@
             <!-- NY KOLUMN: Verktyg -->
             <div class="grid-column-item">
                 <h3>Verktyg</h3>
-                <!-- Alla knappar får samma gröna färg genom add-button klassen -->
-                <button id="openDiuresisCalculatorButton" data-action="openModal" data-target="diuresisCalculatorModalOverlay" class="add-button" style="margin-top: 0;">Diureskalkylator</button>
+                <div class="tool-buttons-group">
+                    <button id="resetButton" data-action="openModal" data-target="confirmationModalOverlay" class="add-button reset-button">Rensa allt</button>
+                    <button id="openDiuresisCalculatorButton" data-action="openModal" data-target="diuresisCalculatorModalOverlay" class="add-button">Diureskalkylator</button>
+                </div>
                 <button id="openCalculationsButton" data-action="openModal" data-target="calculationsModalOverlay" class="add-button">Beräkningar & Referensvärden</button>
                 <button id="openPrintSummaryButton" data-action="openModal" data-target="printDetailedSummaryModalOverlay" class="add-button">Skriv ut detaljerad sammanställning</button>
                 <!-- Nya knappar för Spara/Ladda -->
@@ -1265,7 +1274,7 @@
                     <div class="grid-item">
                         <label for="expectedPerspiratioRemaining">Förväntad Perspiratio (återstående till 06:00) (ml):</label>
                         <input type="text" id="expectedPerspiratioRemaining" readonly class="calculated-output">
-                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Baseras på vikt och den aktuella feberjusteringsgraden från huvudfliken.</p>
+                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Beräknad perspiratio för återstående tid. Justeras automatiskt baserat på data från huvudfliken.</p>
                     </div>
                     <div class="grid-item">
                         <label for="plannedSingleIntake">Förväntad vätsketillförsel (engångsdoser) (ml):</label>
@@ -1291,7 +1300,7 @@
                 <table class="diuresis-summary-table" style="width:100%; border-collapse: collapse;">
                     <tbody>
                         <tr>
-                            <td colspan="2" class="category-heading">Aktuella Värden (från Huvudflik)</td>
+                            <td colspan="2" class="category-heading">Aktuella Värden (från Huvudfliken)</td>
                         </tr>
                         <tr>
                             <td>Aktuell vätskebalans (ml)</td>
@@ -1356,19 +1365,9 @@
             <button class="modal-close-button" data-action="closeModal" data-target="printDetailedSummaryModalOverlay">×</button>
             <h2>Vätskebalansräkning</h2>
 
-            <div class="summary-header-grid">
-                <div class="patient-label-box">
-                    Plats för patientetikett
-                </div>
-                <div class="summary-info">
-                    <p><strong>Datum:</strong> <span id="summaryDate"></span></p>
-                    <p><strong>Tidsperiod:</strong> <span id="summaryTimePeriod"></span></p>
-                    <p><strong>Plats:</strong> <span id="summaryLocation"></span></p>
-                </div>
-            </div>
-
             <div class="summary-grid-container">
                 <div>
+                    <div class="patient-label-placeholder">klistra patientetikett här</div>
                     <h3>Vikter</h3>
                     <table class="summary-table">
                         <tr>
@@ -1394,6 +1393,11 @@
                     </table>
                 </div>
                 <div>
+                    <div class="summary-info-box">
+                        <p><strong>Datum:</strong> <span id="summaryDatePrint"></span></p>
+                        <p><strong>Tidsperiod:</strong> <span id="summaryTimePeriodPrint"></span></p>
+                        <p><strong>Plats:</strong> <span id="summaryLocationPrint"></span></p>
+                    </div>
                     <h3>Sammanställning</h3>
                     <table class="summary-table">
                         <tr>
@@ -1438,64 +1442,29 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
-            <h3>Version 1.9</h3>
+            <h3>Version 2.0</h3>
             <ul>
-                <li>Justerade layouten i utskriftsvyn till en genomgående tvåkolumns-layout för att spara plats.</li>
+                <li>Lade till "Kräkning" och "VAC-pump" som val under "Förluster".</li>
             </ul>
-            <h3>Version 1.8</h3>
-            <ul>
-                <li>Justerade layout och design i utskriftsvyn för ett mjukare och mer professionellt utseende.</li>
-                <li>Lade till "Kalium/Kaliumklorid" som ett val under "Läkemedelsvätskor".</li>
-            </ul>
-            <h3>Version 1.7</h3>
-            <ul>
-                <li>Lade till "Kalium/Kaliumklorid" som ett val under "Läkemedelsvätskor".</li>
-            </ul>
-            <h3>Version 1.6</h3>
-            <ul>
-                <li>Justerade layouten i utskriftsvyn för att vara mer kompakt och lättläst.</li>
-                <li>Grupperade detaljerat intag och förluster i egna tabeller.</li>
-            </ul>
-            <h3>Version 1.5</h3>
-            <ul>
-                <li>Justerade layouten i utskriftsvyn för att vara mer kompakt och lättläst.</li>
-                <li>Grupperade detaljerat intag och förluster i egna tabeller.</li>
-            </ul>
-            <h3>Version 1.4</h3>
-            <ul>
-                <li>Ändrade "Ålder (år)" till en Ja/Nej-fråga "Patient under 15 år?" för snabbare ifyllnad.</li>
-                <li>Förbättrade varningstexten för perspiratioberäkning.</li>
-            </ul>
-            <h3>Version 1.3</h3>
-            <ul>
-                <li>Bytt beräkningsmodell för perspiratio till att baseras på en fast grundförlust per dygn som justeras med en temperaturfaktor.</li>
-                <li>Lagt till fält för "Ålder" och "Maxtemperatur" för den nya beräkningen.</li>
-                <li>Lagt till varningstext om perspiratio inte kan beräknas (ålder &lt;15 eller vikt &lt;50).</li>
-                <li>Uppdaterat informationstexten under "Beräkningar & Referensvärden".</li>
-            </ul>
-            <h3>Version 1.2</h3>
-            <ul>
-                <li>Lade till "Blödning" som ett alternativ under "Förluster".</li>
-            </ul>
-            <h3>Version 1.1</h3>
-            <ul>
-                <li>Spara/Ladda-knapparna ligger nu bredvid varandra för en mer kompakt layout.</li>
-                <li>Lade till denna ändringslogg för att visa versionshistorik.</li>
-                <li>Gjorde fältet för Perspiratio under "Förluster" redigerbart för manuell justering.</li>
-                <li>Tog bort exempeltext från fältet "Kumulativ balans".</li>
-                <li>Korrigerade en bugg som hindrade färgindikeringen (röd/grön) på obligatoriska fält från att fungera korrekt.</li>
-                <li>Korrigerade en bugg som gjorde att Kcal-fälten inte kunde redigeras manuellt.</li>
-            </ul>
-             <h3>Version 1.0</h3>
-            <ul>
-                <li>Initial version av applikationen.</li>
-            </ul>
+            <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johannes.paulsson@vgregion.se</p>
+        </div>
+    </div>
+    
+    <!-- Nytt: Modal för bekräftelse -->
+    <div id="confirmationModalOverlay" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <h3>Rensa allt?</h3>
+            <p>Är du säker på att du vill rensa alla fält? Detta går inte att ångra.</p>
+            <div class="file-buttons-group">
+                <button id="confirmResetButton" data-action="resetAll" class="add-button reset-button">Ja, rensa</button>
+                <button data-action="closeModal" data-target="confirmationModalOverlay" class="add-button">Avbryt</button>
+            </div>
         </div>
     </div>
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 1.9 - Ändringslogg
+            Version 2.0 - Ändringslogg
         </span>
     </footer>
 
@@ -1567,7 +1536,7 @@
                         "TPN/Sondmat": [{ name: "Vatten i sond", kcal: 0 }, { name: "Sondmat övrig", kcal: 0 }, { name: "Smof Kabiven 900 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1100 kcal", kcal: 1.12 }, { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68 }, { name: "Smof Kabiven 1350 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1600 kcal", kcal: 1.08 }, { name: "Smof Kabiven 1800 extra nitrogen", kcal: 1.1 }, { name: "Smof Kabiven 2200 kcal", kcal: 1.12 }, { name: "Sondmat Fresubin 2 kcal HP", kcal: 2.0 }, { name: "Sondmat Fresubin Original", kcal: 1 }, { name: "Sondmat Isosource standardfibre", kcal: 1 }]
                     }
                 },
-                loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä'] }
+                loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Kräkning', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä', 'VAC-pump'] }
             },
             init() {
                 this.cacheDOMElements();
@@ -1663,6 +1632,7 @@
                     case 'save': this.saveDataToFile(); break;
                     case 'load': this.dom.loadFromFileInput.click(); break;
                     case 'print': window.print(); break;
+                    case 'resetAll': this.resetAll(); break;
                 }
             },
             handleFormInput(e) {
@@ -1842,23 +1812,17 @@
                 idealWeightInput.value = (Math.round(displayWeight * 10) / 10).toFixed(1);
                 notice.style.display = isAdjusted ? 'inline' : 'none';
             },
-            calculatePerspiratio() {
+            _calculatePerspiratioLogic(durationInHours) {
                 const isUnder15 = document.getElementById('isUnder15').value === 'yes';
                 const weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
                 const ventilationStatus = document.getElementById('breathingSupport').value;
                 const temperature = parseFloat(document.getElementById('maxTemp').value) || 37.0;
-                const outputEl = document.getElementById('calculatedPerspiratio');
-                
-                this.state.perspiratioWarning = ''; // Reset warning
 
                 if (isUnder15 || weight < 50) {
                     this.state.perspiratioWarning = "Perspiratioberäkning ej möjligt vid ålder < 15 och/eller vikt < 50 kg";
-                }
-
-                if (this.state.perspiratioWarning) {
-                    outputEl.value = '0 ml';
-                    this.dom.perspiratioWarning.textContent = this.state.perspiratioWarning;
-                    return;
+                    return 0;
+                } else {
+                    this.state.perspiratioWarning = "";
                 }
 
                 let lBasicPerspiratio = 700;
@@ -1874,20 +1838,25 @@
 
                 let sTempFactor = 1;
                 const sTempDifference = temperature - 37;
-                if (temperature < 35) { // Corresponds to < -2 difference
+                if (temperature < 35) {
                     sTempFactor = 0.5;
-                } else if (temperature > 41) { // Corresponds to > 4 difference
+                } else if (temperature > 41) {
                     sTempFactor = 2;
                 } else {
                     sTempFactor = 1 + (sTempDifference * 0.25);
                 }
 
                 const perspiratio24h = lBasicPerspiratio * sTempFactor;
+                const finalPerspiratio = perspiratio24h * (durationInHours / 24);
+                
+                return Math.round(finalPerspiratio);
+            },
+            calculatePerspiratio() {
                 const duration = this.calculateDurationInHours(document.getElementById('startTime').value, document.getElementById('endTime').value);
-                const finalPerspiratio = perspiratio24h * (duration / 24);
-
-                outputEl.value = `${Math.round(finalPerspiratio)} ml`;
-                this.dom.perspiratioWarning.textContent = '';
+                const finalPerspiratio = this._calculatePerspiratioLogic(duration);
+                
+                document.getElementById('calculatedPerspiratio').value = `${finalPerspiratio} ml`;
+                document.getElementById('perspiratioWarning').textContent = this.state.perspiratioWarning;
             },
             transferPerspiratioToLoss() {
                 const perspiratioValue = parseFloat(document.getElementById('calculatedPerspiratio').value) || 0;
@@ -1991,7 +1960,7 @@
                 
                 document.getElementById('remainingTimeTo0600').value = remainingHours.toFixed(1);
                 
-                const expectedPerspiratio = this.calculatePerspiratio(remainingHours, this.state.dailyWeight);
+                const expectedPerspiratio = this._calculatePerspiratioLogic(remainingHours);
                 document.getElementById('expectedPerspiratioRemaining').value = expectedPerspiratio;
                 
                 const totalFutureIntake = plannedSingleIntake + (plannedHourlyIntake * remainingHours);
@@ -2090,10 +2059,11 @@
             populatePrintModal() {
                 this.updateAllCalculations(); // Ensure state is current
                 
-                document.getElementById('summaryDate').textContent = document.getElementById('dateInput').value;
-                document.getElementById('summaryTimePeriod').textContent = `${document.getElementById('startTime').value} - ${document.getElementById('endTime').value}`;
+                // NEW: Populate the info box
+                document.getElementById('summaryDatePrint').textContent = document.getElementById('dateInput').value;
+                document.getElementById('summaryTimePeriodPrint').textContent = `${document.getElementById('startTime').value} - ${document.getElementById('endTime').value}`;
                 const bedSelect = document.getElementById('bedSelect');
-                document.getElementById('summaryLocation').textContent = bedSelect.value === 'Annan plats' ? document.getElementById('otherLocationInput').value : bedSelect.value;
+                document.getElementById('summaryLocationPrint').textContent = bedSelect.value === 'Annan plats' ? document.getElementById('otherLocationInput').value : bedSelect.value;
                 
                 document.getElementById('printInitialWeight').textContent = `${this.state.initialWeight.toFixed(1)} kg`;
                 document.getElementById('printDailyWeight').textContent = `${this.state.dailyWeight.toFixed(1)} kg`;
@@ -2286,6 +2256,48 @@
                 this.checkInitialInputColors();
                 this.updateAllCalculations();
             },
+            resetAll() {
+                // Rensa alla input-fält
+                document.querySelectorAll('input[type="text"], input[type="date"], input[type="time"], select').forEach(el => {
+                    if (el.id === 'startTime' || el.id === 'endTime') {
+                        el.value = '06:00';
+                    } else if (el.id === 'maxTemp') {
+                        el.value = '37.0';
+                    } else if (el.id === 'isUnder15') {
+                        el.value = 'no';
+                    } else if (el.tagName === 'SELECT') {
+                        el.selectedIndex = 0;
+                    } else {
+                        el.value = '';
+                    }
+                });
+
+                // Rensa alla dynamiska rader
+                Object.values(this.dom.containers).forEach(container => {
+                    container.innerHTML = '';
+                });
+                
+                // Återställ perspiratio-raden
+                this.dom.containers.loss.innerHTML = `
+                    <div class="loss-entry-row" data-id="perspiratio_static">
+                        <div class="grid-item">
+                            <select id="lossSelect_perspiratio_static" disabled>
+                                <option value="Perspiratio" selected disabled>Perspiratio</option>
+                            </select>
+                        </div>
+                        <div class="grid-item">
+                            <input type="text" id="lossMlInput_perspiratio_static" value="0">
+                        </div>
+                        <button class="remove-fluid-button disabled" disabled><i class="fas fa-trash"></i></button>
+                    </div>`;
+
+                // Återställ standardvärden och initiala rader
+                this.setDefaultValues();
+                this.addInitialRows();
+                this.checkInitialInputColors();
+                this.updateAllCalculations();
+                this.closeModal('confirmationModalOverlay');
+            }
         };
 
         document.addEventListener('DOMContentLoaded', () => app.init());
