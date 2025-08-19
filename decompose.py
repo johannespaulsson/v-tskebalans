@@ -20,7 +20,7 @@ for style_tag in soup.find_all("style"):
     styles.append(style_tag.string or "")
     style_tag.decompose()
 
-css_content = "\n\n".join(styles)
+css_content = "\n\n".join(styles).strip()
 (output_dir / "styles.css").write_text(css_content, encoding="utf-8")
 
 # Lägg till länk till CSS i <head>
@@ -34,10 +34,10 @@ for script_tag in soup.find_all("script"):
         scripts.append(script_tag.string)
         script_tag.decompose()
 
-js_content = "\n\n".join(scripts)
+js_content = "\n\n".join(scripts).strip()
 (output_dir / "script.js").write_text(js_content, encoding="utf-8")
 
-# Lägg till script-tag längst ned i <body>
+# Lägg till script-tag längst ned i <head>
 new_script_tag = soup.new_tag("script", src="script.js")
 new_script_tag.attrs["defer"] = ""  # renders as defer="defer"
 soup.head.append(new_script_tag)

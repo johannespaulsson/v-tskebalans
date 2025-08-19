@@ -1,5 +1,4 @@
-
-        const app = {
+const app = {
             state: {
                 totalIntakeMl: 0, totalIntakeKcal: 0, totalLossMl: 0, netBalanceMl: 0, cumulativeBalanceMl: 0,
                 weightDifferenceKg: 0, totalDiuresisMl: 0, totalPerspiratioMl: 0, totalOtherLossMl: 0,
@@ -831,4 +830,3 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => app.init());
-    
