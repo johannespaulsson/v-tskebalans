@@ -1,626 +1,1070 @@
 <!DOCTYPE html>
 <html lang="sv">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vätskebalans IVA Skövde</title>
-    <!-- Länkar till Font Awesome för ikoner -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-</head>
-<body>
-    <div class="container">
-        <h2>Patientinformation</h2>
-        <div class="grid-container">
-            <!-- Datumfält -->
-            <div class="grid-item">
-                <label for="dateInput">Datum:</label>
-                <input type="date" id="dateInput">
-            </div>
-            <!-- Starttid med "Nu"-knapp -->
-            <div class="grid-item">
-                <label for="startTime">Beräknat från (starttid):</label>
-                <div class="input-group">
-                    <input type="time" id="startTime" value="06:00">
-                    <button data-action="setNow" data-target="startTime">Nu</button>
-                </div>
-            </div>
-            <!-- Sluttid med "Nu"-knapp -->
-            <div class="grid-item">
-                <label for="endTime">till (sluttid):</label>
-                <div class="input-group">
-                    <input type="time" id="endTime" value="06:00">
-                    <button data-action="setNow" data-target="endTime">Nu</button>
-                </div>
-            </div>
-            <!-- Sängval och "Annan plats" fält -->
-            <div class="grid-item">
-                <label for="bedSelect">Säng:</label>
-                <select id="bedSelect">
-                    <option value="">Välj säng</option>
-                    <option value="IVA 1">IVA 1</option>
-                    <option value="IVA 2">IVA 2</option>
-                    <option value="IVA 3">IVA 3</option>
-                    <option value="IVA 4">IVA 4</option>
-                    <option value="IVA 5">IVA 5</option>
-                    <option value="IVA 6">IVA 6</option>
-                    <option value="IVA 7">IVA 7</option>
-                    <option value="IVA 8">IVA 8</option>
-                    <option value="IVA 9">IVA 9</option>
-                    <option value="IVA 10">IVA 10</option>
-                    <option value="IVA 11">IVA 11</option>
-                    <option value="IVA 12">IVA 12</option>
-                    <option value="IMA 1">IMA 1</option>
-                    <option value="IMA 2">IMA 2</option>
-                    <option value="IMA 3">IMA 3</option>
-                    <option value="IMA 4">IMA 4</option>
-                    <option value="Annan plats">Annan plats</option>
-                </select>
-                <input type="text" id="otherLocationInput" placeholder="Ange annan plats" style="display: none;">
-            </div>
-            <!-- Utgångsvikt/torrvikt -->
-            <div class="grid-item">
-                <label for="initialWeight">Utgångsvikt/torrvikt (kg):</label>
-                <input type="text" id="initialWeight" class="important-input" placeholder="t.ex. 70.0">
-            </div>
-            <!-- Dagens vikt -->
-            <div class="grid-item">
-                <label for="dailyWeight">Dagens vikt (kg):</label>
-                <input type="text" id="dailyWeight" class="important-input" placeholder="t.ex. 71.5" value="0">
-            </div>
-            <!-- Längd -->
-            <div class="grid-item">
-                <label for="height">Längd (cm):</label>
-                <input type="text" id="height" class="important-input" placeholder="t.ex. 175.0">
-            </div>
-            <!-- Kön -->
-            <div class="grid-item">
-                <label for="gender">Kön:</label>
-                <select id="gender" class="important-input">
-                    <option value="">Välj kön</option>
-                    <option value="Man">Man</option>
-                    <option value="Kvinna">Kvinna</option>
-                </select>
-            </div>
-            <!-- Nytt fält för Ålder -->
-            <div class="grid-item">
-                <label for="age">Ålder (år):</label>
-                <input type="text" id="age" class="important-input" placeholder="t.ex. 40">
-            </div>
-            <!-- Idealvikt (kg) -->
-            <div class="grid-item">
-                <label for="idealWeight">Idealvikt (kg):</label>
-                <input type="text" id="idealWeight" readonly class="calculated-output" value="Var god ange längd och kön">
-                <span id="adjustedWeightNotice" class="adjusted-weight-notice" style="display: none;">(Justerad vikt)</span>
-            </div>
-            <!-- Kumulativ balans föregående dygn -->
-            <div class="grid-item">
-                <label for="cumulativeBalancePrev">Kumulativ balans föregående dygn (ml):</label>
-                <input type="text" id="cumulativeBalancePrev" value="0">
-            </div>
-            <!-- Antal förfyllda 10ml NaCl-sprutor med +/- knappar -->
-            <div class="grid-item">
-                <label for="naclSyringes">Antal förfyllda 10ml NaCl-sprutor:</label>
-                <div class="number-input-buttons">
-                    <button data-action="changeNumber" data-target="naclSyringes" data-delta="-1"><i class="fas fa-minus"></i></button>
-                    <input type="text" id="naclSyringes" value="0">
-                    <button data-action="changeNumber" data-target="naclSyringes" data-delta="1"><i class="fas fa-plus"></i></button>
-                </div>
-            </div>
-            <!-- Antal tryckset med +/- knappar -->
-            <div class="grid-item">
-                <label for="pressureSets">Antal tryckset (CVP-set = 2):</label>
-                <div class="number-input-buttons">
-                    <button data-action="changeNumber" data-target="pressureSets" data-delta="-1"><i class="fas fa-minus"></i></button>
-                    <input type="text" id="pressureSets" value="0">
-                    <button data-action="changeNumber" data-target="pressureSets" data-delta="1"><i class="fas fa-plus"></i></button>
-                </div>
-            </div>
-        </div>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Vätskebalans IVA Skövde
+  </title>
+  <!-- Länkar till Font Awesome för ikoner -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <link href="styles.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="container">
+   <h2>
+    Patientinformation
+   </h2>
+   <div class="grid-container">
+    <!-- Datumfält -->
+    <div class="grid-item">
+     <label for="dateInput">
+      Datum:
+     </label>
+     <input id="dateInput" type="date"/>
     </div>
-
-    <!-- Ny sektion för Balansräkning -->
-    <div class="container" style="margin-top: 8px;">
-        <h2>Balansräkning</h2>
-        <div class="grid-container two-column-grid">
-            <!-- Första kolumn: Kristalloider/Kolloider -->
-            <div class="grid-column-item">
-                <h3>Kristalloider/Kolloider</h3>
-                <!-- Tabellrubriker för vätskeraderna -->
-                <div class="fluid-table-header">
-                    <div>Vätska</div>
-                    <div>Mängd (ml)</div>
-                    <div>Kcal</div>
-                    <div></div> <!-- Tom div för att matcha ta bort-knappens kolumn -->
-                </div>
-                <div id="fluidEntriesContainer">
-                    <!-- Rader läggs till här dynamiskt -->
-                </div>
-                <button id="addFluidButton" data-action="addRow" data-type="fluid" class="add-button">Lägg till vätska</button>
-            </div>
-
-            <!-- Andra kolumn: Läkemedelsvätskor -->
-            <div class="grid-column-item">
-                <h3>Läkemedelsvätskor</h3>
-                <!-- Tabellrubriker för läkemedelsvätskeraderna -->
-                <div class="fluid-table-header">
-                    <div>Läkemedel</div>
-                    <div>Mängd (ml)</div>
-                    <div>Kcal</div>
-                    <div></div> <!-- Tom div för att matcha ta bort-knappens kolumn -->
-                </div>
-                <div id="medicineEntriesContainer">
-                    <!-- Rader läggs till här dynamiskt -->
-                </div>
-                <button id="addMedicineButton" data-action="addRow" data-type="medicine" class="add-button">Lägg till läkemedelsvätska</button>
-            </div>
-
-            <!-- Ny kolumn: Blodprodukter -->
-            <div class="grid-column-item">
-                <h3>Blodprodukter</h3>
-                <div class="blood-product-table-header"> <!-- Specifik header för blodprodukter -->
-                    <div>Blodprodukt</div>
-                    <div>Mängd (ml)</div>
-                    <div></div> <!-- Tom div för att matcha ta bort-knappens kolumn -->
-                </div>
-                <div id="bloodProductEntriesContainer">
-                    <!-- Rader läggs till här dynamiskt -->
-                </div>
-                <button id="addBloodProductButton" data-action="addRow" data-type="bloodProduct" class="add-button">Lägg till blodprodukt</button>
-            </div>
-
-            <!-- Ny kolumn: TPN/Sondmat/Peroralt -->
-            <div class="grid-column-item">
-                <h3>TPN/Sondmat/Peroralt</h3>
-                <div class="tpn-sondmat-table-header"> <!-- Specifik header för TPN/Sondmat -->
-                    <div>Typ</div>
-                    <div>Mängd (ml)</div>
-                    <div>Kcal</div>
-                    <div></div> <!-- Tom div för att matcha ta bort-knappens kolumn -->
-                </div>
-                <div id="tpnSondmatEntriesContainer">
-                    <!-- Rader läggs till här dynamiskt -->
-                </div>
-                <button id="addTpnSondmatButton" data-action="addRow" data-type="tpnSondmat" class="add-button">Lägg till TPN/Sondmat/Peroralt</button>
-            </div>
-
-            <!-- Ny kolumn: Förluster -->
-            <div class="grid-column-item">
-                <h3>Förluster</h3>
-                <div class="loss-table-header"> <!-- Specifik header för Förluster -->
-                    <div>Typ</div>
-                    <div>Mängd (ml)</div>
-                    <div></div> <!-- Tom div för att matcha ta bort-knappens kolumn -->
-                </div>
-                <div id="lossEntriesContainer">
-                    <!-- Statisk, icke-borttagningsbar Perspiratio-rad -->
-                    <div class="loss-entry-row" data-id="perspiratio_static">
-                        <div class="grid-item">
-                            <!-- Hardcode the option for "Perspiratio" as it's static and disabled -->
-                            <select id="lossSelect_perspiratio_static" disabled>
-                                <option value="Perspiratio" selected disabled>Perspiratio</option>
-                            </select>
-                            <!-- Ingen custom input behövs för Perspiratio -->
-                        </div>
-                        <div class="grid-item">
-                            <input type="text" id="lossMlInput_perspiratio_static" value="0">
-                        </div>
-                        <!-- Ingen ta bort-knapp för denna rad -->
-                        <button class="remove-fluid-button disabled" disabled><i class="fas fa-trash"></i></button>
-                    </div>
-                    <!-- Dynamiska rader läggs till här -->
-                </div>
-                <button id="addLossButton" data-action="addRow" data-type="loss" class="add-button">Lägg till förlust</button>
-            </div>
-
-            <!-- Ny kolumn: Perspiratio-beräkning -->
-            <div class="grid-column-item">
-                <h3>Perspiratio-beräkning</h3>
-                <div class="grid-item">
-                    <label for="breathingSupport">Andningsstöd:</label>
-                    <select id="breathingSupport">
-                        <option value="standard">Standard/Inget</option>
-                        <option value="niv_hmef">NIV med HMEF</option>
-                        <option value="intub_hmef">Intuberad med HMEF</option>
-                        <option value="niv_humid">NIV med aktiv befuktning</option>
-                        <option value="hfnc">HFNC</option>
-                        <option value="intub_humid">Intuberad med aktiv befuktning</option>
-                    </select>
-                </div>
-                <div class="grid-item">
-                    <label for="maxTemp">Maxtemperatur under dygnet (°C):</label>
-                    <input type="text" id="maxTemp" value="37.0" placeholder="t.ex. 38.5">
-                </div>
-                <div class="grid-item">
-                    <label id="calculatedPerspiratioLabel" for="calculatedPerspiratio">Beräknad Perspiratio (ml):</label>
-                    <div class="calculated-perspiratio-group"> <!-- Ny flex-container för input och knapp -->
-                        <input type="text" id="calculatedPerspiratio" readonly class="calculated-output" value="0">
-                        <button id="transferPerspiratioButton" data-action="transferPerspiratio" class="add-button">För över till förlust</button>
-                    </div>
-                    <span id="perspiratioWarning"></span>
-                </div>
-            </div>
-
-            <!-- NY KOLUMN: Verktyg -->
-            <div class="grid-column-item">
-                <h3>Verktyg</h3>
-                <!-- Alla knappar får samma gröna färg genom add-button klassen -->
-                <button id="openDiuresisCalculatorButton" data-action="openModal" data-target="diuresisCalculatorModalOverlay" class="add-button" style="margin-top: 0;">Diureskalkylator</button>
-                <button id="openCalculationsButton" data-action="openModal" data-target="calculationsModalOverlay" class="add-button">Beräkningar & Referensvärden</button>
-                <button id="openPrintSummaryButton" data-action="openModal" data-target="printDetailedSummaryModalOverlay" class="add-button">Skriv ut detaljerad sammanställning</button>
-                <!-- Nya knappar för Spara/Ladda -->
-                <div class="file-buttons-group">
-                    <button id="saveToFileButton" data-action="save" class="add-button">Spara till fil</button>
-                    <input type="file" id="loadFromFileInput" style="display: none;" accept=".json">
-                    <button id="loadFromFileButton" data-action="load" class="add-button">Ladda från fil</button>
-                </div>
-            </div>
-
-            <!-- NY KOLUMN: Sammanställning -->
-            <div class="grid-column-item">
-                <h3>Sammanställning</h3>
-                <table style="width:100%; border-collapse: collapse; font-size: 0.85rem;">
-                    <thead>
-                        <tr>
-                            <th style="text-align:left; padding: 4px; border-bottom: 1px solid #ddd;">Post</th>
-                            <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">Volym (ml)</th>
-                            <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">Kcal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="summaryTableBody">
-                        <tr>
-                            <td style="padding: 4px;">Totalt intag</td>
-                            <td id="totalIntakeMl" style="text-align:right; padding: 4px;">0</td>
-                            <td id="totalIntakeKcal" style="text-align:right; padding: 4px;">0</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 4px;">Totalt förlust</td>
-                            <td id="totalLossMl" style="text-align:right; padding: 4px;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 4px; font-weight: bold;">Netto balans</td>
-                            <td id="netBalanceMl" style="text-align:right; padding: 4px; font-weight: bold;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 4px;">Kumulativ balans</td>
-                            <td id="cumulativeBalanceMl" style="text-align:right; padding: 4px;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 4px;">Differens mot utgångsvikt (kg)</td>
-                            <td id="weightDifferenceKg" style="text-align:right; padding: 4px;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
-                        </tr>
-                        <!-- Ny rad för timdiures -->
-                        <tr>
-                            <td style="padding: 4px;">Genomsnittlig timdiures (ml/kg/h)</td>
-                            <td id="avgHourlyDiuresis" style="text-align:right; padding: 4px;">0.00</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Starttid med "Nu"-knapp -->
+    <div class="grid-item">
+     <label for="startTime">
+      Beräknat från (starttid):
+     </label>
+     <div class="input-group">
+      <input id="startTime" type="time" value="06:00"/>
+      <button data-action="setNow" data-target="startTime">
+       Nu
+      </button>
+     </div>
     </div>
-
-    <!-- Modal för Beräkningar & Referensvärden -->
-    <div id="calculationsModalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-button" data-action="closeModal" data-target="calculationsModalOverlay">×</button>
-            <h2>Beräkningar & Referensvärden</h2>
-            <p style="font-size: 0.85rem; margin-bottom: 10px;">Kalorier beräknas genom att multiplicera den angivna <strong>mängden (ml)</strong> med ett specifikt <strong>kcal/ml-värde</strong> för respektive vätska/produkt. Värden för "Övrig vätska", "Övrigt läkemedel" och "Sondmat övrig" är 0 kcal/ml som standard om inget annat anges.</p>
-            <!-- New class for modal's inner grid to handle 3 columns -->
-            <div class="grid-container modal-three-column-grid">
-                <div class="grid-column-item">
-                    <h3>Perspiratioberäkning</h3>
-                    <p>Perspiratio beräknas utifrån en fast grundförlust per dygn som justeras med en temperaturfaktor. Det slutgiltiga värdet anpassas till den valda tidsperioden.</p>
-                    <p><strong>Grundförlust (per 24 timmar):</strong></p>
-                    <ul>
-                        <li><strong>700 ml:</strong> Standard (Inget andningsstöd, NIV/HMEF, Intuberad/HMEF)</li>
-                        <li><strong>500 ml:</strong> Vid viss befuktning (NIV/aktiv befuktning, HFNC)</li>
-                        <li><strong>400 ml:</strong> Vid optimal befuktning (Intuberad/aktiv befuktning)</li>
-                    </ul>
-                    <p><strong>Temperaturjustering:</strong><br>Beräkningen baseras på patientens maxtemperatur under dygnet. En faktor beräknas enligt `1 + (Maxtemp - 37) * 0.25`. Vid extrem kroppstemperatur används en fast faktor (0.5 vid &lt;35°C och 2.0 vid &gt;41°C).</p>
-                    <p><strong>Gränsvärden:</strong><br>Beräkning sker ej om patientens ålder är under 15 år eller vikt är under 50 kg. Perspiratio sätts då till 0 ml.</p>
-                </div>
-                <div class="grid-column-item">
-                    <h3>Idealvikt & Justerad Idealvikt</h3>
-                    <p><strong>Idealvikt (Devine-formeln):</strong></p>
-                    <ul>
-                        <li><strong>Män:</strong> 50 + 0.91 x (Längd i cm - 152.4)</li>
-                        <li><strong>Kvinnor:</strong> 45.5 + 0.91 x (Längd i cm - 152.4)</li>
-                    </ul>
-                    <p><strong>Justerad Idealvikt:</strong> Används om patientens dagliga vikt överstiger den beräknade idealvikten med mer än 20%.</p>
-                    <ul>
-                        <li>Justerad vikt = Idealvikt + 0.4 * (Aktuell vikt - Idealvikt)</li>
-                    </ul>
-                    <p><em>Alla vikter avrundas till en decimal.</em></p>
-                </div>
-                <!-- Nya Kcal-sektioner -->
-                <div class="grid-column-item" id="kcalKristalloiderContainer"></div>
-                <div class="grid-column-item" id="kcalMedicineContainer"></div>
-                <div class="grid-column-item" id="kcalTpnSondmatContainer"></div>
-            </div>
-        </div>
+    <!-- Sluttid med "Nu"-knapp -->
+    <div class="grid-item">
+     <label for="endTime">
+      till (sluttid):
+     </label>
+     <div class="input-group">
+      <input id="endTime" type="time" value="06:00"/>
+      <button data-action="setNow" data-target="endTime">
+       Nu
+      </button>
+     </div>
     </div>
-
-    <!-- START Diureskalkylator Modal -->
-    <div id="diuresisCalculatorModalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-button" data-action="closeModal" data-target="diuresisCalculatorModalOverlay">×</button>
-            <h2>Diureskalkylator</h2>
-
-            <!-- Instruktionsavsnitt -->
-            <div class="grid-column-item" style="margin-bottom: 15px;">
-                <h3>Instruktioner</h3>
-                <p style="font-size: 0.8rem;">
-                    Fyll i relevanta vätsketillförslar och vätskeförluster i <strong>huvudfliken</strong>.<br>
-                    Fyll in önskad vätskebalans fram till kl 06:00 nästa dygn i detta avsnitt.<br>
-                    Fyll in planerade framtida tillförslar/förluster i detta avsnitt.
-                </p>
-            </div>
-
-            <div class="grid-container two-column-diuresis">
-                <!-- Vänster kolumn: Grundläggande inställningar & mål + Aktuell balans (nuvarande tidpunkt) -->
-                <div class="grid-column-item">
-                    <h3>Grundläggande inställningar & mål</h3>
-                    <div class="grid-item">
-                        <label for="desiredBalanceTomorrow">Önskad vätskebalans (ml) fram till klockan 06:00 nästa dygn:</label>
-                        <input type="text" id="desiredBalanceTomorrow" value="0" placeholder="t.ex. 0 eller =100+50">
-                    </div>
-                    <div class="grid-item">
-                        <label for="diuresisCalcTime">Beräkning från klockslag:</label>
-                        <div class="input-group">
-                            <input type="time" id="diuresisCalcTime">
-                            <button data-action="setNow" data-target="diuresisCalcTime">Nu</button>
-                        </div>
-                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Tidpunkt du gör din beräkning.</p>
-                    </div>
-                </div>
-
-                <!-- Höger kolumn: Planerad framtida balans -->
-                <div class="grid-column-item">
-                    <h3>Planerad framtida balans (från 'Beräkning från' till 06:00 nästa dygn)</h3>
-                    <div class="grid-item">
-                        <label for="remainingTimeTo0600">Tid kvar till 06:00 (timmar):</label>
-                        <input type="text" id="remainingTimeTo0600" readonly class="calculated-output">
-                    </div>
-                    <div class="grid-item">
-                        <label for="expectedPerspiratioRemaining">Förväntad Perspiratio (återstående till 06:00) (ml):</label>
-                        <input type="text" id="expectedPerspiratioRemaining" readonly class="calculated-output">
-                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Baseras på vikt och den aktuella feberjusteringsgraden från huvudfliken.</p>
-                    </div>
-                    <div class="grid-item">
-                        <label for="plannedSingleIntake">Förväntad vätsketillförsel (engångsdoser) (ml):</label>
-                        <input type="text" id="plannedSingleIntake" value="0" placeholder="t.ex. 0 eller =100+50">
-                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Planerade enstaka infusioner/vätskor.</p>
-                    </div>
-                    <div class="grid-item">
-                        <label for="plannedHourlyIntake">Förväntad vätsketillförsel per timma (ml/h):</label>
-                        <input type="text" id="plannedHourlyIntake" value="0" placeholder="t.ex. 0 eller =100+50">
-                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Kontinuerliga dropp (ex. Propofol, Noradrenalin).</p>
-                    </div>
-                    <div class="grid-item">
-                        <label for="plannedSingleLosses">Förväntade övriga förluster (engångsförluster) (ml):</label>
-                        <input type="text" id="plannedSingleLosses" value="0" placeholder="t.ex. 0 eller =100+50">
-                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Planerade/förväntade enstaka förluster.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Resultat och Diuresbehov -->
-            <div class="grid-column-item" style="margin-top: 15px;">
-                <h3>Resultat och Diuresbehov</h3>
-                <table class="diuresis-summary-table" style="width:100%; border-collapse: collapse;">
-                    <tbody>
-                        <tr>
-                            <td colspan="2" class="category-heading">Aktuella Värden (från Huvudflik)</td>
-                        </tr>
-                        <tr>
-                            <td>Aktuell vätskebalans (ml)</td>
-                            <td id="summaryBalanceTillNow" style="text-align:right;">0</td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2" class="category-heading" style="margin-top: 15px;">Planerade Framtida Värden (från nu till 06:00 nästa dygn)</td>
-                        </tr>
-                        <tr>
-                            <td>Tid kvar till 06:00 (timmar)</td>
-                            <td id="summaryRemainingHoursFuture" style="text-align:right;">0</td>
-                        </tr>
-                        <tr>
-                            <td>Förväntad engångstillförsel (ml)</td>
-                            <td id="summaryPlannedSingleIntakeSummary" style="text-align:right;">0</td>
-                        </tr>
-                        <tr>
-                            <td>Total förväntad kontinuerlig tillförsel (<span id="plannedHourlyIntakeDisplay">0</span> ml/h x <span id="remainingHoursDisplay">0</span> timmar)</td>
-                            <td id="summaryPlannedHourlyIntakeTotal" style="text-align:right;">0</td>
-                        </tr>
-                        <tr>
-                            <td>Förväntade engångsförluster (ml)</td>
-                            <td id="summaryPlannedSingleLossesSummary" style="text-align:right;">0</td>
-                        </tr>
-                        <tr>
-                            <td>Förväntad perspiratio (ml)</td>
-                            <td id="summaryExpectedPerspiratioRemainingSummary" style="text-align:right;">0</td>
-                        </tr>
-
-                        <tr>
-                            <td colspan="2" class="category-heading" style="margin-top: 15px;">Sammanställda Beräkningar & Diuresbehov</td>
-                        </tr>
-                        <tr>
-                            <td>Önskad vätskebalans vid 06:00 nästa dygn (ml)</td>
-                            <td id="summaryDesiredBalanceTomorrowSummary" style="text-align:right;">0</td>
-                        </tr>
-                        <tr>
-                            <td>Beräknad total tillförsel (till 06:00 nästa dygn) (ml)</td>
-                            <td id="summaryTotalCalculatedIntake" style="text-align:right;">0</td>
-                        </tr>
-                        <tr>
-                            <td>Beräknade totala förluster (exkl. Diures) (till 06:00 nästa dygn) (ml)</td>
-                            <td id="summaryTotalCalculatedLossExclDiuresis" style="text-align:right;">0</td>
-                        </tr>
-                        <tr class="highlight-row">
-                            <td>Diuresbehov per timma (för återstående tid) (ml/h)</td>
-                            <td id="diuresisNeedPerHour" style="text-align:right;">0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <button data-action="closeModal" data-target="diuresisCalculatorModalOverlay" class="add-button" style="margin-top: 15px;">Tillbaka till Vätskebalans</button>
-        </div>
+    <!-- Sängval och "Annan plats" fält -->
+    <div class="grid-item">
+     <label for="bedSelect">
+      Säng:
+     </label>
+     <select id="bedSelect">
+      <option value="">
+       Välj säng
+      </option>
+      <option value="IVA 1">
+       IVA 1
+      </option>
+      <option value="IVA 2">
+       IVA 2
+      </option>
+      <option value="IVA 3">
+       IVA 3
+      </option>
+      <option value="IVA 4">
+       IVA 4
+      </option>
+      <option value="IVA 5">
+       IVA 5
+      </option>
+      <option value="IVA 6">
+       IVA 6
+      </option>
+      <option value="IVA 7">
+       IVA 7
+      </option>
+      <option value="IVA 8">
+       IVA 8
+      </option>
+      <option value="IVA 9">
+       IVA 9
+      </option>
+      <option value="IVA 10">
+       IVA 10
+      </option>
+      <option value="IVA 11">
+       IVA 11
+      </option>
+      <option value="IVA 12">
+       IVA 12
+      </option>
+      <option value="IMA 1">
+       IMA 1
+      </option>
+      <option value="IMA 2">
+       IMA 2
+      </option>
+      <option value="IMA 3">
+       IMA 3
+      </option>
+      <option value="IMA 4">
+       IMA 4
+      </option>
+      <option value="Annan plats">
+       Annan plats
+      </option>
+     </select>
+     <input id="otherLocationInput" placeholder="Ange annan plats" style="display: none;" type="text"/>
     </div>
-    <!-- END Diureskalkylator Modal -->
-
-    <!-- START Detaljerad Sammanställning Modal -->
-    <div id="printDetailedSummaryModalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-button" data-action="closeModal" data-target="printDetailedSummaryModalOverlay">×</button>
-            <h2>Vätskebalansräkning</h2>
-
-            <!-- Ruta för patientetikett -->
-            <div class="patient-label-box">
-                Plats för patientetikett
-            </div>
-
-            <!-- Allmän information om patient och tidsperiod -->
-            <div class="summary-info">
-                <p><strong>Datum:</strong> <span id="summaryDate"></span></p>
-                <p><strong>Tidsperiod:</strong> <span id="summaryTimePeriod"></span></p>
-                <p><strong>Plats:</strong> <span id="summaryLocation"></span></p>
-            </div>
-
-            <!-- Vikter -->
-            <h3>Vikter</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Utgångsvikt/torrvikt:</td>
-                    <td id="printInitialWeight" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Dagens vikt:</td>
-                    <td id="printDailyWeight" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Idealvikt (beräknad/justerad):</td>
-                    <td id="printIdealWeight" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Differens mot utgångsvikt:</td>
-                    <td id="printWeightDifference" class="numeric-value"></td>
-                </tr>
-            </table>
-
-            <!-- Vätskebalansberäkningar -->
-            <h3>Vätskebalans</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Totalt intag:</td>
-                    <td id="printTotalIntakeMl" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Totalt förlust:</td>
-                    <td id="printTotalLossMl" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Netto balans:</td>
-                    <td id="printNetBalanceMl" class="numeric-value"></td>
-                </tr>
-                <tr>
-                    <td>Kumulativ balans:</td>
-                    <td id="printCumulativeBalanceMl" class="numeric-value"></td>
-                </tr>
-            </table>
-
-            <!-- Läkemedelsvolymer (subkategoriserade) -->
-            <h3>Läkemedelsvolymer (totalt)</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Sedativa:</td>
-                    <td id="printMedicineSedativeMl" class="numeric-value">0 ml</td>
-                </tr>
-                <tr>
-                    <td>Antibiotika:</td>
-                    <td id="printMedicineAntibioticsMl" class="numeric-value">0 ml</td>
-                </tr>
-                <tr>
-                    <td>Vasoaktiva:</td>
-                    <td id="printMedicineVasoactiveMl" class="numeric-value">0 ml</td>
-                </tr>
-                <tr>
-                    <td>Övriga läkemedel:</td>
-                    <td id="printMedicineOtherMl" class="numeric-value">0 ml</td>
-                </tr>
-            </table>
-
-            <!-- Kcal-intag (uppdelat) -->
-            <h3>Kcal-intag</h3>
-            <table class="summary-table">
-                <tr>
-                    <td>Kcal från peroralt intag:</td>
-                    <td id="printKcalPeroral" class="numeric-value">0 Kcal</td>
-                </tr>
-                <tr>
-                    <td>Kcal från sondmat:</td>
-                    <td id="printKcalSondmat" class="numeric-value">0 Kcal</td>
-                </tr>
-                <!-- Förenad rad för IV Läkemedel och TPN -->
-                <tr>
-                    <td>Kcal från intravenös tillförsel:</td>
-                    <td id="printKcalIntravenousTotal" class="numeric-value">0 Kcal</td>
-                </tr>
-                <tr>
-                    <td><strong>Totalt Kcal intag:</strong></td>
-                    <td id="printTotalKcalIntake" class="numeric-value">0 Kcal</td>
-                </tr>
-            </table>
-
-            <!-- Utskriftsknapp -->
-            <button class="add-button" style="margin-top: 20px;" data-action="print">Skriv ut</button>
-        </div>
+    <!-- Utgångsvikt/torrvikt -->
+    <div class="grid-item">
+     <label for="initialWeight">
+      Utgångsvikt/torrvikt (kg):
+     </label>
+     <input class="important-input" id="initialWeight" placeholder="t.ex. 70.0" type="text"/>
     </div>
-    <!-- END Detaljerad Sammanställning Modal -->
-
-    <!-- Nytt: Modal för Ändringslogg -->
-    <div id="changelogModalOverlay" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
-            <h2>Ändringslogg / Versioner</h2>
-            <h3>Version 1.3</h3>
-            <ul>
-                <li>Bytt beräkningsmodell för perspiratio till att baseras på en fast grundförlust per dygn som justeras med en temperaturfaktor.</li>
-                <li>Lagt till fält för "Ålder" och "Maxtemperatur" för den nya beräkningen.</li>
-                <li>Lagt till varningstext om perspiratio inte kan beräknas (ålder &lt;15 eller vikt &lt;50).</li>
-                <li>Uppdaterat informationstexten under "Beräkningar & Referensvärden".</li>
-            </ul>
-            <h3>Version 1.2</h3>
-            <ul>
-                <li>Lade till "Blödning" som ett alternativ under "Förluster".</li>
-            </ul>
-            <h3>Version 1.1</h3>
-            <ul>
-                <li>Spara/Ladda-knapparna ligger nu bredvid varandra för en mer kompakt layout.</li>
-                <li>Lade till denna ändringslogg för att visa versionshistorik.</li>
-                <li>Gjorde fältet för Perspiratio under "Förluster" redigerbart för manuell justering.</li>
-                <li>Tog bort exempeltext från fältet "Kumulativ balans".</li>
-                <li>Korrigerade en bugg som hindrade färgindikeringen (röd/grön) på obligatoriska fält från att fungera korrekt.</li>
-                <li>Korrigerade en bugg som gjorde att Kcal-fälten inte kunde redigeras manuellt.</li>
-            </ul>
-             <h3>Version 1.0</h3>
-            <ul>
-                <li>Initial version av applikationen.</li>
-            </ul>
-        </div>
+    <!-- Dagens vikt -->
+    <div class="grid-item">
+     <label for="dailyWeight">
+      Dagens vikt (kg):
+     </label>
+     <input class="important-input" id="dailyWeight" placeholder="t.ex. 71.5" type="text" value="0"/>
     </div>
-
-    <footer class="app-footer">
-        <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 1.3 - Ändringslogg
+    <!-- Längd -->
+    <div class="grid-item">
+     <label for="height">
+      Längd (cm):
+     </label>
+     <input id="height" placeholder="t.ex. 175.0" type="text"/>
+    </div>
+    <!-- Kön -->
+    <div class="grid-item">
+     <label for="gender">
+      Kön:
+     </label>
+     <select id="gender">
+      <option value="">
+       Välj kön
+      </option>
+      <option value="Man">
+       Man
+      </option>
+      <option value="Kvinna">
+       Kvinna
+      </option>
+     </select>
+    </div>
+    <!-- Idealvikt (kg) -->
+    <div class="grid-item">
+     <label for="idealWeight">
+      Idealvikt (kg):
+     </label>
+     <input class="calculated-output" id="idealWeight" readonly="" type="text" value="Var god ange längd och kön"/>
+     <span class="adjusted-weight-notice" id="adjustedWeightNotice" style="display: none;">
+      (Justerad vikt)
+     </span>
+    </div>
+    <!-- Nytt fält för Ålder -->
+    <div class="grid-item">
+     <label for="isUnder15">
+      Patient under 15 år?
+     </label>
+     <select id="isUnder15">
+      <option selected="" value="no">
+       Nej
+      </option>
+      <option value="yes">
+       Ja
+      </option>
+     </select>
+    </div>
+    <!-- Kumulativ balans föregående dygn -->
+    <div class="grid-item">
+     <label for="cumulativeBalancePrev">
+      Kumulativ balans föregående dygn (ml):
+     </label>
+     <input id="cumulativeBalancePrev" type="text" value="0"/>
+    </div>
+    <!-- Antal förfyllda 10ml NaCl-sprutor med +/- knappar -->
+    <div class="grid-item">
+     <label for="naclSyringes">
+      Antal förfyllda 10ml NaCl-sprutor:
+     </label>
+     <div class="number-input-buttons">
+      <button data-action="changeNumber" data-delta="-1" data-target="naclSyringes">
+       <i class="fas fa-minus">
+       </i>
+      </button>
+      <input id="naclSyringes" type="text" value="0"/>
+      <button data-action="changeNumber" data-delta="1" data-target="naclSyringes">
+       <i class="fas fa-plus">
+       </i>
+      </button>
+     </div>
+    </div>
+    <!-- Antal tryckset med +/- knappar -->
+    <div class="grid-item">
+     <label for="pressureSets">
+      Antal tryckset (CVP-set = 2):
+     </label>
+     <div class="number-input-buttons">
+      <button data-action="changeNumber" data-delta="-1" data-target="pressureSets">
+       <i class="fas fa-minus">
+       </i>
+      </button>
+      <input id="pressureSets" type="text" value="0"/>
+      <button data-action="changeNumber" data-delta="1" data-target="pressureSets">
+       <i class="fas fa-plus">
+       </i>
+      </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- Ny sektion för Balansräkning -->
+  <div class="container" style="margin-top: 8px;">
+   <h2>
+    Balansräkning
+   </h2>
+   <div class="grid-container two-column-grid">
+    <!-- Första kolumn: Kristalloider/Kolloider -->
+    <div class="grid-column-item">
+     <h3>
+      Kristalloider/Kolloider
+     </h3>
+     <!-- Tabellrubriker för vätskeraderna -->
+     <div class="fluid-table-header">
+      <div>
+       Vätska
+      </div>
+      <div>
+       Mängd (ml)
+      </div>
+      <div>
+       Kcal
+      </div>
+      <div>
+      </div>
+      <!-- Tom div för att matcha ta bort-knappens kolumn -->
+     </div>
+     <div id="fluidEntriesContainer">
+      <!-- Rader läggs till här dynamiskt -->
+     </div>
+     <button class="add-button" data-action="addRow" data-type="fluid" id="addFluidButton">
+      Lägg till vätska
+     </button>
+    </div>
+    <!-- Andra kolumn: Läkemedelsvätskor -->
+    <div class="grid-column-item">
+     <h3>
+      Läkemedelsvätskor
+     </h3>
+     <!-- Tabellrubriker för läkemedelsvätskeraderna -->
+     <div class="fluid-table-header">
+      <div>
+       Läkemedel
+      </div>
+      <div>
+       Mängd (ml)
+      </div>
+      <div>
+       Kcal
+      </div>
+      <div>
+      </div>
+      <!-- Tom div för att matcha ta bort-knappens kolumn -->
+     </div>
+     <div id="medicineEntriesContainer">
+      <!-- Rader läggs till här dynamiskt -->
+     </div>
+     <button class="add-button" data-action="addRow" data-type="medicine" id="addMedicineButton">
+      Lägg till läkemedelsvätska
+     </button>
+    </div>
+    <!-- Ny kolumn: Blodprodukter -->
+    <div class="grid-column-item">
+     <h3>
+      Blodprodukter
+     </h3>
+     <div class="blood-product-table-header">
+      <!-- Specifik header för blodprodukter -->
+      <div>
+       Blodprodukt
+      </div>
+      <div>
+       Mängd (ml)
+      </div>
+      <div>
+      </div>
+      <!-- Tom div för att matcha ta bort-knappens kolumn -->
+     </div>
+     <div id="bloodProductEntriesContainer">
+      <!-- Rader läggs till här dynamiskt -->
+     </div>
+     <button class="add-button" data-action="addRow" data-type="bloodProduct" id="addBloodProductButton">
+      Lägg till blodprodukt
+     </button>
+    </div>
+    <!-- Ny kolumn: TPN/Sondmat/Peroralt -->
+    <div class="grid-column-item">
+     <h3>
+      TPN/Sondmat/Peroralt
+     </h3>
+     <div class="tpn-sondmat-table-header">
+      <!-- Specifik header för TPN/Sondmat -->
+      <div>
+       Typ
+      </div>
+      <div>
+       Mängd (ml)
+      </div>
+      <div>
+       Kcal
+      </div>
+      <div>
+      </div>
+      <!-- Tom div för att matcha ta bort-knappens kolumn -->
+     </div>
+     <div id="tpnSondmatEntriesContainer">
+      <!-- Rader läggs till här dynamiskt -->
+     </div>
+     <button class="add-button" data-action="addRow" data-type="tpnSondmat" id="addTpnSondmatButton">
+      Lägg till TPN/Sondmat/Peroralt
+     </button>
+    </div>
+    <!-- Ny kolumn: Förluster -->
+    <div class="grid-column-item">
+     <h3>
+      Förluster
+     </h3>
+     <div class="loss-table-header">
+      <!-- Specifik header för Förluster -->
+      <div>
+       Typ
+      </div>
+      <div>
+       Mängd (ml)
+      </div>
+      <div>
+      </div>
+      <!-- Tom div för att matcha ta bort-knappens kolumn -->
+     </div>
+     <div id="lossEntriesContainer">
+      <!-- Statisk, icke-borttagningsbar Perspiratio-rad -->
+      <div class="loss-entry-row" data-id="perspiratio_static">
+       <div class="grid-item">
+        <!-- Hardcode the option for "Perspiratio" as it's static and disabled -->
+        <select disabled="" id="lossSelect_perspiratio_static">
+         <option disabled="" selected="" value="Perspiratio">
+          Perspiratio
+         </option>
+        </select>
+        <!-- Ingen custom input behövs för Perspiratio -->
+       </div>
+       <div class="grid-item">
+        <input id="lossMlInput_perspiratio_static" type="text" value="0"/>
+       </div>
+       <!-- Ingen ta bort-knapp för denna rad -->
+       <button class="remove-fluid-button disabled" disabled="">
+        <i class="fas fa-trash">
+        </i>
+       </button>
+      </div>
+      <!-- Dynamiska rader läggs till här -->
+     </div>
+     <button class="add-button" data-action="addRow" data-type="loss" id="addLossButton">
+      Lägg till förlust
+     </button>
+    </div>
+    <!-- Ny kolumn: Perspiratio-beräkning -->
+    <div class="grid-column-item">
+     <h3>
+      Perspiratio-beräkning
+     </h3>
+     <div class="grid-item">
+      <label for="breathingSupport">
+       Andningsstöd:
+      </label>
+      <select id="breathingSupport">
+       <option value="standard">
+        Standard/Inget
+       </option>
+       <option value="niv_hmef">
+        NIV med HMEF
+       </option>
+       <option value="intub_hmef">
+        Intuberad med HMEF
+       </option>
+       <option value="niv_humid">
+        NIV med aktiv befuktning
+       </option>
+       <option value="hfnc">
+        HFNC
+       </option>
+       <option value="intub_humid">
+        Intuberad med aktiv befuktning
+       </option>
+      </select>
+     </div>
+     <div class="grid-item">
+      <label for="maxTemp">
+       Maxtemperatur under dygnet (°C):
+      </label>
+      <input id="maxTemp" placeholder="t.ex. 38.5" type="text" value="37.0"/>
+     </div>
+     <div class="grid-item">
+      <label for="calculatedPerspiratio" id="calculatedPerspiratioLabel">
+       Beräknad Perspiratio (ml):
+      </label>
+      <div class="calculated-perspiratio-group">
+       <!-- Ny flex-container för input och knapp -->
+       <input class="calculated-output" id="calculatedPerspiratio" readonly="" type="text" value="0"/>
+       <button class="add-button" data-action="transferPerspiratio" id="transferPerspiratioButton">
+        För över till förlust
+       </button>
+      </div>
+      <span id="perspiratioWarning">
+      </span>
+     </div>
+    </div>
+    <!-- NY KOLUMN: Verktyg -->
+    <div class="grid-column-item">
+     <h3>
+      Verktyg
+     </h3>
+     <div class="tool-buttons-group">
+      <button class="add-button reset-button" data-action="openModal" data-target="confirmationModalOverlay" id="resetButton">
+       Rensa allt
+      </button>
+      <button class="add-button" data-action="openModal" data-target="diuresisCalculatorModalOverlay" id="openDiuresisCalculatorButton">
+       Diureskalkylator
+      </button>
+     </div>
+     <button class="add-button" data-action="openModal" data-target="calculationsModalOverlay" id="openCalculationsButton">
+      Beräkningar &amp; Referensvärden
+     </button>
+     <button class="add-button" data-action="openModal" data-target="printDetailedSummaryModalOverlay" id="openPrintSummaryButton">
+      Skriv ut detaljerad sammanställning
+     </button>
+     <!-- Nya knappar för Spara/Ladda -->
+     <div class="file-buttons-group">
+      <button class="add-button" data-action="save" id="saveToFileButton">
+       Spara till fil
+      </button>
+      <input accept=".json" id="loadFromFileInput" style="display: none;" type="file"/>
+      <button class="add-button" data-action="load" id="loadFromFileButton">
+       Ladda från fil
+      </button>
+     </div>
+    </div>
+    <!-- NY KOLUMN: Sammanställning -->
+    <div class="grid-column-item">
+     <h3>
+      Sammanställning
+     </h3>
+     <table style="width:100%; border-collapse: collapse; font-size: 0.85rem;">
+      <thead>
+       <tr>
+        <th style="text-align:left; padding: 4px; border-bottom: 1px solid #ddd;">
+         Post
+        </th>
+        <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">
+         Volym (ml)
+        </th>
+        <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">
+         Kcal
+        </th>
+       </tr>
+      </thead>
+      <tbody id="summaryTableBody">
+       <tr>
+        <td style="padding: 4px;">
+         Totalt intag
+        </td>
+        <td id="totalIntakeMl" style="text-align:right; padding: 4px;">
+         0
+        </td>
+        <td id="totalIntakeKcal" style="text-align:right; padding: 4px;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td style="padding: 4px;">
+         Totalt förlust
+        </td>
+        <td id="totalLossMl" style="text-align:right; padding: 4px;">
+         0
+        </td>
+        <td style="text-align:right; padding: 4px;">
+         -
+        </td>
+       </tr>
+       <tr>
+        <td style="padding: 4px; font-weight: bold;">
+         Netto balans
+        </td>
+        <td id="netBalanceMl" style="text-align:right; padding: 4px; font-weight: bold;">
+         0
+        </td>
+        <td style="text-align:right; padding: 4px;">
+         -
+        </td>
+       </tr>
+       <tr>
+        <td style="padding: 4px;">
+         Kumulativ balans
+        </td>
+        <td id="cumulativeBalanceMl" style="text-align:right; padding: 4px;">
+         0
+        </td>
+        <td style="text-align:right; padding: 4px;">
+         -
+        </td>
+       </tr>
+       <tr>
+        <td style="padding: 4px;">
+         Differens mot utgångsvikt (kg)
+        </td>
+        <td id="weightDifferenceKg" style="text-align:right; padding: 4px;">
+         0
+        </td>
+        <td style="text-align:right; padding: 4px;">
+         -
+        </td>
+       </tr>
+       <!-- Ny rad för timdiures -->
+       <tr>
+        <td style="padding: 4px;">
+         Genomsnittlig timdiures (ml/kg/h)
+        </td>
+        <td id="avgHourlyDiuresis" style="text-align:right; padding: 4px;">
+         0.00
+        </td>
+        <td style="text-align:right; padding: 4px;">
+         -
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
+  </div>
+  <!-- Modal för Beräkningar & Referensvärden -->
+  <div class="modal-overlay" id="calculationsModalOverlay">
+   <div class="modal-content">
+    <button class="modal-close-button" data-action="closeModal" data-target="calculationsModalOverlay">
+     ×
+    </button>
+    <h2>
+     Beräkningar &amp; Referensvärden
+    </h2>
+    <p style="font-size: 0.85rem; margin-bottom: 10px;">
+     Kalorier beräknas genom att multiplicera den angivna
+     <strong>
+      mängden (ml)
+     </strong>
+     med ett specifikt
+     <strong>
+      kcal/ml-värde
+     </strong>
+     för respektive vätska/produkt. Värden för "Övrig vätska", "Övrigt läkemedel" och "Sondmat övrig" är 0 kcal/ml som standard om inget annat anges.
+    </p>
+    <!-- New class for modal's inner grid to handle 3 columns -->
+    <div class="grid-container modal-three-column-grid">
+     <div class="grid-column-item">
+      <h3>
+       Perspiratioberäkning
+      </h3>
+      <p>
+       Perspiratio beräknas utifrån en fast grundförlust per dygn som justeras med en temperaturfaktor. Det slutgiltiga värdet anpassas till den valda tidsperioden.
+      </p>
+      <p>
+       <strong>
+        Grundförlust (per 24 timmar):
+       </strong>
+      </p>
+      <ul>
+       <li>
+        <strong>
+         700 ml:
+        </strong>
+        Standard (Inget andningsstöd, NIV/HMEF, Intuberad/HMEF)
+       </li>
+       <li>
+        <strong>
+         500 ml:
+        </strong>
+        Vid viss befuktning (NIV/aktiv befuktning, HFNC)
+       </li>
+       <li>
+        <strong>
+         400 ml:
+        </strong>
+        Vid optimal befuktning (Intuberad/aktiv befuktning)
+       </li>
+      </ul>
+      <p>
+       <strong>
+        Temperaturjustering:
+       </strong>
+       <br/>
+       Beräkningen baseras på patientens maxtemperatur under dygnet. En faktor beräknas enligt `1 + (Maxtemp - 37) * 0.25`. Vid extrem kroppstemperatur används en fast faktor (0.5 vid &lt;35°C och 2.0 vid &gt;41°C).
+      </p>
+      <p>
+       <strong>
+        Gränsvärden:
+       </strong>
+       <br/>
+       Beräkning sker ej om patientens ålder är under 15 år eller vikt är under 50 kg. Perspiratio sätts då till 0 ml.
+      </p>
+     </div>
+     <div class="grid-column-item">
+      <h3>
+       Idealvikt &amp; Justerad Idealvikt
+      </h3>
+      <p>
+       <strong>
+        Idealvikt (Devine-formeln):
+       </strong>
+      </p>
+      <ul>
+       <li>
+        <strong>
+         Män:
+        </strong>
+        50 + 0.91 x (Längd i cm - 152.4)
+       </li>
+       <li>
+        <strong>
+         Kvinnor:
+        </strong>
+        45.5 + 0.91 x (Längd i cm - 152.4)
+       </li>
+      </ul>
+      <p>
+       <strong>
+        Justerad Idealvikt:
+       </strong>
+       Används om patientens dagliga vikt överstiger den beräknade idealvikten med mer än 20%.
+      </p>
+      <ul>
+       <li>
+        Justerad vikt = Idealvikt + 0.4 * (Aktuell vikt - Idealvikt)
+       </li>
+      </ul>
+      <p>
+       <em>
+        Alla vikter avrundas till en decimal.
+       </em>
+      </p>
+     </div>
+     <!-- Nya Kcal-sektioner -->
+     <div class="grid-column-item" id="kcalKristalloiderContainer">
+     </div>
+     <div class="grid-column-item" id="kcalMedicineContainer">
+     </div>
+     <div class="grid-column-item" id="kcalTpnSondmatContainer">
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- START Diureskalkylator Modal -->
+  <div class="modal-overlay" id="diuresisCalculatorModalOverlay">
+   <div class="modal-content">
+    <button class="modal-close-button" data-action="closeModal" data-target="diuresisCalculatorModalOverlay">
+     ×
+    </button>
+    <h2>
+     Diureskalkylator
+    </h2>
+    <!-- Instruktionsavsnitt -->
+    <div class="grid-column-item" style="margin-bottom: 15px;">
+     <h3>
+      Instruktioner
+     </h3>
+     <p style="font-size: 0.8rem;">
+      Fyll i relevanta vätsketillförslar och vätskeförluster i
+      <strong>
+       huvudfliken
+      </strong>
+      .
+      <br/>
+      Fyll in önskad vätskebalans fram till kl 06:00 nästa dygn i detta avsnitt.
+      <br/>
+      Fyll in planerade framtida tillförslar/förluster i detta avsnitt.
+     </p>
+    </div>
+    <div class="grid-container two-column-diuresis">
+     <!-- Vänster kolumn: Grundläggande inställningar & mål + Aktuell balans (nuvarande tidpunkt) -->
+     <div class="grid-column-item">
+      <h3>
+       Grundläggande inställningar &amp; mål
+      </h3>
+      <div class="grid-item">
+       <label for="desiredBalanceTomorrow">
+        Önskad vätskebalans (ml) fram till klockan 06:00 nästa dygn:
+       </label>
+       <input id="desiredBalanceTomorrow" placeholder="t.ex. 0 eller =100+50" type="text" value="0"/>
+      </div>
+      <div class="grid-item">
+       <label for="diuresisCalcTime">
+        Beräkning från klockslag:
+       </label>
+       <div class="input-group">
+        <input id="diuresisCalcTime" type="time"/>
+        <button data-action="setNow" data-target="diuresisCalcTime">
+         Nu
+        </button>
+       </div>
+       <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">
+        Tidpunkt du gör din beräkning.
+       </p>
+      </div>
+     </div>
+     <!-- Höger kolumn: Planerad framtida balans -->
+     <div class="grid-column-item">
+      <h3>
+       Planerad framtida balans (från 'Beräkning från' till 06:00 nästa dygn)
+      </h3>
+      <div class="grid-item">
+       <label for="remainingTimeTo0600">
+        Tid kvar till 06:00 (timmar):
+       </label>
+       <input class="calculated-output" id="remainingTimeTo0600" readonly="" type="text"/>
+      </div>
+      <div class="grid-item">
+       <label for="expectedPerspiratioRemaining">
+        Förväntad Perspiratio (återstående till 06:00) (ml):
+       </label>
+       <input class="calculated-output" id="expectedPerspiratioRemaining" readonly="" type="text"/>
+       <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">
+        Beräknad perspiratio för återstående tid. Justeras automatiskt baserat på data från huvudfliken.
+       </p>
+      </div>
+      <div class="grid-item">
+       <label for="plannedSingleIntake">
+        Förväntad vätsketillförsel (engångsdoser) (ml):
+       </label>
+       <input id="plannedSingleIntake" placeholder="t.ex. 0 eller =100+50" type="text" value="0"/>
+       <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">
+        Planerade enstaka infusioner/vätskor.
+       </p>
+      </div>
+      <div class="grid-item">
+       <label for="plannedHourlyIntake">
+        Förväntad vätsketillförsel per timma (ml/h):
+       </label>
+       <input id="plannedHourlyIntake" placeholder="t.ex. 0 eller =100+50" type="text" value="0"/>
+       <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">
+        Kontinuerliga dropp (ex. Propofol, Noradrenalin).
+       </p>
+      </div>
+      <div class="grid-item">
+       <label for="plannedSingleLosses">
+        Förväntade övriga förluster (engångsförluster) (ml):
+       </label>
+       <input id="plannedSingleLosses" placeholder="t.ex. 0 eller =100+50" type="text" value="0"/>
+       <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">
+        Planerade/förväntade enstaka förluster.
+       </p>
+      </div>
+     </div>
+    </div>
+    <!-- Resultat och Diuresbehov -->
+    <div class="grid-column-item" style="margin-top: 15px;">
+     <h3>
+      Resultat och Diuresbehov
+     </h3>
+     <table class="diuresis-summary-table" style="width:100%; border-collapse: collapse;">
+      <tbody>
+       <tr>
+        <td class="category-heading" colspan="2">
+         Aktuella Värden (från Huvudfliken)
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Aktuell vätskebalans (ml)
+        </td>
+        <td id="summaryBalanceTillNow" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td class="category-heading" colspan="2" style="margin-top: 15px;">
+         Planerade Framtida Värden (från nu till 06:00 nästa dygn)
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Tid kvar till 06:00 (timmar)
+        </td>
+        <td id="summaryRemainingHoursFuture" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Förväntad engångstillförsel (ml)
+        </td>
+        <td id="summaryPlannedSingleIntakeSummary" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Total förväntad kontinuerlig tillförsel (
+         <span id="plannedHourlyIntakeDisplay">
+          0
+         </span>
+         ml/h x
+         <span id="remainingHoursDisplay">
+          0
+         </span>
+         timmar)
+        </td>
+        <td id="summaryPlannedHourlyIntakeTotal" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Förväntade engångsförluster (ml)
+        </td>
+        <td id="summaryPlannedSingleLossesSummary" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Förväntad perspiratio (ml)
+        </td>
+        <td id="summaryExpectedPerspiratioRemainingSummary" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td class="category-heading" colspan="2" style="margin-top: 15px;">
+         Sammanställda Beräkningar &amp; Diuresbehov
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Önskad vätskebalans vid 06:00 nästa dygn (ml)
+        </td>
+        <td id="summaryDesiredBalanceTomorrowSummary" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Beräknad total tillförsel (till 06:00 nästa dygn) (ml)
+        </td>
+        <td id="summaryTotalCalculatedIntake" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Beräknade totala förluster (exkl. Diures) (till 06:00 nästa dygn) (ml)
+        </td>
+        <td id="summaryTotalCalculatedLossExclDiuresis" style="text-align:right;">
+         0
+        </td>
+       </tr>
+       <tr class="highlight-row">
+        <td>
+         Diuresbehov per timma (för återstående tid) (ml/h)
+        </td>
+        <td id="diuresisNeedPerHour" style="text-align:right;">
+         0
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </div>
+    <button class="add-button" data-action="closeModal" data-target="diuresisCalculatorModalOverlay" style="margin-top: 15px;">
+     Tillbaka till Vätskebalans
+    </button>
+   </div>
+  </div>
+  <!-- END Diureskalkylator Modal -->
+  <!-- START Detaljerad Sammanställning Modal -->
+  <div class="modal-overlay" id="printDetailedSummaryModalOverlay">
+   <div class="modal-content">
+    <button class="modal-close-button" data-action="closeModal" data-target="printDetailedSummaryModalOverlay">
+     ×
+    </button>
+    <h2>
+     Vätskebalansräkning
+    </h2>
+    <div class="summary-grid-container">
+     <div>
+      <div class="patient-label-placeholder">
+       klistra patientetikett här
+      </div>
+      <h3>
+       Vikter
+      </h3>
+      <table class="summary-table">
+       <tr>
+        <td>
+         Utgångsvikt/torrvikt:
+        </td>
+        <td class="numeric-value" id="printInitialWeight">
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Dagens vikt:
+        </td>
+        <td class="numeric-value" id="printDailyWeight">
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Idealvikt (beräknad/justerad):
+        </td>
+        <td class="numeric-value" id="printIdealWeight">
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Differens mot utgångsvikt:
+        </td>
+        <td class="numeric-value" id="printWeightDifference">
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Kumulativ balans föregående dygn:
+        </td>
+        <td class="numeric-value" id="printCumulativeBalancePrev">
+        </td>
+       </tr>
+      </table>
+     </div>
+     <div>
+      <div class="summary-info-box">
+       <p>
+        <strong>
+         Datum:
+        </strong>
+        <span id="summaryDatePrint">
         </span>
-    </footer>
-</body>
+       </p>
+       <p>
+        <strong>
+         Tidsperiod:
+        </strong>
+        <span id="summaryTimePeriodPrint">
+        </span>
+       </p>
+       <p>
+        <strong>
+         Plats:
+        </strong>
+        <span id="summaryLocationPrint">
+        </span>
+       </p>
+      </div>
+      <h3>
+       Sammanställning
+      </h3>
+      <table class="summary-table">
+       <tr>
+        <td>
+         Totalt vätskeintag:
+        </td>
+        <td class="numeric-value" id="printTotalIntakeMl">
+        </td>
+       </tr>
+       <tr>
+        <td>
+         Total vätskeförlust:
+        </td>
+        <td class="numeric-value" id="printTotalLossMl">
+        </td>
+       </tr>
+       <tr class="highlight-row-print">
+        <td>
+         Nettobalans:
+        </td>
+        <td class="numeric-value" id="printNetBalanceMl">
+        </td>
+       </tr>
+       <tr class="highlight-row-print">
+        <td>
+         Kumulativ balans:
+        </td>
+        <td class="numeric-value" id="printCumulativeBalanceMl">
+        </td>
+       </tr>
+       <tr class="highlight-row-print">
+        <td>
+         Totalt kaloriintag:
+        </td>
+        <td class="numeric-value" id="printTotalKcalIntake">
+        </td>
+       </tr>
+      </table>
+     </div>
+    </div>
+    <!-- Ny sektion för detaljerad lista -->
+    <div class="details-grid-container" id="print-details-container">
+     <div id="print-details-intake">
+     </div>
+     <div id="print-details-loss">
+     </div>
+    </div>
+    <!-- Utskriftsknapp -->
+    <button class="add-button" data-action="print" style="margin-top: 20px;">
+     Skriv ut
+    </button>
+   </div>
+  </div>
+  <!-- END Detaljerad Sammanställning Modal -->
+  <!-- Nytt: Modal för Ändringslogg -->
+  <div class="modal-overlay" id="changelogModalOverlay">
+   <div class="modal-content">
+    <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">
+     ×
+    </button>
+    <h2>
+     Ändringslogg / Versioner
+    </h2>
+    <h3>
+     Version 2.0
+    </h3>
+    <ul>
+     <li>
+      Lade till "Kräkning" och "VAC-pump" som val under "Förluster".
+     </li>
+    </ul>
+    <p style="font-size: 0.8rem; margin-top: 20px;">
+     Feedback/input till johannes.paulsson@vgregion.se
+    </p>
+   </div>
+  </div>
+  <!-- Nytt: Modal för bekräftelse -->
+  <div class="modal-overlay" id="confirmationModalOverlay">
+   <div class="modal-content" style="max-width: 400px;">
+    <h3>
+     Rensa allt?
+    </h3>
+    <p>
+     Är du säker på att du vill rensa alla fält? Detta går inte att ångra.
+    </p>
+    <div class="file-buttons-group">
+     <button class="add-button reset-button" data-action="resetAll" id="confirmResetButton">
+      Ja, rensa
+     </button>
+     <button class="add-button" data-action="closeModal" data-target="confirmationModalOverlay">
+      Avbryt
+     </button>
+    </div>
+   </div>
+  </div>
+  <footer class="app-footer">
+   <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
+    Version 2.0 - Ändringslogg
+   </span>
+  </footer>
+  <script src="script.js">
+  </script>
+ </body>
 </html>

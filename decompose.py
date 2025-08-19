@@ -1,11 +1,13 @@
 from pathlib import Path
 from bs4 import BeautifulSoup
 
+NEW_FOLDER_NAME = "static"
+
 # Stig till originalfilen
 original_file = Path("index.html")
 
 # Skapa ny mapp
-output_dir = original_file.parent / "new_folder"
+output_dir = original_file.parent / NEW_FOLDER_NAME
 output_dir.mkdir(exist_ok=True)
 
 # Läs in HTML
@@ -22,7 +24,7 @@ css_content = "\n\n".join(styles)
 (output_dir / "styles.css").write_text(css_content, encoding="utf-8")
 
 # Lägg till länk till CSS i <head>
-link_tag = soup.new_tag("link", rel="stylesheet", href="./new_folder/styles.css")
+link_tag = soup.new_tag("link", rel="stylesheet", href="styles.css")
 soup.head.append(link_tag)
 
 # --- Extrahera JS ---
@@ -36,7 +38,7 @@ js_content = "\n\n".join(scripts)
 (output_dir / "script.js").write_text(js_content, encoding="utf-8")
 
 # Lägg till script-tag längst ned i <body>
-new_script_tag = soup.new_tag("script", src="./new_folder/script.js")
+new_script_tag = soup.new_tag("script", src="script.js")
 soup.body.append(new_script_tag)
 
 # --- Skriv uppdaterad index.html ---
