@@ -40,4 +40,9 @@ for s in list(soup.find_all("script", src=True)):
 
 # --- Write full inlined file ---
 FULL_INDEX.write_text(soup.prettify(), encoding="utf-8")
-print(f"Inlined CSS/JS and updated: {FULL_INDEX}")
+print(
+    f"Composed complete app index.html at: {FULL_INDEX}\n"
+    f"Original HTML from: {INDEX}\n"
+    f"Contains inlined CSS from: {CSS}\n"
+    f"Contains inlined JS from: {JS}\n"
+)
