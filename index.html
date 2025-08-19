@@ -648,7 +648,7 @@
             font-weight: 500;
         }
         .summary-table .highlight-row-print {
-            background-color: #f5f5f5;
+            background-color: #f0f0f0; /* Ljusgrå bakgrund för utskrift */
             font-weight: bold;
         }
         .summary-table .category-row td {
@@ -867,17 +867,17 @@
 
             /* Adjust font sizes for better print readability */
             .modal-content h2 {
-                font-size: 1.2em !important;
+                font-size: 1.4em !important;
             }
             .modal-content h3 {
-                font-size: 1em !important;
+                font-size: 1.2em !important;
                 margin-top: 20px !important;
             }
-            .summary-info p,
+            .summary-info-box p,
             .summary-table,
             .summary-table th,
             .summary-table td {
-                font-size: 0.75em !important; /* Slightly larger for print */
+                font-size: 0.9em !important;
             }
 
             /* Page breaks for tables if necessary */
@@ -945,7 +945,7 @@
             <!-- Dagens vikt -->
             <div class="grid-item">
                 <label for="dailyWeight">Dagens vikt (kg):</label>
-                <input type="text" id="dailyWeight" class="important-input" placeholder="t.ex. 71.5" value="0">
+                <input type="text" id="dailyWeight" class="important-input" placeholder="t.ex. 71.5" value="">
             </div>
             <!-- Längd -->
             <div class="grid-item">
@@ -978,14 +978,14 @@
             <!-- Kumulativ balans föregående dygn -->
             <div class="grid-item">
                 <label for="cumulativeBalancePrev">Kumulativ balans föregående dygn (ml):</label>
-                <input type="text" id="cumulativeBalancePrev" value="0">
+                <input type="text" id="cumulativeBalancePrev" value="">
             </div>
             <!-- Antal förfyllda 10ml NaCl-sprutor med +/- knappar -->
             <div class="grid-item">
                 <label for="naclSyringes">Antal förfyllda 10ml NaCl-sprutor:</label>
                 <div class="number-input-buttons">
                     <button data-action="changeNumber" data-target="naclSyringes" data-delta="-1"><i class="fas fa-minus"></i></button>
-                    <input type="text" id="naclSyringes" value="0">
+                    <input type="text" id="naclSyringes" value="">
                     <button data-action="changeNumber" data-target="naclSyringes" data-delta="1"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
@@ -994,7 +994,7 @@
                 <label for="pressureSets">Antal tryckset (CVP-set = 2):</label>
                 <div class="number-input-buttons">
                     <button data-action="changeNumber" data-target="pressureSets" data-delta="-1"><i class="fas fa-minus"></i></button>
-                    <input type="text" id="pressureSets" value="0">
+                    <input type="text" id="pressureSets" value="">
                     <button data-action="changeNumber" data-target="pressureSets" data-delta="1"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
@@ -1085,7 +1085,7 @@
                             <!-- Ingen custom input behövs för Perspiratio -->
                         </div>
                         <div class="grid-item">
-                            <input type="text" id="lossMlInput_perspiratio_static" value="0">
+                            <input type="text" id="lossMlInput_perspiratio_static" value="">
                         </div>
                         <!-- Ingen ta bort-knapp för denna rad -->
                         <button class="remove-fluid-button disabled" disabled><i class="fas fa-trash"></i></button>
@@ -1252,7 +1252,7 @@
                     <h3>Grundläggande inställningar & mål</h3>
                     <div class="grid-item">
                         <label for="desiredBalanceTomorrow">Önskad vätskebalans (ml) fram till klockan 06:00 nästa dygn:</label>
-                        <input type="text" id="desiredBalanceTomorrow" value="0" placeholder="t.ex. 0 eller =100+50">
+                        <input type="text" id="desiredBalanceTomorrow" value="" placeholder="">
                     </div>
                     <div class="grid-item">
                         <label for="diuresisCalcTime">Beräkning från klockslag:</label>
@@ -1278,17 +1278,17 @@
                     </div>
                     <div class="grid-item">
                         <label for="plannedSingleIntake">Förväntad vätsketillförsel (engångsdoser) (ml):</label>
-                        <input type="text" id="plannedSingleIntake" value="0" placeholder="t.ex. 0 eller =100+50">
+                        <input type="text" id="plannedSingleIntake" value="" placeholder="">
                         <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Planerade enstaka infusioner/vätskor.</p>
                     </div>
                     <div class="grid-item">
                         <label for="plannedHourlyIntake">Förväntad vätsketillförsel per timma (ml/h):</label>
-                        <input type="text" id="plannedHourlyIntake" value="0" placeholder="t.ex. 0 eller =100+50">
+                        <input type="text" id="plannedHourlyIntake" value="" placeholder="">
                         <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Kontinuerliga dropp (ex. Propofol, Noradrenalin).</p>
                     </div>
                     <div class="grid-item">
                         <label for="plannedSingleLosses">Förväntade övriga förluster (engångsförluster) (ml):</label>
-                        <input type="text" id="plannedSingleLosses" value="0" placeholder="t.ex. 0 eller =100+50">
+                        <input type="text" id="plannedSingleLosses" value="" placeholder="">
                         <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">Planerade/förväntade enstaka förluster.</p>
                     </div>
                 </div>
@@ -1442,11 +1442,11 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
-            <h3>Version 2.0</h3>
+            <h3>Version 2.1</h3>
             <ul>
-                <li>Lade till "Kräkning" och "VAC-pump" som val under "Förluster".</li>
+                <li>Release för betatest.</li>
             </ul>
-            <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johannes.paulsson@vgregion.se</p>
+            <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johpa15@vgregion.se</p>
         </div>
     </div>
     
@@ -1464,7 +1464,7 @@
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 2.0 - Ändringslogg
+            Version 2.1 - Ändringslogg
         </span>
     </footer>
 
@@ -1479,6 +1479,8 @@
                 adjustedWeight: false,
                 avgHourlyDiuresis: 0,
                 perspiratioWarning: '',
+                naclSyringeVolume: 0,
+                pressureSetVolume: 0,
                 medicineCategoryTotals: { Sedering: 0, Antibiotika: 0, Vasoaktiva: 0, Övrigt: 0 },
                 kcalSummary: { peroralt: 0, sondmat: 0, tpn: 0, ivMedicine: 0, intravenousTotal: 0 }
             },
@@ -1486,27 +1488,27 @@
             config: {
                 fluid: {
                     containerId: 'fluidEntriesContainer',
-                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="fluid"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig vätska" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="0" placeholder="=50+50"></div><div class="grid-item"><input type="text" class="kcal-output" value="0" placeholder="=10*1.1"></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="fluid"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig vätska" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'fluid')
                 },
                 medicine: {
                     containerId: 'medicineEntriesContainer',
-                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="medicine"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrigt läkemedel" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="0" placeholder="=50+50"></div><div class="grid-item"><input type="text" class="kcal-output" value="0" placeholder="=10*1.1"></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="medicine"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrigt läkemedel" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'medicine')
                 },
                 bloodProduct: {
                     containerId: 'bloodProductEntriesContainer',
-                    template: (id) => `<div class="blood-product-entry-row" data-id="${id}" data-type="bloodProduct"><div class="grid-item"><select class="select-main"></select></div><div class="grid-item"><input type="text" class="ml-input" value="0" placeholder="=50+50"></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="blood-product-entry-row" data-id="${id}" data-type="bloodProduct"><div class="grid-item"><select class="select-main"></select></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'bloodProduct')
                 },
                 tpnSondmat: {
                     containerId: 'tpnSondmatEntriesContainer',
-                    template: (id) => `<div class="tpn-sondmat-entry-row" data-id="${id}" data-type="tpnSondmat"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig sondmat" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="0" placeholder="=50+50"></div><div class="grid-item"><input type="text" class="kcal-output" value="0" placeholder="=10*1.1"></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="tpn-sondmat-entry-row" data-id="${id}" data-type="tpnSondmat"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig sondmat" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'tpnSondmat')
                 },
                 loss: {
                     containerId: 'lossEntriesContainer',
-                    template: (id) => `<div class="loss-entry-row" data-id="${id}" data-type="loss"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange annan förlust" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="0" placeholder="=50+50"></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="loss-entry-row" data-id="${id}" data-type="loss"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange annan förlust" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'loss')
                 }
             },
@@ -1520,7 +1522,7 @@
                     }
                 },
                 medicine: {
-                    placeholder: 'Välj läkemedelsvätska', customOption: 'Övrigt läkemedel', customOption2: 'Övrig Antibiotika',
+                    placeholder: 'Välj läkemedelsvätska', customOption: 'Övrigt läkemedel',
                     categories: {
                         "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 1.1 }, { name: "Propofol 20mg/ml", kcal: 1.33 }, { name: "Remifentanil", kcal: 0 }],
                         "Antibiotika": [{ name: "Pip/Taz 4g x 3", kcal: 0, defaultMl: 60 }, { name: "Övrig Antibiotika", kcal: 0 }, { name: "Kaspofungin", kcal: 0, defaultMl: 250 }],
@@ -1643,6 +1645,9 @@
                 if (target.id === 'bedSelect') {
                     this.dom.otherLocationInput.style.display = target.value === 'Annan plats' ? 'block' : 'none';
                 }
+                 if (target.id === 'diuresisCalcTime') {
+                    document.getElementById('expectedPerspiratioRemaining').dataset.manualOverride = 'false';
+                }
                 const row = target.closest('[data-id]');
                 if (row) {
                     const kcalOutput = row.querySelector('.kcal-output');
@@ -1708,8 +1713,8 @@
                 }
                 if (Object.keys(initialData).length > 0 && !initialData.isInitial) {
                     if(select) select.value = initialData.selectValue || '';
-                    newRow.querySelector('.ml-input').value = initialData.mlValue || '0';
-                    if(newRow.querySelector('.kcal-output')) newRow.querySelector('.kcal-output').value = initialData.kcalValue || '0';
+                    newRow.querySelector('.ml-input').value = initialData.mlValue || '';
+                    if(newRow.querySelector('.kcal-output')) newRow.querySelector('.kcal-output').value = initialData.kcalValue || '';
                     if(newRow.querySelector('.custom-input')) {
                         const customInput = newRow.querySelector('.custom-input');
                         customInput.value = initialData.customValue || '';
@@ -1894,7 +1899,7 @@
                         if (kcalOutput.dataset.manualOverride !== 'true') {
                             const kcalPerMl = parseFloat(selectedOption.dataset.kcalPerMl || '0');
                             kcalValue = Math.round(mlValue * kcalPerMl);
-                            kcalOutput.value = kcalValue;
+                            kcalOutput.value = mlValue > 0 ? kcalValue : '';
                         } else {
                             kcalValue = parseFloat(kcalOutput.value) || 0;
                         }
@@ -1920,10 +1925,14 @@
                     }
                 });
                 const naclSyringes = parseFloat(document.getElementById('naclSyringes').value) || 0;
-                this.state.totalIntakeMl += naclSyringes * 10;
+                this.state.naclSyringeVolume = naclSyringes * 10;
+                this.state.totalIntakeMl += this.state.naclSyringeVolume;
+
                 const pressureSets = parseFloat(document.getElementById('pressureSets').value) || 0;
                 const duration = this.calculateDurationInHours(document.getElementById('startTime').value, document.getElementById('endTime').value);
-                this.state.totalIntakeMl += pressureSets * 3 * duration;
+                this.state.pressureSetVolume = Math.round(pressureSets * 3 * duration);
+                this.state.totalIntakeMl += this.state.pressureSetVolume;
+
                 this.state.netBalanceMl = this.state.totalIntakeMl - this.state.totalLossMl;
                 const cumulativePrev = parseFloat(document.getElementById('cumulativeBalancePrev').value) || 0;
                 this.state.cumulativeBalanceMl = cumulativePrev + this.state.netBalanceMl;
@@ -1958,10 +1967,13 @@
                 const plannedHourlyIntake = parseFloat(document.getElementById('plannedHourlyIntake').value) || 0;
                 const plannedSingleLosses = parseFloat(document.getElementById('plannedSingleLosses').value) || 0;
                 
+                const expectedPerspiratioInput = document.getElementById('expectedPerspiratioRemaining');
+                const calculatedPerspiratio = this._calculatePerspiratioLogic(remainingHours);
+
+                expectedPerspiratioInput.value = calculatedPerspiratio;
+                const expectedPerspiratio = parseFloat(expectedPerspiratioInput.value) || 0;
+
                 document.getElementById('remainingTimeTo0600').value = remainingHours.toFixed(1);
-                
-                const expectedPerspiratio = this._calculatePerspiratioLogic(remainingHours);
-                document.getElementById('expectedPerspiratioRemaining').value = expectedPerspiratio;
                 
                 const totalFutureIntake = plannedSingleIntake + (plannedHourlyIntake * remainingHours);
                 const totalFutureLoss = plannedSingleLosses + expectedPerspiratio;
@@ -1987,6 +1999,7 @@
                 if (targetId === 'calculationsModalOverlay') this.populateKcalTableInModal();
                 if (targetId === 'printDetailedSummaryModalOverlay') this.populatePrintModal();
                 if (targetId === 'diuresisCalculatorModalOverlay') {
+                    document.getElementById('expectedPerspiratioRemaining').dataset.manualOverride = 'false';
                     this.setNow('diuresisCalcTime');
                     this.calculateDiuresis();
                 }
@@ -2107,6 +2120,16 @@
                             entries.push({ name, ml: mlValue, kcal: kcalValue });
                         }
                     });
+
+                    if (section.type === 'fluid') {
+                        if (this.state.naclSyringeVolume > 0) {
+                            entries.push({ name: 'NaCl från förfyllda sprutor', ml: this.state.naclSyringeVolume, kcal: 0 });
+                        }
+                        if (this.state.pressureSetVolume > 0) {
+                            entries.push({ name: 'NaCl från tryckset', ml: this.state.pressureSetVolume, kcal: 0 });
+                        }
+                    }
+
                     if (entries.length > 0) {
                         allIntakeEntries.push({category: section.title, items: entries});
                     }
@@ -2118,7 +2141,7 @@
                         intakeHtml += `<tr class="category-row"><td colspan="2"><strong>${section.category}</strong></td></tr>`;
                         section.items.forEach(item => {
                             const kcalText = item.kcal > 0 ? ` (${item.kcal} Kcal)` : '';
-                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${item.ml} ml${kcalText}</td></tr>`;
+                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${Math.round(item.ml)} ml${kcalText}</td></tr>`;
                         });
                     });
                     intakeHtml += '</table>';
@@ -2149,7 +2172,7 @@
                 if (lossEntries.length > 0) {
                     lossHtml += `<h3>Förluster</h3><table class="summary-table">`;
                     lossEntries.forEach(entry => {
-                        lossHtml += `<tr><td>${entry.name}</td><td class="numeric-value">${entry.ml} ml</td></tr>`;
+                        lossHtml += `<tr><td>${entry.name}</td><td class="numeric-value">${Math.round(entry.ml)} ml</td></tr>`;
                     });
                     lossHtml += '</table>';
                 }
@@ -2286,7 +2309,7 @@
                             </select>
                         </div>
                         <div class="grid-item">
-                            <input type="text" id="lossMlInput_perspiratio_static" value="0">
+                            <input type="text" id="lossMlInput_perspiratio_static" value="">
                         </div>
                         <button class="remove-fluid-button disabled" disabled><i class="fas fa-trash"></i></button>
                     </div>`;
