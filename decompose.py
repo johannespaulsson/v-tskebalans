@@ -39,9 +39,12 @@ js_content = "\n\n".join(scripts)
 
 # Lägg till script-tag längst ned i <body>
 new_script_tag = soup.new_tag("script", src="script.js")
-soup.body.append(new_script_tag)
+new_script_tag.attrs["defer"] = ""  # renders as defer="defer"
+soup.head.append(new_script_tag)
 
 # --- Skriv uppdaterad index.html ---
-(output_dir / "index.html").write_text(soup.prettify(), encoding="utf-8")
+html_out = soup.prettify()
+html_out = html_out.replace('defer=""', 'defer')
+(output_dir / "index.html").write_text(html_out, encoding="utf-8")
 
 print("Filer skapade i", output_dir)
