@@ -265,10 +265,24 @@
         }
 
         /* Stil för den egna vätskan/läkemedlet */
+        .custom-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
         .custom-input {
-            width: 100%;
-            padding: 3px;
-            font-size: 0.8rem;
+            flex-grow: 1;
+        }
+        .cancel-custom-input {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 5px;
+        }
+        .cancel-custom-input:hover {
+            color: #333;
         }
 
         .remove-fluid-button {
@@ -451,6 +465,59 @@
             margin-top: 4px;
             display: block;
             min-height: 1em;
+        }
+
+        /* --- Tooltip Stilar --- */
+        .label-with-tooltip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .label-with-tooltip label {
+            margin-bottom: 0; /* Remove default margin from label inside this container */
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            color: #1a73e8;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            font-weight: normal;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
         }
 
         /* --- Modal Specifika Stilar --- */
@@ -944,7 +1011,13 @@
             </div>
             <!-- Dagens vikt -->
             <div class="grid-item">
-                <label for="dailyWeight">Dagens vikt (kg):</label>
+                 <div class="label-with-tooltip">
+                    <label for="dailyWeight">Dagens vikt (kg):</label>
+                    <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Alla beräkningar, inklusive timdiures och perspiratio, utgår från detta värde.</span>
+                    </span>
+                </div>
                 <input type="text" id="dailyWeight" class="important-input" placeholder="t.ex. 71.5" value="">
             </div>
             <!-- Längd -->
@@ -963,13 +1036,25 @@
             </div>
             <!-- Idealvikt (kg) -->
             <div class="grid-item">
-                <label for="idealWeight">Idealvikt (kg):</label>
+                <div class="label-with-tooltip">
+                    <label for="idealWeight">Idealvikt (kg):</label>
+                    <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Beräknas automatiskt med Devine-formeln. Om dagens vikt är >20% över idealvikten används en justerad idealvikt.</span>
+                    </span>
+                </div>
                 <input type="text" id="idealWeight" readonly class="calculated-output" value="Var god ange längd och kön">
                 <span id="adjustedWeightNotice" class="adjusted-weight-notice" style="display: none;">(Justerad vikt)</span>
             </div>
             <!-- Nytt fält för Ålder -->
             <div class="grid-item">
-                <label for="isUnder15">Patient under 15 år?</label>
+                <div class="label-with-tooltip">
+                    <label for="isUnder15">Patient under 15 år?</label>
+                    <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Perspiratio beräknas ej hos patient under 15 år.</span>
+                    </span>
+                </div>
                 <select id="isUnder15">
                     <option value="no" selected>Nej</option>
                     <option value="yes">Ja</option>
@@ -977,24 +1062,42 @@
             </div>
             <!-- Kumulativ balans föregående dygn -->
             <div class="grid-item">
-                <label for="cumulativeBalancePrev">Kumulativ balans föregående dygn (ml):</label>
+                <div class="label-with-tooltip">
+                    <label for="cumulativeBalancePrev">Kumulativ balans föregående dygn (ml):</label>
+                    <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Fyll i den kumulativa balansen från föregående dygns avstämning (t.ex. gårdagens värde kl 06:00).</span>
+                    </span>
+                </div>
                 <input type="text" id="cumulativeBalancePrev" value="">
             </div>
             <!-- Antal förfyllda 10ml NaCl-sprutor med +/- knappar -->
             <div class="grid-item">
-                <label for="naclSyringes">Antal förfyllda 10ml NaCl-sprutor:</label>
+                <div class="label-with-tooltip">
+                    <label for="naclSyringes">Antal förfyllda 10ml NaCl-sprutor:</label>
+                    <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Frivilligt att fylla i.</span>
+                    </span>
+                </div>
                 <div class="number-input-buttons">
                     <button data-action="changeNumber" data-target="naclSyringes" data-delta="-1"><i class="fas fa-minus"></i></button>
-                    <input type="text" id="naclSyringes" value="">
+                    <input type="text" id="naclSyringes" value="0">
                     <button data-action="changeNumber" data-target="naclSyringes" data-delta="1"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <!-- Antal tryckset med +/- knappar -->
             <div class="grid-item">
-                <label for="pressureSets">Antal tryckset (CVP-set = 2):</label>
+                <div class="label-with-tooltip">
+                    <label for="pressureSets">Antal tryckset:</label>
+                     <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Varje tryckset beräknas ge 3 ml/timme. Ett CVP-set räknas som två tryckset.</span>
+                    </span>
+                </div>
                 <div class="number-input-buttons">
                     <button data-action="changeNumber" data-target="pressureSets" data-delta="-1"><i class="fas fa-minus"></i></button>
-                    <input type="text" id="pressureSets" value="">
+                    <input type="text" id="pressureSets" value="0">
                     <button data-action="changeNumber" data-target="pressureSets" data-delta="1"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
@@ -1007,7 +1110,13 @@
         <div class="grid-container two-column-grid">
             <!-- Första kolumn: Kristalloider/Kolloider -->
             <div class="grid-column-item">
-                <h3>Kristalloider/Kolloider</h3>
+                <div class="label-with-tooltip">
+                    <h3>Kristalloider/Kolloider</h3>
+                    <span class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltiptext">Du kan skriva in enkla uträkningar direkt i fältet genom att börja med ett likhetstecken. Exempel: =50+100*2.</span>
+                    </span>
+                </div>
                 <!-- Tabellrubriker för vätskeraderna -->
                 <div class="fluid-table-header">
                     <div>Vätska</div>
@@ -1179,7 +1288,15 @@
                         </tr>
                         <!-- Ny rad för timdiures -->
                         <tr>
-                            <td style="padding: 4px;">Genomsnittlig timdiures (ml/kg/h)</td>
+                            <td style="padding: 4px;">
+                                <div class="label-with-tooltip" style="justify-content: space-between;">
+                                    <span>Genomsnittlig timdiures (ml/kg/h)</span>
+                                    <span class="tooltip">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="tooltiptext">Visar den genomsnittliga urinproduktionen per kilo kroppsvikt och timme. Värdet blir rött om det understiger 0.5 ml/kg/h.</span>
+                                    </span>
+                                </div>
+                            </td>
                             <td id="avgHourlyDiuresis" style="text-align:right; padding: 4px;">0.00</td>
                             <td style="text-align:right; padding: 4px;">-</td>
                         </tr>
@@ -1442,9 +1559,12 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
-            <h3>Version 2.1</h3>
+            <h3>Version 2.2</h3>
             <ul>
-                <li>Release för betatest.</li>
+                <li><b>Förbättrad användarvänlighet med tooltips.</b></li>
+                <li><b>Smidigare inmatning för "Övrigt".</b></li>
+                <li><b>Tydligare standardvärden.</b></li>
+                <li><b>Utökad utskrift med timdiures.</b></li>
             </ul>
             <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johpa15@vgregion.se</p>
         </div>
@@ -1464,7 +1584,7 @@
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 2.1 - Ändringslogg
+            Version 2.2 - Ändringslogg
         </span>
     </footer>
 
@@ -1488,12 +1608,12 @@
             config: {
                 fluid: {
                     containerId: 'fluidEntriesContainer',
-                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="fluid"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig vätska" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="fluid"><div class="grid-item"><div class="custom-input-wrapper"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig vätska" style="display: none;"><button class="cancel-custom-input" data-action="cancelCustomInput" style="display: none;">&times;</button></div></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'fluid')
                 },
                 medicine: {
                     containerId: 'medicineEntriesContainer',
-                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="medicine"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrigt läkemedel" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="fluid-entry-row" data-id="${id}" data-type="medicine"><div class="grid-item"><div class="custom-input-wrapper"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Övrigt lkm" style="display: none;"><button class="cancel-custom-input" data-action="cancelCustomInput" style="display: none;">&times;</button></div></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'medicine')
                 },
                 bloodProduct: {
@@ -1503,12 +1623,12 @@
                 },
                 tpnSondmat: {
                     containerId: 'tpnSondmatEntriesContainer',
-                    template: (id) => `<div class="tpn-sondmat-entry-row" data-id="${id}" data-type="tpnSondmat"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange övrig sondmat" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="tpn-sondmat-entry-row" data-id="${id}" data-type="tpnSondmat"><div class="grid-item"><div class="custom-input-wrapper"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Övrigt" style="display: none;"><button class="cancel-custom-input" data-action="cancelCustomInput" style="display: none;">&times;</button></div></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'tpnSondmat')
                 },
                 loss: {
                     containerId: 'lossEntriesContainer',
-                    template: (id) => `<div class="loss-entry-row" data-id="${id}" data-type="loss"><div class="grid-item"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange annan förlust" style="display: none;"></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="loss-entry-row" data-id="${id}" data-type="loss"><div class="grid-item"><div class="custom-input-wrapper"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Ange annan förlust" style="display: none;"><button class="cancel-custom-input" data-action="cancelCustomInput" style="display: none;">&times;</button></div></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'loss')
                 }
             },
@@ -1578,11 +1698,11 @@
                 const yesterday = new Date(today);
                 yesterday.setDate(today.getDate() - 1);
                 this.dom.dateInput.value = yesterday.toISOString().split('T')[0];
+                document.getElementById('naclSyringes').value = '0';
+                document.getElementById('pressureSets').value = '0';
             },
             addInitialRows() {
-                ['fluid', 'medicine', 'bloodProduct', 'tpnSondmat'].forEach(type => this.addRow(type, { isInitial: true }));
-                this.addRow('loss', { selectValue: 'Diures', isInitial: true }); // Add Diures by default
-                this.addRow('loss', { isInitial: true }); // Add one empty loss row
+                this.addRow('loss', { selectValue: 'Diures', isInitial: true });
             },
             checkInitialInputColors() {
                 document.querySelectorAll('.important-input, .filled-input').forEach(input => {
@@ -1635,6 +1755,7 @@
                     case 'load': this.dom.loadFromFileInput.click(); break;
                     case 'print': window.print(); break;
                     case 'resetAll': this.resetAll(); break;
+                    case 'cancelCustomInput': this.cancelCustomInput(target); break;
                 }
             },
             handleFormInput(e) {
@@ -1659,13 +1780,10 @@
                         }
                     }
                     if (target.classList.contains('select-main')) {
-                        const customInput = row.querySelector('.custom-input');
-                        if (customInput) {
-                            const configData = this.data[row.dataset.type];
-                            const showCustom = target.value === configData.customOption || (configData.customOption2 && target.value === configData.customOption2);
-                            customInput.style.display = showCustom ? 'block' : 'none';
-                        }
-                        // NYTT: Sätt default-värde för Pip/Taz
+                        const configData = this.data[row.dataset.type];
+                        const showCustom = target.value === configData.customOption || (configData.customOption2 && target.value === configData.customOption2);
+                        this.toggleCustomInput(target.parentElement, showCustom);
+                        
                         const selectedOption = target.options[target.selectedIndex];
                         const defaultMl = selectedOption.dataset.defaultMl;
                         const mlInput = row.querySelector('.ml-input');
@@ -1715,11 +1833,14 @@
                     if(select) select.value = initialData.selectValue || '';
                     newRow.querySelector('.ml-input').value = initialData.mlValue || '';
                     if(newRow.querySelector('.kcal-output')) newRow.querySelector('.kcal-output').value = initialData.kcalValue || '';
-                    if(newRow.querySelector('.custom-input')) {
-                        const customInput = newRow.querySelector('.custom-input');
-                        customInput.value = initialData.customValue || '';
-                        const showCustom = select.value === this.data[type].customOption || (this.data[type].customOption2 && select.value === this.data[type].customOption2);
-                        customInput.style.display = showCustom ? 'block' : 'none';
+                    const customInputWrapper = newRow.querySelector('.custom-input-wrapper');
+                    if(customInputWrapper) {
+                        const configData = this.data[type];
+                        const isCustom = select.value === configData.customOption || (configData.customOption2 && select.value === configData.customOption2);
+                        if (isCustom) {
+                            this.toggleCustomInput(customInputWrapper, true);
+                            customInputWrapper.querySelector('.custom-input').value = initialData.customValue || '';
+                        }
                     }
                 }
                 if(initialData.isInitial !== true) this.updateAllCalculations();
@@ -1759,6 +1880,22 @@
                 if (kcal !== null) option.dataset.kcalPerMl = kcal;
                 if (defaultMl !== null) option.dataset.defaultMl = defaultMl;
                 parent.appendChild(option);
+            },
+            toggleCustomInput(wrapper, showCustom) {
+                const select = wrapper.querySelector('.select-main');
+                const input = wrapper.querySelector('.custom-input');
+                const button = wrapper.querySelector('.cancel-custom-input');
+                if (select) select.style.display = showCustom ? 'none' : 'block';
+                if (input) input.style.display = showCustom ? 'block' : 'none';
+                if (button) button.style.display = showCustom ? 'block' : 'none';
+                if (showCustom && input) input.focus();
+            },
+            cancelCustomInput(button) {
+                const wrapper = button.parentElement;
+                this.toggleCustomInput(wrapper, false);
+                wrapper.querySelector('select').value = '';
+                wrapper.querySelector('input').value = '';
+                this.updateAllCalculations();
             },
             updateAllCalculations() {
                 this.calculateIdealAndAdjustedWeight();
@@ -2172,7 +2309,11 @@
                 if (lossEntries.length > 0) {
                     lossHtml += `<h3>Förluster</h3><table class="summary-table">`;
                     lossEntries.forEach(entry => {
-                        lossHtml += `<tr><td>${entry.name}</td><td class="numeric-value">${Math.round(entry.ml)} ml</td></tr>`;
+                        let text = `<tr><td>${entry.name}</td><td class="numeric-value">${Math.round(entry.ml)} ml</td></tr>`;
+                        if (entry.name === 'Diures') {
+                            text = `<tr><td>${entry.name}</td><td class="numeric-value">${Math.round(entry.ml)} ml (${this.state.avgHourlyDiuresis.toFixed(2)} ml/kg/h)</td></tr>`;
+                        }
+                        lossHtml += text;
                     });
                     lossHtml += '</table>';
                 }
