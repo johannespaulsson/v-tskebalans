@@ -473,6 +473,11 @@
             align-items: center;
             gap: 5px;
         }
+        .input-with-tooltip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
         .label-with-tooltip label {
             margin-bottom: 0; /* Remove default margin from label inside this container */
@@ -1311,7 +1316,6 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="calculationsModalOverlay">×</button>
             <h2>Beräkningar & Referensvärden</h2>
-            <p style="font-size: 0.85rem; margin-bottom: 10px;">Kalorier beräknas genom att multiplicera den angivna <strong>mängden (ml)</strong> med ett specifikt <strong>kcal/ml-värde</strong> för respektive vätska/produkt. Värden för "Övrig vätska", "Övrigt läkemedel" och "Sondmat övrig" är 0 kcal/ml som standard om inget annat anges.</p>
             <!-- New class for modal's inner grid to handle 3 columns -->
             <div class="grid-container modal-three-column-grid">
                 <div class="grid-column-item">
@@ -1370,6 +1374,7 @@
                     <div class="grid-item">
                         <label for="desiredBalanceTomorrow">Önskad vätskebalans (ml) fram till klockan 06:00 nästa dygn:</label>
                         <input type="text" id="desiredBalanceTomorrow" value="" placeholder="">
+                        <p style="font-size: 0.75rem; margin-top: 4px; color: #666;">*Lämna tomt eller ange 0 för att sikta på nollbalans.*</p>
                     </div>
                     <div class="grid-item">
                         <label for="diuresisCalcTime">Beräkning från klockslag:</label>
@@ -1618,7 +1623,7 @@
                 },
                 bloodProduct: {
                     containerId: 'bloodProductEntriesContainer',
-                    template: (id) => `<div class="blood-product-entry-row" data-id="${id}" data-type="bloodProduct"><div class="grid-item"><select class="select-main"></select></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="blood-product-entry-row" data-id="${id}" data-type="bloodProduct"><div class="grid-item"><select class="select-main"></select></div><div class="grid-item"><div class="input-with-tooltip"><input type="text" class="ml-input" value="" placeholder=""><span class="tooltip" style="display: none;"><i class="fas fa-info-circle"></i><span class="tooltiptext">Volymen för en enhet trombocyter är oftast cirka 200 ml, men kan variera. Kontrollera påsen.</span></span></div></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
                     populateSelect: (select) => app.populateSelect(select, 'bloodProduct')
                 },
                 tpnSondmat: {
@@ -1652,10 +1657,10 @@
                 },
                 bloodProduct: { placeholder: 'Välj blodprodukt', options: ['Erytrocyter', 'Trombocyter', 'Plasma'] },
                 tpnSondmat: {
-                    placeholder: 'Välj TPN/Sondmat/Peroralt', customOption: 'Sondmat övrig',
+                    placeholder: 'Välj TPN/Sondmat/Peroralt', customOption: 'Övrigt',
                     options: [{ name: "Peroralt intag", kcal: 0 }],
                     categories: {
-                        "TPN/Sondmat": [{ name: "Vatten i sond", kcal: 0 }, { name: "Sondmat övrig", kcal: 0 }, { name: "Smof Kabiven 900 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1100 kcal", kcal: 1.12 }, { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68 }, { name: "Smof Kabiven 1350 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1600 kcal", kcal: 1.08 }, { name: "Smof Kabiven 1800 extra nitrogen", kcal: 1.1 }, { name: "Smof Kabiven 2200 kcal", kcal: 1.12 }, { name: "Sondmat Fresubin 2 kcal HP", kcal: 2.0 }, { name: "Sondmat Fresubin Original", kcal: 1 }, { name: "Sondmat Isosource standardfibre", kcal: 1 }]
+                        "TPN/Sondmat": [{ name: "Vatten i sond", kcal: 0 }, { name: "Övrigt", kcal: 0 }, { name: "Smof Kabiven 900 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1100 kcal", kcal: 1.12 }, { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68 }, { name: "Smof Kabiven 1350 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1600 kcal", kcal: 1.08 }, { name: "Smof Kabiven 1800 extra nitrogen", kcal: 1.1 }, { name: "Smof Kabiven 2200 kcal", kcal: 1.12 }, { name: "Sondmat Fresubin 2 kcal HP", kcal: 2.0 }, { name: "Sondmat Fresubin Original", kcal: 1 }, { name: "Sondmat Isosource standardfibre", kcal: 1 }]
                     }
                 },
                 loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Kräkning', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä', 'VAC-pump'] }
@@ -1781,14 +1786,23 @@
                     }
                     if (target.classList.contains('select-main')) {
                         const configData = this.data[row.dataset.type];
-                        const showCustom = target.value === configData.customOption || (configData.customOption2 && target.value === configData.customOption2);
-                        this.toggleCustomInput(target.parentElement, showCustom);
+                        if (configData.customOption || configData.customOption2) {
+                            const showCustom = target.value === configData.customOption || (configData.customOption2 && target.value === configData.customOption2);
+                            this.toggleCustomInput(target.closest('.custom-input-wrapper') || target.parentElement, showCustom);
+                        }
                         
                         const selectedOption = target.options[target.selectedIndex];
                         const defaultMl = selectedOption.dataset.defaultMl;
                         const mlInput = row.querySelector('.ml-input');
                         if (defaultMl && mlInput) {
                             mlInput.value = defaultMl;
+                        }
+
+                        if (row.dataset.type === 'bloodProduct') {
+                            const tooltipSpan = row.querySelector('.tooltip');
+                            if (tooltipSpan) {
+                                tooltipSpan.style.display = target.value === 'Trombocyter' ? 'inline-block' : 'none';
+                            }
                         }
                     }
                 }
@@ -1882,6 +1896,7 @@
                 parent.appendChild(option);
             },
             toggleCustomInput(wrapper, showCustom) {
+                if (!wrapper) return;
                 const select = wrapper.querySelector('.select-main');
                 const input = wrapper.querySelector('.custom-input');
                 const button = wrapper.querySelector('.cancel-custom-input');
