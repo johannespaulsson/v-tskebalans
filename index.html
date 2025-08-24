@@ -1474,6 +1474,12 @@
                         </tr>
                     </tbody>
                 </table>
+                 <div class="grid-item" style="margin-top: 15px; text-align: center;">
+                    <label for="includeDiuresisGoalInPrint" style="display: inline-flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="includeDiuresisGoalInPrint">
+                        Inkludera diuresbehov i utskriften
+                    </label>
+                </div>
             </div>
 
             <button data-action="closeModal" data-target="diuresisCalculatorModalOverlay" class="add-button" style="margin-top: 15px;">Tillbaka till Vätskebalans</button>
@@ -1551,7 +1557,6 @@
                 <div id="print-details-intake"></div>
                 <div id="print-details-loss"></div>
             </div>
-
 
             <!-- Utskriftsknapp -->
             <button class="add-button" style="margin-top: 20px;" data-action="print">Skriv ut</button>
@@ -1660,7 +1665,7 @@
                     placeholder: 'Välj TPN/Sondmat/Peroralt', customOption: 'Övrigt',
                     options: [{ name: "Peroralt intag", kcal: 0 }],
                     categories: {
-                        "TPN/Sondmat": [{ name: "Vatten i sond", kcal: 0 }, { name: "Övrigt", kcal: 0 }, { name: "Smof Kabiven 900 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1100 kcal", kcal: 1.12 }, { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68 }, { name: "Smof Kabiven 1350 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1600 kcal", kcal: 1.08 }, { name: "Smof Kabiven 1800 extra nitrogen", kcal: 1.1 }, { name: "Smof Kabiven 2200 kcal", kcal: 1.12 }, { name: "Sondmat Fresubin 2 kcal HP", kcal: 2.0 }, { name: "Sondmat Fresubin Original", kcal: 1 }, { name: "Sondmat Isosource standardfibre", kcal: 1 }]
+                        "TPN/Sondmat": [{ name: "Vatten i sond", kcal: 0 }, { name: "Smof Kabiven 900 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1100 kcal", kcal: 1.12 }, { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68 }, { name: "Smof Kabiven 1350 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1600 kcal", kcal: 1.08 }, { name: "Smof Kabiven 1800 extra nitrogen", kcal: 1.1 }, { name: "Smof Kabiven 2200 kcal", kcal: 1.12 }, { name: "Sondmat Fresubin 2 kcal HP", kcal: 2.0 }, { name: "Sondmat Fresubin Original", kcal: 1 }, { name: "Sondmat Isosource standardfibre", kcal: 1 }]
                     }
                 },
                 loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Kräkning', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä', 'VAC-pump'] }
@@ -2244,6 +2249,7 @@
 
                 const intakeContainer = document.getElementById('print-details-intake');
                 const lossContainer = document.getElementById('print-details-loss');
+
                 if(!intakeContainer || !lossContainer) return;
                 
                 let intakeHtml = '';
@@ -2331,6 +2337,34 @@
                         lossHtml += text;
                     });
                     lossHtml += '</table>';
+                }
+
+                // --- DIURESIS GOAL ---
+                if (document.getElementById('includeDiuresisGoalInPrint').checked) {
+                    const calcTime = document.getElementById('diuresisCalcTime').value;
+                    const currentNetBalance = document.getElementById('summaryBalanceTillNow').textContent;
+                    const futureSingleIntake = parseFloat(document.getElementById('summaryPlannedSingleIntakeSummary').textContent) || 0;
+                    const futureHourlyIntake = parseFloat(document.getElementById('summaryPlannedHourlyIntakeTotal').textContent) || 0;
+                    const totalFutureIntake = futureSingleIntake + futureHourlyIntake;
+                    const futureSingleLoss = parseFloat(document.getElementById('summaryPlannedSingleLossesSummary').textContent) || 0;
+                    const futurePerspiratio = parseFloat(document.getElementById('summaryExpectedPerspiratioRemainingSummary').textContent) || 0;
+                    const totalFutureLoss = futureSingleLoss + futurePerspiratio;
+                    const desiredBalance = document.getElementById('summaryDesiredBalanceTomorrowSummary').textContent;
+                    const diuresisNeedPerHour = document.getElementById('diuresisNeedPerHour').textContent;
+                    const remainingHours = document.getElementById('summaryRemainingHoursFuture').textContent;
+                    const diuresisNeedTotal = parseFloat(diuresisNeedPerHour) * parseFloat(remainingHours);
+
+                    lossHtml += `
+                        <h3 style="margin-top: 20px;">Plan för att nå vätskebalansmål (från kl. ${calcTime})</h3>
+                        <table class="summary-table">
+                            <tr><td>Nuvarande nettobalans:</td><td class="numeric-value">${currentNetBalance} ml</td></tr>
+                            <tr><td>(+) Förväntad framtida tillförsel:</td><td class="numeric-value">${Math.round(totalFutureIntake)} ml</td></tr>
+                            <tr><td>(-) Förväntade framtida förluster (exkl. diures):</td><td class="numeric-value">${Math.round(totalFutureLoss)} ml</td></tr>
+                            <tr><td>(-) Önskad nettobalans kl 06:00:</td><td class="numeric-value">${desiredBalance} ml</td></tr>
+                            <tr class="highlight-row-print"><td><strong>(=) Totalt diuresbehov (återstående tid):</strong></td><td class="numeric-value"><strong>${Math.round(diuresisNeedTotal)} ml</strong></td></tr>
+                            <tr><td><em>Motsvarar:</em></td><td class="numeric-value"><em>${diuresisNeedPerHour} ml/h i ${remainingHours} timmar</em></td></tr>
+                        </table>
+                    `;
                 }
 
                 intakeContainer.innerHTML = intakeHtml;
