@@ -618,6 +618,11 @@
             border-collapse: collapse;
             font-size: 0.7rem; /* Smaller text for tables to fit 3 columns */
         }
+        .modal-content td.cell-with-tooltip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .modal-content th, .modal-content td {
             border: 1px solid #eee;
             padding: 4px; /* Reduced padding for table cells */
@@ -1571,6 +1576,7 @@
             <h2>Ändringslogg / Versioner</h2>
             <h3>Version 2.2</h3>
             <ul>
+                <li><b>Justerat kaloriantal för propofol och lagt till källhänvisning.</b></li>
                 <li><b>Förbättrad användarvänlighet med tooltips.</b></li>
                 <li><b>Smidigare inmatning för "Övrigt".</b></li>
                 <li><b>Tydligare standardvärden.</b></li>
@@ -1654,7 +1660,7 @@
                 medicine: {
                     placeholder: 'Välj läkemedelsvätska', customOption: 'Övrigt läkemedel',
                     categories: {
-                        "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 1.1 }, { name: "Propofol 20mg/ml", kcal: 1.33 }, { name: "Remifentanil", kcal: 0 }],
+                        "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 0.9 }, { name: "Propofol 20mg/ml", kcal: 0.9 }, { name: "Remifentanil", kcal: 0 }],
                         "Antibiotika": [{ name: "Pip/Taz 4g x 3", kcal: 0, defaultMl: 60 }, { name: "Övrig Antibiotika", kcal: 0 }, { name: "Kaspofungin", kcal: 0, defaultMl: 250 }],
                         "Vasoaktiva": [{ name: "Adrenalin", kcal: 0 }, { name: "Argipressin", kcal: 0 }, { name: "Dobutamin", kcal: 0 }, { name: "Levosimendan", kcal: 0.2 }, { name: "Milrinon", kcal: 0 }, { name: "Noradrenalin", kcal: 0 }],
                         "Övrigt": [{ name: "Amiodarone", kcal: 0.2 }, { name: "EDA", kcal: 0 }, { name: "Kalium/Kaliumklorid", kcal: 0 }, { name: "Lispro", kcal: 0 }, { name: "Paracetamol", kcal: 0 }]
@@ -2219,7 +2225,11 @@
                     uniqueItems.forEach(item => {
                         const name = item.name || item;
                         const kcal = item.kcal ?? 0;
-                        tbody.innerHTML += `<tr><td>${name}</td><td style="text-align:right;">${kcal}</td></tr>`;
+                        let tooltipHtml = '';
+                        if (name.includes('Propofol')) {
+                            tooltipHtml = `<span class="tooltip" style="margin-left: 5px;"><i class="fas fa-info-circle"></i><span class="tooltiptext">Källa: ePed</span></span>`;
+                        }
+                        tbody.innerHTML += `<tr><td class="cell-with-tooltip"><span>${name}</span>${tooltipHtml}</td><td style="text-align:right;">${kcal}</td></tr>`;
                     });
 
                     table.appendChild(tbody);
