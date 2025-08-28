@@ -1229,7 +1229,7 @@
                     </select>
                 </div>
                 <div class="grid-item">
-                    <label for="maxTemp">Maxtemperatur under dygnet (°C):</label>
+                    <label for="maxTemp">Medeltemperatur under dygnet (°C):</label>
                     <input type="text" id="maxTemp" value="37.0" placeholder="t.ex. 38.5">
                 </div>
                 <div class="grid-item">
@@ -1332,7 +1332,7 @@
                         <li><strong>500 ml:</strong> Vid viss befuktning (NIV/aktiv befuktning, HFNC)</li>
                         <li><strong>400 ml:</strong> Vid optimal befuktning (Intuberad/aktiv befuktning)</li>
                     </ul>
-                    <p><strong>Temperaturjustering:</strong><br>Beräkningen baseras på patientens maxtemperatur under dygnet. En faktor beräknas enligt `1 + (Maxtemp - 37) * 0.25`. Vid extrem kroppstemperatur används en fast faktor (0.5 vid &lt;35°C och 2.0 vid &gt;41°C).</p>
+                    <p><strong>Temperaturjustering:</strong><br>Beräkningen baseras på patientens medeltemperatur under dygnet. En faktor beräknas enligt `1 + (Medeltemp - 37) * 0.25`. Vid extrem kroppstemperatur används en fast faktor (0.5 vid &lt;35°C och 2.0 vid &gt;41°C).</p>
                     <p><strong>Gränsvärden:</strong><br>Beräkning sker ej om patientens ålder är under 15 år eller vikt är under 50 kg. Perspiratio sätts då till 0 ml.</p>
                 </div>
                 <div class="grid-column-item">
