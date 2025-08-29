@@ -618,11 +618,6 @@
             border-collapse: collapse;
             font-size: 0.7rem; /* Smaller text for tables to fit 3 columns */
         }
-        .modal-content td.cell-with-tooltip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
         .modal-content th, .modal-content td {
             border: 1px solid #eee;
             padding: 4px; /* Reduced padding for table cells */
@@ -954,7 +949,7 @@
             .summary-table,
             .summary-table th,
             .summary-table td {
-                font-size: 0.9em !important;
+                font-size: 1.0em !important;
             }
 
             /* Page breaks for tables if necessary */
@@ -1574,13 +1569,15 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
-            <h3>Version 2.2</h3>
+            <h3>Version 2.3</h3>
             <ul>
-                <li><b>Justerat kaloriantal för propofol och lagt till källhänvisning.</b></li>
+                <li><b>Ökat teckenstorleken i utskrift.</b></li>
+                <li><b>Ändrat från maxtemperatur till medeltemperatur i perspiratioberäkningen.</b></li>
                 <li><b>Förbättrad användarvänlighet med tooltips.</b></li>
                 <li><b>Smidigare inmatning för "Övrigt".</b></li>
                 <li><b>Tydligare standardvärden.</b></li>
                 <li><b>Utökad utskrift med timdiures.</b></li>
+                <li><b>Justerat kaloriantal för propofol och lagt till källhänvisning.</b></li>
             </ul>
             <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johpa15@vgregion.se</p>
         </div>
@@ -1600,7 +1597,7 @@
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 2.2 - Ändringslogg
+            Version 2.3 - Ändringslogg
         </span>
     </footer>
 
@@ -2192,10 +2189,8 @@
                     const dataSet = this.data[mapping.key];
                     const items = [];
 
-                    // Add custom options first if they exist
                     if (dataSet.customOption) items.push({ name: dataSet.customOption, kcal: 0 });
                     if (dataSet.customOption2) items.push({ name: dataSet.customOption2, kcal: 0 });
-                    // Add options if they exist
                     if (dataSet.options) {
                         dataSet.options.forEach(opt => {
                             if (typeof opt === 'object') {
@@ -2205,17 +2200,14 @@
                             }
                         });
                     }
-                    // Add categorized items
                     if (dataSet.categories) {
                         for (const cat in dataSet.categories) {
                             items.push(...dataSet.categories[cat]);
                         }
                     }
                     
-                    // Sort items alphabetically for better readability
                     items.sort((a, b) => (a.name || a).localeCompare(b.name || b));
 
-                    // Remove duplicates
                     const uniqueItems = items.filter((item, index, self) =>
                         index === self.findIndex((t) => (
                             (t.name || t) === (item.name || item)
@@ -2227,9 +2219,13 @@
                         const kcal = item.kcal ?? 0;
                         let tooltipHtml = '';
                         if (name.includes('Propofol')) {
-                            tooltipHtml = `<span class="tooltip" style="margin-left: 5px;"><i class="fas fa-info-circle"></i><span class="tooltiptext">Källa: ePed</span></span>`;
+                            tooltipHtml = `
+                                <span class="tooltip">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span class="tooltiptext">Källa: ePed</span>
+                                </span>`;
                         }
-                        tbody.innerHTML += `<tr><td class="cell-with-tooltip"><span>${name}</span>${tooltipHtml}</td><td style="text-align:right;">${kcal}</td></tr>`;
+                        tbody.innerHTML += `<tr><td>${name} ${tooltipHtml}</td><td style="text-align:right;">${kcal}</td></tr>`;
                     });
 
                     table.appendChild(tbody);
@@ -2264,6 +2260,7 @@
                 
                 let intakeHtml = '';
                 let lossHtml = '';
+                let diuresisGoalHtml = '';
 
                 // --- INTAKE ---
                 const intakeSections = [
@@ -2351,34 +2348,30 @@
 
                 // --- DIURESIS GOAL ---
                 if (document.getElementById('includeDiuresisGoalInPrint').checked) {
-                    const calcTime = document.getElementById('diuresisCalcTime').value;
-                    const currentNetBalance = document.getElementById('summaryBalanceTillNow').textContent;
-                    const futureSingleIntake = parseFloat(document.getElementById('summaryPlannedSingleIntakeSummary').textContent) || 0;
-                    const futureHourlyIntake = parseFloat(document.getElementById('summaryPlannedHourlyIntakeTotal').textContent) || 0;
-                    const totalFutureIntake = futureSingleIntake + futureHourlyIntake;
-                    const futureSingleLoss = parseFloat(document.getElementById('summaryPlannedSingleLossesSummary').textContent) || 0;
-                    const futurePerspiratio = parseFloat(document.getElementById('summaryExpectedPerspiratioRemainingSummary').textContent) || 0;
-                    const totalFutureLoss = futureSingleLoss + futurePerspiratio;
-                    const desiredBalance = document.getElementById('summaryDesiredBalanceTomorrowSummary').textContent;
+                    const currentBalance = this.state.netBalanceMl;
+                    const futureIntake = (parseFloat(document.getElementById('plannedSingleIntake').value) || 0) + 
+                                         ((parseFloat(document.getElementById('plannedHourlyIntake').value) || 0) * this.calculateDurationInHours(document.getElementById('diuresisCalcTime').value, '06:00'));
+                    const futureLoss = (parseFloat(document.getElementById('plannedSingleLosses').value) || 0) + 
+                                       (parseFloat(document.getElementById('expectedPerspiratioRemaining').value) || 0);
+                    const desiredBalance = parseFloat(document.getElementById('desiredBalanceTomorrow').value) || 0;
                     const diuresisNeedPerHour = document.getElementById('diuresisNeedPerHour').textContent;
-                    const remainingHours = document.getElementById('summaryRemainingHoursFuture').textContent;
+                    const remainingHours = this.calculateDurationInHours(document.getElementById('diuresisCalcTime').value, '06:00').toFixed(1);
                     const diuresisNeedTotal = parseFloat(diuresisNeedPerHour) * parseFloat(remainingHours);
 
-                    lossHtml += `
-                        <h3 style="margin-top: 20px;">Plan för att nå vätskebalansmål (från kl. ${calcTime})</h3>
+                    diuresisGoalHtml = `
+                        <h3>Plan för att nå vätskebalansmål (från kl. ${document.getElementById('diuresisCalcTime').value})</h3>
                         <table class="summary-table">
-                            <tr><td>Nuvarande nettobalans:</td><td class="numeric-value">${currentNetBalance} ml</td></tr>
-                            <tr><td>(+) Förväntad framtida tillförsel:</td><td class="numeric-value">${Math.round(totalFutureIntake)} ml</td></tr>
-                            <tr><td>(-) Förväntade framtida förluster (exkl. diures):</td><td class="numeric-value">${Math.round(totalFutureLoss)} ml</td></tr>
-                            <tr><td>(-) Önskad nettobalans kl 06:00:</td><td class="numeric-value">${desiredBalance} ml</td></tr>
-                            <tr class="highlight-row-print"><td><strong>(=) Totalt diuresbehov (återstående tid):</strong></td><td class="numeric-value"><strong>${Math.round(diuresisNeedTotal)} ml</strong></td></tr>
+                            <tr><td>Nuvarande nettobalans:</td><td class="numeric-value">${Math.round(currentBalance)} ml</td></tr>
+                            <tr><td>+ Förväntad framtida tillförsel:</td><td class="numeric-value">${Math.round(futureIntake)} ml</td></tr>
+                            <tr><td>- Förväntade framtida förluster (exkl. diures):</td><td class="numeric-value">${Math.round(futureLoss)} ml</td></tr>
+                            <tr><td>- Önskad nettobalans kl 06:00:</td><td class="numeric-value">${Math.round(desiredBalance)} ml</td></tr>
+                            <tr class="highlight-row-print"><td><strong>= Totalt diuresbehov (återstående tid):</strong></td><td class="numeric-value"><strong>${Math.round(diuresisNeedTotal)} ml</strong></td></tr>
                             <tr><td><em>Motsvarar:</em></td><td class="numeric-value"><em>${diuresisNeedPerHour} ml/h i ${remainingHours} timmar</em></td></tr>
-                        </table>
-                    `;
+                        </table>`;
                 }
 
                 intakeContainer.innerHTML = intakeHtml;
-                lossContainer.innerHTML = lossHtml;
+                lossContainer.innerHTML = lossHtml + diuresisGoalHtml;
             },
             collectFormData() {
                 const data = { patientInfo: {}, fluidEntries: [], medicineEntries: [], bloodProductEntries: [], tpnSondmatEntries: [], lossEntries: [], perspiratioCalc: {}, diuresisCalc: {} };
@@ -2527,3 +2520,4 @@
     </script>
 </body>
 </html>
+
