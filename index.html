@@ -1507,7 +1507,7 @@
                             <td id="printDailyWeight" class="numeric-value"></td>
                         </tr>
                         <tr>
-                            <td>Idealvikt (beräknad/justerad):</td>
+                            <td id="printIdealWeightLabel">Idealvikt (beräknad/justerad):</td>
                             <td id="printIdealWeight" class="numeric-value"></td>
                         </tr>
                         <tr>
@@ -1969,13 +1969,13 @@
                 let idealWeight = (gender === 'Man') ? (50 + 0.91 * (height - 152.4)) : (45.5 + 0.91 * (height - 152.4));
                 idealWeight = Math.round(idealWeight * 10) / 10;
                 let displayWeight = idealWeight;
-                let isAdjusted = false;
+                this.state.adjustedWeight = false; // Reset before check
                 if (dailyWeight > (idealWeight * 1.20)) {
                     displayWeight = idealWeight + 0.4 * (dailyWeight - idealWeight);
-                    isAdjusted = true;
+                    this.state.adjustedWeight = true;
                 }
                 idealWeightInput.value = (Math.round(displayWeight * 10) / 10).toFixed(1);
-                notice.style.display = isAdjusted ? 'inline' : 'none';
+                notice.style.display = this.state.adjustedWeight ? 'inline' : 'none';
             },
             _calculatePerspiratioLogic(durationInHours) {
                 const isUnder15 = document.getElementById('isUnder15').value === 'yes';
@@ -2243,7 +2243,20 @@
                 
                 document.getElementById('printInitialWeight').textContent = `${this.state.initialWeight.toFixed(1)} kg`;
                 document.getElementById('printDailyWeight').textContent = `${this.state.dailyWeight.toFixed(1)} kg`;
-                document.getElementById('printIdealWeight').textContent = `${document.getElementById('idealWeight').value} kg ${this.state.adjustedWeight ? '(Justerad)' : ''}`;
+                
+                const idealWeightValue = document.getElementById('idealWeight').value;
+                const printIdealWeightLabelElement = document.getElementById('printIdealWeightLabel');
+                const printIdealWeightValueElement = document.getElementById('printIdealWeight');
+                const idealWeightRow = printIdealWeightValueElement.parentElement; // This gets the <tr>
+
+                if (idealWeightValue && !isNaN(parseFloat(idealWeightValue))) {
+                    idealWeightRow.style.display = ''; // or 'table-row' to be specific
+                    printIdealWeightLabelElement.textContent = this.state.adjustedWeight ? 'Justerad idealvikt:' : 'Beräknad idealvikt:';
+                    printIdealWeightValueElement.textContent = `${idealWeightValue} kg`;
+                } else {
+                    idealWeightRow.style.display = 'none';
+                }
+                
                 document.getElementById('printWeightDifference').textContent = `${this.state.weightDifferenceKg.toFixed(1)} kg`;
                 document.getElementById('printCumulativeBalancePrev').textContent = `${document.getElementById('cumulativeBalancePrev').value} ml`;
 
@@ -2259,8 +2272,7 @@
                 if(!intakeContainer || !lossContainer) return;
                 
                 let intakeHtml = '';
-                let lossHtml = '';
-                let diuresisGoalHtml = '';
+                let lossAndGoalHtml = '';
 
                 // --- INTAKE ---
                 const intakeSections = [
@@ -2335,15 +2347,15 @@
                 }
 
                 if (lossEntries.length > 0) {
-                    lossHtml += `<h3>Förluster</h3><table class="summary-table">`;
+                    lossAndGoalHtml += `<h3>Förluster</h3><table class="summary-table">`;
                     lossEntries.forEach(entry => {
                         let text = `<tr><td>${entry.name}</td><td class="numeric-value">${Math.round(entry.ml)} ml</td></tr>`;
                         if (entry.name === 'Diures') {
                             text = `<tr><td>${entry.name}</td><td class="numeric-value">${Math.round(entry.ml)} ml (${this.state.avgHourlyDiuresis.toFixed(2)} ml/kg/h)</td></tr>`;
                         }
-                        lossHtml += text;
+                        lossAndGoalHtml += text;
                     });
-                    lossHtml += '</table>';
+                    lossAndGoalHtml += '</table>';
                 }
 
                 // --- DIURESIS GOAL ---
@@ -2358,7 +2370,7 @@
                     const remainingHours = this.calculateDurationInHours(document.getElementById('diuresisCalcTime').value, '06:00').toFixed(1);
                     const diuresisNeedTotal = parseFloat(diuresisNeedPerHour) * parseFloat(remainingHours);
 
-                    diuresisGoalHtml = `
+                    lossAndGoalHtml += `
                         <h3>Plan för att nå vätskebalansmål (från kl. ${document.getElementById('diuresisCalcTime').value})</h3>
                         <table class="summary-table">
                             <tr><td>Nuvarande nettobalans:</td><td class="numeric-value">${Math.round(currentBalance)} ml</td></tr>
@@ -2371,7 +2383,7 @@
                 }
 
                 intakeContainer.innerHTML = intakeHtml;
-                lossContainer.innerHTML = lossHtml + diuresisGoalHtml;
+                lossContainer.innerHTML = lossAndGoalHtml;
             },
             collectFormData() {
                 const data = { patientInfo: {}, fluidEntries: [], medicineEntries: [], bloodProductEntries: [], tpnSondmatEntries: [], lossEntries: [], perspiratioCalc: {}, diuresisCalc: {} };
@@ -2520,6 +2532,4 @@
     </script>
 </body>
 </html>
-
-
 
