@@ -1095,10 +1095,10 @@
             <div class="grid-item">
                 <div class="label-with-tooltip">
                     <label for="pressureSets">Antal tryckset:</label>
-                     <span class="tooltip">
-                        <i class="fas fa-info-circle"></i>
-                        <span class="tooltiptext">Varje tryckset beräknas ge 3 ml/timme. Ett CVP-set räknas som två tryckset.</span>
-                    </span>
+                       <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Varje tryckset beräknas ge 3 ml/timme. Ett CVP-set räknas som två tryckset.</span>
+                       </span>
                 </div>
                 <div class="number-input-buttons">
                     <button data-action="changeNumber" data-target="pressureSets" data-delta="-1"><i class="fas fa-minus"></i></button>
@@ -1505,6 +1505,10 @@
                         <tr>
                             <td>Dagens vikt:</td>
                             <td id="printDailyWeight" class="numeric-value"></td>
+                        </tr>
+                        <tr>
+                            <td>Längd:</td>
+                            <td id="printHeight" class="numeric-value"></td>
                         </tr>
                         <tr>
                             <td id="printIdealWeightLabel">Idealvikt (beräknad/justerad):</td>
@@ -2031,6 +2035,7 @@
             calculateTotals() {
                 this.state.dailyWeight = parseFloat(document.getElementById('dailyWeight').value) || 0;
                 this.state.initialWeight = parseFloat(document.getElementById('initialWeight').value) || 0;
+                this.state.height = parseFloat(document.getElementById('height').value) || 0;
 
                 Object.assign(this.state, {
                     totalIntakeMl: 0, totalIntakeKcal: 0, totalLossMl: 0,
@@ -2243,6 +2248,7 @@
                 
                 document.getElementById('printInitialWeight').textContent = `${this.state.initialWeight.toFixed(1)} kg`;
                 document.getElementById('printDailyWeight').textContent = `${this.state.dailyWeight.toFixed(1)} kg`;
+                document.getElementById('printHeight').textContent = `${this.state.height.toFixed(0)} cm`;
                 
                 const idealWeightValue = document.getElementById('idealWeight').value;
                 const printIdealWeightLabelElement = document.getElementById('printIdealWeightLabel');
@@ -2532,4 +2538,3 @@
     </script>
 </body>
 </html>
-
