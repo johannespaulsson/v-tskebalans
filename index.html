@@ -7,13 +7,70 @@
     <!-- Länkar till Font Awesome för ikoner -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* --- CSS Variabler för färgteman --- */
+        :root {
+            --bg-body: #f4f4f4;
+            --bg-container: #fff;
+            --bg-item: #fcfcfc;
+            --bg-column: #f9f9f9;
+            --text-main: #333;
+            --text-label: #555;
+            --border-color: #e5e5e5;
+            --input-bg: #fff;
+            --input-text: #333;
+            --input-border: #ccc;
+            --primary-color: #1a73e8;
+            --heading-border: #ddd;
+            
+            /* Statusfärger (Light Mode) */
+            --important-bg: #fff5f5;
+            --important-border: #ffdddd;
+            --filled-bg: #f5fff5;
+            --filled-border: #ddffdd;
+            --calculated-bg: #ffffff;
+            
+            /* Modal och tabell */
+            --modal-th-bg: #e9e9e9;
+            --table-stripe: #f5f5f5;
+            --category-bg: #e0e0e0;
+        }
+
+        /* Mörkt läge variabler */
+        body.dark-mode {
+            --bg-body: #121212;
+            --bg-container: #1e1e1e;
+            --bg-item: #2d2d2d;
+            --bg-column: #252525;
+            --text-main: #e0e0e0;
+            --text-label: #bbb;
+            --border-color: #444;
+            --input-bg: #333;
+            --input-text: #fff;
+            --input-border: #555;
+            --primary-color: #64b5f6; /* Ljusare blå för mörk bakgrund */
+            --heading-border: #444;
+
+            /* Statusfärger (Dark Mode) */
+            --important-bg: #3a2a2a;
+            --important-border: #5c3a3a;
+            --filled-bg: #2a3a2a;
+            --filled-border: #3a5c3a;
+            --calculated-bg: #2c2c2c;
+
+            /* Modal och tabell */
+            --modal-th-bg: #333;
+            --table-stripe: #2a2a2a;
+            --category-bg: #444;
+        }
+
         /* Grundläggande stil för body */
         body {
             font-family: 'Inter', sans-serif;
             margin: 5px;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: var(--bg-body);
+            color: var(--text-main);
             font-size: 0.9rem;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* Ny stil för att förhindra scrolling på body när modal är öppen */
@@ -25,16 +82,17 @@
         .container {
             max-width: 900px;
             margin: 0 auto;
-            background-color: #fff;
+            background-color: var(--bg-container);
             padding: 8px;
             border-radius: 8px;
             box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+            transition: background-color 0.3s;
         }
 
         /* Stil för rubriker */
         h2 {
-            color: #1a73e8;
-            border-bottom: 1px solid #1a73e8;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--primary-color);
             padding-bottom: 4px;
             margin-top: 0;
             margin-bottom: 8px;
@@ -59,25 +117,25 @@
         /* Stil för varje rutnätsartikel (enkel inmatningsgrupp) */
         .grid-item {
             margin-bottom: 8px;
-            background-color: #fcfcfc;
+            background-color: var(--bg-item);
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--border-color);
         }
 
         /* Stil för de yttre kolumnerna inom 2-kolumns rutnät */
         .grid-column-item {
-            background-color: #f9f9f9;
+            background-color: var(--bg-column);
             padding: 12px;
             border-radius: 6px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
         .grid-column-item h3 {
-            color: #1a73e8;
-            border-bottom: 1px solid #ddd;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--heading-border);
             padding-bottom: 3px;
             margin-top: 0;
             margin-bottom: 6px;
@@ -90,7 +148,7 @@
             display: block;
             margin-bottom: 4px;
             font-weight: 600;
-            color: #555;
+            color: var(--text-label);
             font-size: 0.85rem;
         }
 
@@ -101,7 +159,9 @@
         .grid-item select {
             width: calc(100% - 10px);
             padding: 6px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--input-text);
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 0.9rem;
@@ -112,7 +172,7 @@
 
         .grid-item input:focus,
         .grid-item select:focus {
-            border-color: #1a73e8;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
             outline: none;
         }
@@ -128,7 +188,7 @@
         }
         .input-group button {
             padding: 6px 10px;
-            background-color: #1a73e8;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
@@ -148,13 +208,13 @@
 
         /* Stil för "viktigt input"-markering (ljusrosa bakgrund) */
         .important-input {
-            background-color: #fff5f5;
-            border-color: #ffdddd;
+            background-color: var(--important-bg) !important;
+            border-color: var(--important-border) !important;
         }
         /* Stil för "fyllt input"-markering (ljusgrön bakgrund) */
         .filled-input {
-            background-color: #f5fff5;
-            border-color: #ddffdd;
+            background-color: var(--filled-bg) !important;
+            border-color: var(--filled-border) !important;
         }
 
         /* Stil för numeriska inmatningar med plus/minus-knappar */
@@ -199,8 +259,9 @@
 
         /* Stil för det automatiskt beräknade Kcal-fältet */
         .calculated-output {
-            background-color: #ffffff;
-            border-color: #ccc;
+            background-color: var(--calculated-bg) !important;
+            border-color: var(--input-border);
+            color: var(--input-text);
         }
 
         /* Stil för enskild vätskerad (Kristalloider/Kolloider & Läkemedelsvätskor) */
@@ -282,7 +343,7 @@
             padding: 0 5px;
         }
         .cancel-custom-input:hover {
-            color: #333;
+            color: var(--text-main);
         }
 
         .remove-fluid-button {
@@ -341,10 +402,10 @@
             gap: 6px;
             font-weight: bold;
             padding: 4px 0;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--input-border);
             margin-bottom: 3px;
             font-size: 0.85rem;
-            color: #444;
+            color: var(--text-label);
         }
         /* Ny stil för blodprodukter tabellrubriker (utan Kcal) */
         .blood-product-table-header {
@@ -353,10 +414,10 @@
             gap: 6px;
             font-weight: bold;
             padding: 4px 0;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--input-border);
             margin-bottom: 3px;
             font-size: 0.85rem;
-            color: #444;
+            color: var(--text-label);
         }
         /* Ny stil för TPN/Sondmat tabellrubriker (med Kcal) */
         .tpn-sondmat-table-header {
@@ -365,10 +426,10 @@
             gap: 6px;
             font-weight: bold;
             padding: 4px 0;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--input-border);
             margin-bottom: 3px;
             font-size: 0.85rem;
-            color: #444;
+            color: var(--text-label);
         }
         /* Ny stil för förlust tabellrubriker (utan Kcal) */
         .loss-table-header {
@@ -377,10 +438,10 @@
             gap: 6px;
             font-weight: bold;
             padding: 4px 0;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--input-border);
             margin-bottom: 3px;
             font-size: 0.85rem;
-            color: #444;
+            color: var(--text-label);
         }
         .fluid-table-header div,
         .blood-product-table-header div,
@@ -438,6 +499,65 @@
             margin-top: 0;
             flex-grow: 1; /* Får knapparna att ta upp lika mycket plats */
         }
+
+        /* Ny stil för Local Storage knappar (Blå) */
+        .local-storage-button {
+            background-color: #007bff;
+        }
+        .local-storage-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Stilar för listan med sparade filer i modalen */
+        .saved-file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-item);
+            margin-bottom: 5px;
+            border-radius: 4px;
+            color: var(--text-main);
+        }
+        .saved-file-item:last-child {
+            border-bottom: none;
+        }
+        .saved-file-info {
+            flex-grow: 1;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .saved-file-meta {
+            font-size: 0.75rem;
+            color: var(--text-label);
+            display: block;
+            margin-top: 2px;
+        }
+        .saved-file-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .saved-file-actions button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-load {
+            background-color: #28a745;
+        }
+        .btn-load:hover {
+            background-color: #218838;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
         
         /* Nytt: Stil för Verktygsknappar */
         .tool-buttons-group {
@@ -487,7 +607,7 @@
             position: relative;
             display: inline-block;
             cursor: pointer;
-            color: #1a73e8;
+            color: var(--primary-color);
         }
 
         .tooltip .tooltiptext {
@@ -548,7 +668,7 @@
             opacity: 1;
         }
         .modal-content {
-            background-color: #fff;
+            background-color: var(--bg-container);
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
@@ -563,6 +683,7 @@
             max-height: 90vh; /* Sätter maxhöjden till 90% av viewportens höjd */
             overflow-y: auto; /* Lägger till scroll om innehållet överskrider maxhöjden */
             box-sizing: border-box; /* Inkluderar padding i höjden */
+            color: var(--text-main);
         }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
@@ -583,8 +704,8 @@
             box-sizing: border-box; /* Ensures padding/border are included in width/height */
         }
         .modal-content h3 {
-            color: #1a73e8;
-            border-bottom: 1px solid #ddd;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--heading-border);
             padding-bottom: 3px;
             margin-top: 0;
             margin-bottom: 6px;
@@ -610,7 +731,7 @@
         }
         .modal-content ul li::before {
             content: "• ";
-            color: #1a73e8;
+            color: var(--primary-color);
             padding-right: 5px;
         }
         .modal-content table {
@@ -619,20 +740,21 @@
             font-size: 0.7rem; /* Smaller text for tables to fit 3 columns */
         }
         .modal-content th, .modal-content td {
-            border: 1px solid #eee;
+            border: 1px solid var(--border-color);
             padding: 4px; /* Reduced padding for table cells */
             text-align: left;
         }
         .modal-content th {
-            background-color: #e9e9e9;
+            background-color: var(--modal-th-bg);
             font-weight: 600;
+            color: var(--text-main);
         }
         .modal-content tr:nth-child(even) {
-            background-color: #f5f5f5;
+            background-color: var(--table-stripe);
         }
         .modal-content .category-heading {
             font-weight: bold;
-            background-color: #e0e0e0;
+            background-color: var(--category-bg);
             padding: 4px 6px;
             margin-top: 8px;
             margin-bottom: 4px;
@@ -653,11 +775,11 @@
             transition-timing-function: ease;
         }
         .modal-close-button:hover {
-            color: #333;
+            color: var(--text-main);
         }
         /* Stil för den statiska Perspiratio-selecten för att säkerställa att den syns tydligt */
         #lossSelect_perspiratio_static {
-            color: #333 !important; /* Force a darker color */
+            color: var(--input-text) !important; /* Force correct text color */
             font-weight: bold; /* Make it bold */
             opacity: 1; /* Ensure full opacity */
         }
@@ -677,7 +799,7 @@
         #diuresisCalculatorModalOverlay .grid-column-item {
             padding: 12px;
             border-radius: 6px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
         }
         #diuresisCalculatorModalOverlay .diuresis-summary-table td,
         #diuresisCalculatorModalOverlay .diuresis-summary-table th {
@@ -686,11 +808,11 @@
         }
         #diuresisCalculatorModalOverlay .diuresis-summary-table .detail-row {
             font-size: 0.75rem;
-            color: #555;
+            color: var(--text-label);
             padding-left: 15px;
         }
         .highlight-row {
-            background-color: #e6ffe6; /* Light green for highlight */
+            background-color: var(--filled-bg); /* Use variable for filled bg */
             font-weight: bold;
         }
 
@@ -703,31 +825,31 @@
             table-layout: fixed; /* Nytt för jämna kolumner */
         }
         .summary-table th, .summary-table td {
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             padding: 6px 8px;
             text-align: left;
             width: 50%; /* Nytt för jämna kolumner */
         }
         .summary-table th {
-            background-color: #f2f2f2;
+            background-color: var(--modal-th-bg);
             font-weight: bold;
         }
         .summary-table tr:nth-child(even) {
-            background-color: #fff;
+            background-color: var(--bg-container);
         }
         .summary-table .numeric-value {
             text-align: right;
             font-weight: 500;
         }
         .summary-table .highlight-row-print {
-            background-color: #f0f0f0; /* Ljusgrå bakgrund för utskrift */
+            background-color: var(--category-bg); /* Variable for bg */
             font-weight: bold;
         }
         .summary-table .category-row td {
             font-weight: bold;
             padding-top: 10px;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
+            background-color: var(--bg-container);
+            border-bottom: 1px solid var(--border-color);
         }
         .summary-table .subcategory-row td {
             font-style: italic;
@@ -771,7 +893,7 @@
             font-style: italic;
         }
         .summary-info-box {
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
             height: 120px;
             margin-bottom: 15px;
             width: 100%;
@@ -795,14 +917,32 @@
             padding: 10px;
             font-size: 0.8rem;
             color: #888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
         .changelog-link {
-            color: #1a73e8;
+            color: var(--primary-color);
             text-decoration: none;
             cursor: pointer;
         }
         .changelog-link:hover {
             text-decoration: underline;
+        }
+
+        /* Stil för Tema-knapp */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-label);
+            transition: color 0.3s, transform 0.2s;
+        }
+        .theme-toggle-btn:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
         }
 
         /* Nytt: Stil för låg diures */
@@ -892,6 +1032,11 @@
                 display: none !important; /* Hide everything except the print modal overlay */
             }
 
+            body {
+                background-color: #fff !important; /* Force white background on print */
+                color: #000 !important; /* Force black text on print */
+            }
+
             #printDetailedSummaryModalOverlay {
                 position: static !important; /* Remove fixed positioning for print */
                 top: auto !important;
@@ -916,10 +1061,11 @@
                 max-height: none !important; /* No max height for print */
                 overflow-y: visible !important; /* Allow content to flow */
                 background-color: transparent !important; /* No background on print */
+                color: #000 !important;
             }
 
-            .modal-close-button, .add-button, .app-footer {
-                display: none !important; /* Hide close button, add buttons, and footer on print */
+            .modal-close-button, .add-button, .app-footer, .theme-toggle-btn {
+                display: none !important; /* Hide close button, add buttons, footer, theme toggle on print */
             }
 
             .summary-table {
@@ -932,6 +1078,8 @@
             }
             .summary-table th {
                 border-bottom: 2px solid #ccc !important;
+                background-color: #f2f2f2 !important; /* Ensure header bg in print */
+                color: #000 !important;
             }
             .summary-table tr:last-child td {
                 border-bottom: none !important;
@@ -940,16 +1088,22 @@
             /* Adjust font sizes for better print readability */
             .modal-content h2 {
                 font-size: 1.4em !important;
+                color: #000 !important;
             }
             .modal-content h3 {
                 font-size: 1.2em !important;
                 margin-top: 20px !important;
+                color: #000 !important;
             }
             .summary-info-box p,
             .summary-table,
             .summary-table th,
             .summary-table td {
                 font-size: 1.0em !important;
+            }
+
+            .highlight-row-print {
+                background-color: #f0f0f0 !important;
             }
 
             /* Page breaks for tables if necessary */
@@ -1246,11 +1400,16 @@
                 </div>
                 <button id="openCalculationsButton" data-action="openModal" data-target="calculationsModalOverlay" class="add-button">Beräkningar & Referensvärden</button>
                 <button id="openPrintSummaryButton" data-action="openModal" data-target="printDetailedSummaryModalOverlay" class="add-button">Skriv ut detaljerad sammanställning</button>
-                <!-- Nya knappar för Spara/Ladda -->
+                <!-- Knappar för Spara/Ladda fil -->
                 <div class="file-buttons-group">
                     <button id="saveToFileButton" data-action="save" class="add-button">Spara till fil</button>
                     <input type="file" id="loadFromFileInput" style="display: none;" accept=".json">
                     <button id="loadFromFileButton" data-action="load" class="add-button">Ladda från fil</button>
+                </div>
+                <!-- Knappar för Spara/Ladda lokalt i webbläsaren -->
+                <div class="file-buttons-group">
+                    <button id="saveToLocalButton" data-action="saveLocal" class="add-button local-storage-button">Spara i webbläsare</button>
+                    <button id="loadFromLocalButton" data-action="openModal" data-target="localStorageManagerModal" class="add-button local-storage-button">Hämta sparade...</button>
                 </div>
             </div>
 
@@ -1568,20 +1727,36 @@
     </div>
     <!-- END Detaljerad Sammanställning Modal -->
 
+    <!-- Nytt: Modal för Hantering av sparade filer -->
+    <div id="localStorageManagerModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" data-action="closeModal" data-target="localStorageManagerModal">×</button>
+            <h2>Sparade filer i webbläsaren</h2>
+            <div id="localStorageListContainer" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                <!-- Lista genereras här -->
+                <p style="text-align: center; color: #666; font-style: italic;">Inga sparade filer hittades.</p>
+            </div>
+            <button data-action="closeModal" data-target="localStorageManagerModal" class="add-button">Stäng</button>
+        </div>
+    </div>
+
     <!-- Nytt: Modal för Ändringslogg -->
     <div id="changelogModalOverlay" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
+            <h3>Version 2.4</h3>
+            <ul>
+                <li><b>Lagt till funktionalitet att spara i webläsarens local storage.</b></li>
+                <li><b>Lagt till mörkt läge.</b></li>
+                <li><b>Hämta från webbläsare visar nu en lista med alla sparade filer.</b></li>
+            </ul>
             <h3>Version 2.3</h3>
             <ul>
+                <li><b>Lagt till patientlängd i utskriftsvyn.</b></li>
                 <li><b>Ökat teckenstorleken i utskrift.</b></li>
                 <li><b>Ändrat från maxtemperatur till medeltemperatur i perspiratioberäkningen.</b></li>
                 <li><b>Förbättrad användarvänlighet med tooltips.</b></li>
-                <li><b>Smidigare inmatning för "Övrigt".</b></li>
-                <li><b>Tydligare standardvärden.</b></li>
-                <li><b>Utökad utskrift med timdiures.</b></li>
-                <li><b>Justerat kaloriantal för propofol och lagt till källhänvisning.</b></li>
             </ul>
             <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johpa15@vgregion.se</p>
         </div>
@@ -1601,8 +1776,11 @@
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 2.3 - Ändringslogg
+            Version 2.4 - Ändringslogg
         </span>
+        <button id="themeToggle" class="theme-toggle-btn" title="Växla mörkt läge" data-action="toggleTheme">
+            <i class="fas fa-moon"></i>
+        </button>
     </footer>
 
     <script>
@@ -1684,6 +1862,7 @@
                 this.addInitialRows();
                 this.checkInitialInputColors();
                 this.updateAllCalculations();
+                this.loadTheme();
             },
             cacheDOMElements() {
                 this.dom = {
@@ -1754,25 +1933,32 @@
                 this.dom.loadFromFileInput.addEventListener('change', this.loadDataFromFile.bind(this));
             },
             handleDelegatedClick(e) {
-                const target = e.target.closest('[data-action]');
-                if (!target) return;
-                const { action, target: targetId, delta, type } = target.dataset;
+                const targetElement = e.target.closest('[data-action]');
+                if (!targetElement) return;
+                const { action, target: targetId, delta, type } = targetElement.dataset;
                 switch (action) {
                     case 'setNow': this.setNow(targetId); break;
                     case 'changeNumber': this.changeNumber(targetId, parseInt(delta, 10)); break;
                     case 'addRow': this.addRow(type); break;
                     case 'removeRow':
-                        target.closest('[data-id]').remove();
+                        targetElement.closest('[data-id]').remove();
                         this.updateAllCalculations();
                         break;
                     case 'transferPerspiratio': this.transferPerspiratioToLoss(); break;
-                    case 'openModal': this.openModal(targetId); break;
+                    case 'openModal': 
+                        if (targetId === 'localStorageManagerModal') this.renderLocalStorageList();
+                        this.openModal(targetId); 
+                        break;
                     case 'closeModal': this.closeModal(targetId); break;
                     case 'save': this.saveDataToFile(); break;
                     case 'load': this.dom.loadFromFileInput.click(); break;
+                    case 'saveLocal': this.saveDataToLocalStorage(targetElement); break;
+                    case 'loadLocalItem': this.loadDataFromLocalStorage(targetElement.dataset.key); break;
+                    case 'deleteLocalItem': this.deleteDataFromLocalStorage(targetElement.dataset.key); break;
                     case 'print': window.print(); break;
                     case 'resetAll': this.resetAll(); break;
-                    case 'cancelCustomInput': this.cancelCustomInput(target); break;
+                    case 'cancelCustomInput': this.cancelCustomInput(targetElement); break;
+                    case 'toggleTheme': this.toggleTheme(); break;
                 }
             },
             handleFormInput(e) {
@@ -2168,6 +2354,9 @@
                     this.setNow('diuresisCalcTime');
                     this.calculateDiuresis();
                 }
+                if (targetId === 'localStorageManagerModal') {
+                    this.renderLocalStorageList();
+                }
                 document.getElementById(targetId)?.classList.add('active');
                 this.dom.body.classList.add('modal-open');
             },
@@ -2431,6 +2620,130 @@
                     console.error("Error saving data:", error);
                 }
             },
+            getLocalStorageData() {
+                try {
+                    const raw = localStorage.getItem('iva_skovde_vatskebalans_saves');
+                    return raw ? JSON.parse(raw) : {};
+                } catch (error) {
+                    console.error("Error reading localStorage:", error);
+                    return {};
+                }
+            },
+            saveDataToLocalStorage(buttonElement) {
+                try {
+                    const data = this.collectFormData();
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+                    const dateString = now.toLocaleDateString('sv-SE');
+                    
+                    const bed = data.patientInfo.bedSelect === 'Annan plats' ? (data.patientInfo.otherLocationInput || 'Okänd plats') : (data.patientInfo.bedSelect || 'Okänd plats');
+                    const defaultName = `${bed} - ${dateString} ${timeString}`;
+
+                    let saveName;
+                    try {
+                         saveName = prompt("Ange ett namn för att spara (eller tryck OK för standardnamn):", defaultName);
+                         if (saveName === null) return; // User cancelled
+                    } catch(e) {
+                         saveName = defaultName;
+                    }
+
+                    const finalName = (!saveName || saveName.trim() === "") ? defaultName : saveName;
+
+                    const saves = this.getLocalStorageData();
+                    const saveId = Date.now().toString(); // Unique ID
+                    
+                    saves[saveId] = {
+                        id: saveId,
+                        name: finalName,
+                        timestamp: now.toISOString(),
+                        data: data
+                    };
+
+                    localStorage.setItem('iva_skovde_vatskebalans_saves', JSON.stringify(saves));
+                    
+                    // Visuell feedback på knappen
+                    if (buttonElement) {
+                        const originalText = buttonElement.textContent;
+                        buttonElement.textContent = "Sparat!";
+                        buttonElement.style.backgroundColor = "#28a745"; // Green
+                        setTimeout(() => {
+                            buttonElement.textContent = originalText;
+                            buttonElement.style.backgroundColor = ""; // Reset
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error("Error saving to local storage:", error);
+                    alert("Kunde inte spara. Minnet kan vara fullt eller privat läge aktivt.");
+                }
+            },
+            // Uppdaterad funktion för att hämta sparade filer
+            // Nu öppnar den listan (modalen) istället för att bara ladda senaste
+            loadLatestFromLocalStorage(buttonElement) {
+                 this.renderLocalStorageList();
+                 this.openModal('localStorageManagerModal');
+            },
+            renderLocalStorageList() {
+                const container = document.getElementById('localStorageListContainer');
+                const saves = this.getLocalStorageData();
+                const keys = Object.keys(saves).sort((a, b) => b - a); // Newest first (based on timestamp ID)
+
+                if (keys.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-label); font-style: italic; padding: 20px;">Inga sparade filer hittades.</p>';
+                    return;
+                }
+
+                let html = '';
+                keys.forEach(key => {
+                    const save = saves[key];
+                    const date = new Date(save.timestamp);
+                    const dateStr = date.toLocaleString('sv-SE');
+                    
+                    html += `
+                        <div class="saved-file-item">
+                            <div class="saved-file-info">
+                                ${save.name}
+                                <span class="saved-file-meta">Sparad: ${dateStr}</span>
+                            </div>
+                            <div class="saved-file-actions">
+                                <button class="btn-load" data-action="loadLocalItem" data-key="${key}">Ladda</button>
+                                <button class="btn-delete" data-action="deleteLocalItem" data-key="${key}"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            },
+            loadDataFromLocalStorage(key) {
+                try {
+                    const saves = this.getLocalStorageData();
+                    const save = saves[key];
+                    if (!save) {
+                        alert("Kunde inte hitta filen.");
+                        return;
+                    }
+                    
+                    if (confirm(`Vill du ladda "${save.name}"? Detta skriver över nuvarande inmatning.`)) {
+                        this.populateFormWithData(save.data);
+                        this.closeModal('localStorageManagerModal');
+                    }
+                } catch (error) {
+                    console.error("Error loading from local storage:", error);
+                    alert("Kunde inte hämta data.");
+                }
+            },
+            deleteDataFromLocalStorage(key) {
+                if (!confirm("Är du säker på att du vill ta bort denna fil?")) return;
+                
+                try {
+                    const saves = this.getLocalStorageData();
+                    delete saves[key];
+                    localStorage.setItem('iva_skovde_vatskebalans_saves', JSON.stringify(saves));
+                    this.renderLocalStorageList(); // Refresh list
+                } catch (error) {
+                    console.error("Error deleting from local storage:", error);
+                    alert("Ett fel uppstod vid radering.");
+                }
+            },
             loadDataFromFile(event) {
                 const file = event.target.files[0];
                 if (!file) return;
@@ -2531,6 +2844,40 @@
                 this.checkInitialInputColors();
                 this.updateAllCalculations();
                 this.closeModal('confirmationModalOverlay');
+            },
+            // --- Tema-hantering ---
+            toggleTheme() {
+                this.dom.body.classList.toggle('dark-mode');
+                const isDark = this.dom.body.classList.contains('dark-mode');
+                const icon = document.querySelector('#themeToggle i');
+                if (isDark) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+                this.saveThemePreference(isDark ? 'dark' : 'light');
+            },
+            saveThemePreference(theme) {
+                try {
+                    localStorage.setItem('iva_skovde_theme', theme);
+                } catch(e) {
+                    console.error("Kunde inte spara temainställning.");
+                }
+            },
+            loadTheme() {
+                try {
+                    const savedTheme = localStorage.getItem('iva_skovde_theme');
+                    if (savedTheme === 'dark') {
+                        this.dom.body.classList.add('dark-mode');
+                        const icon = document.querySelector('#themeToggle i');
+                        icon.classList.remove('fa-moon');
+                        icon.classList.add('fa-sun');
+                    }
+                } catch(e) {
+                    console.error("Kunde inte läsa temainställning.");
+                }
             }
         };
 
