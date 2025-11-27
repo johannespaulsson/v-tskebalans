@@ -78,6 +78,24 @@
             overflow: hidden;
         }
 
+        /* Utskriftslayout - Enhetlig grid för hela sidan för att undvika glapp */
+        .print-layout-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        /* Se till att h3 har marginal för separation i flödet */
+        .print-layout-container h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        /* Första h3 i kolumnen behöver ingen top-margin */
+        .print-layout-container > div > h3:first-of-type {
+            margin-top: 0;
+        }
+
         /* Stil för huvudbehållaren som centrerar innehållet */
         .container {
             max-width: 900px;
@@ -950,6 +968,93 @@
             color: #dc3545;
             font-weight: bold;
         }
+        
+        /* Ny stil för näringsmål i sammanställningen */
+        .nutrition-goals-container {
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+        .nutrition-goals-header {
+            font-size: 1.0em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            cursor: pointer; /* Gör muspekaren till en hand */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none; /* Förhindra textmarkering vid klick */
+        }
+        
+        .nutrition-toggle-icon {
+            transition: transform 0.3s ease;
+            margin-right: 6px;
+            font-size: 0.8em;
+        }
+        
+        .nutrition-goals-header.expanded .nutrition-toggle-icon {
+            transform: rotate(90deg);
+        }
+
+        /* Uppdaterad stil för inputs i nutritionsmål så de matchar övriga */
+        .nutrition-goals-container select,
+        .nutrition-goals-container input[type="text"] {
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--input-text);
+            border-radius: 4px;
+            padding: 4px;
+            font-size: 0.85rem;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        .nutrition-goals-container select:focus,
+        .nutrition-goals-container input[type="text"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+        }
+
+        .nutrition-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .nutrition-input-small {
+            width: 60px !important;
+            text-align: center;
+        }
+        .nutrition-result-text {
+            font-size: 0.85rem;
+            flex-grow: 1;
+            text-align: right;
+        }
+        .goal-achieved {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .goal-not-achieved {
+            color: var(--text-main);
+        }
+        
+        /* Ny stil för progress bars i nutrition */
+        .nutrition-progress-container {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 2px;
+            overflow: hidden;
+        }
+        
+        .nutrition-progress-fill {
+            height: 100%;
+            background-color: #dc3545; /* Startar röd */
+            width: 0%;
+            transition: width 0.5s ease, background-color 0.5s ease;
+        }
 
         /* Mediafråga för mindre skärmar (staplar kolumnerna) */
         @media (max-width: 768px) {
@@ -1205,6 +1310,12 @@
                 <input type="text" id="idealWeight" readonly class="calculated-output" value="Var god ange längd och kön">
                 <span id="adjustedWeightNotice" class="adjusted-weight-notice" style="display: none;">(Justerad vikt)</span>
             </div>
+            <!-- BMI (NY) -->
+            <div class="grid-item">
+                <label>BMI:</label>
+                <input type="text" id="bmiDisplay" readonly class="calculated-output" placeholder="-">
+                <div id="bmiCategory" style="font-size: 0.75rem; color: var(--text-label); margin-top: 4px; font-style: italic;"></div>
+            </div>
             <!-- Nytt fält för Ålder -->
             <div class="grid-item">
                 <div class="label-with-tooltip">
@@ -1222,7 +1333,7 @@
             <!-- Kumulativ balans föregående dygn -->
             <div class="grid-item">
                 <div class="label-with-tooltip">
-                    <label for="cumulativeBalancePrev">Kumulativ balans föregående dygn (ml):</label>
+                    <label for="cumulativeBalancePrev">Gårdagens kumulativa balans (ml):</label>
                     <span class="tooltip">
                         <i class="fas fa-info-circle"></i>
                         <span class="tooltiptext">Fyll i den kumulativa balansen från föregående dygns avstämning (t.ex. gårdagens värde kl 06:00).</span>
@@ -1416,56 +1527,138 @@
             <!-- NY KOLUMN: Sammanställning -->
             <div class="grid-column-item">
                 <h3>Sammanställning</h3>
+                
+                <!-- Del 1: Vätskebalans Tabell -->
+                <div style="font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-label); border-bottom: 1px solid var(--border-color); padding-bottom: 2px;">Vätskebalans</div>
                 <table style="width:100%; border-collapse: collapse; font-size: 0.85rem;">
                     <thead>
                         <tr>
                             <th style="text-align:left; padding: 4px; border-bottom: 1px solid #ddd;">Post</th>
-                            <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">Volym (ml)</th>
-                            <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">Kcal</th>
+                            <th style="text-align:right; padding: 4px; border-bottom: 1px solid #ddd;">Värde</th>
                         </tr>
                     </thead>
                     <tbody id="summaryTableBody">
                         <tr>
                             <td style="padding: 4px;">Totalt intag</td>
-                            <td id="totalIntakeMl" style="text-align:right; padding: 4px;">0</td>
-                            <td id="totalIntakeKcal" style="text-align:right; padding: 4px;">0</td>
+                            <td style="text-align:right; padding: 4px;"><span id="totalIntakeMl">0</span> ml</td>
                         </tr>
                         <tr>
                             <td style="padding: 4px;">Totalt förlust</td>
-                            <td id="totalLossMl" style="text-align:right; padding: 4px;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
+                            <td style="text-align:right; padding: 4px;"><span id="totalLossMl">0</span> ml</td>
                         </tr>
                         <tr>
                             <td style="padding: 4px; font-weight: bold;">Netto balans</td>
-                            <td id="netBalanceMl" style="text-align:right; padding: 4px; font-weight: bold;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
+                            <td style="text-align:right; padding: 4px; font-weight: bold;"><span id="netBalanceMl">0</span> ml</td>
                         </tr>
                         <tr>
                             <td style="padding: 4px;">Kumulativ balans</td>
-                            <td id="cumulativeBalanceMl" style="text-align:right; padding: 4px;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
+                            <td style="text-align:right; padding: 4px;"><span id="cumulativeBalanceMl">0</span> ml</td>
                         </tr>
                         <tr>
-                            <td style="padding: 4px;">Differens mot utgångsvikt (kg)</td>
-                            <td id="weightDifferenceKg" style="text-align:right; padding: 4px;">0</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
+                            <td style="padding: 4px;">Diff. mot utgångsvikt</td>
+                            <td style="text-align:right; padding: 4px;"><span id="weightDifferenceKg">0</span> kg</td>
                         </tr>
                         <!-- Ny rad för timdiures -->
                         <tr>
                             <td style="padding: 4px;">
                                 <div class="label-with-tooltip" style="justify-content: space-between;">
-                                    <span>Genomsnittlig timdiures (ml/kg/h)</span>
+                                    <span>Timdiures</span>
                                     <span class="tooltip">
                                         <i class="fas fa-info-circle"></i>
                                         <span class="tooltiptext">Visar den genomsnittliga urinproduktionen per kilo kroppsvikt och timme. Värdet blir rött om det understiger 0.5 ml/kg/h.</span>
                                     </span>
                                 </div>
                             </td>
-                            <td id="avgHourlyDiuresis" style="text-align:right; padding: 4px;">0.00</td>
-                            <td style="text-align:right; padding: 4px;">-</td>
+                            <td style="text-align:right; padding: 4px;"><span id="avgHourlyDiuresis">0.00</span> ml/kg/h</td>
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- Del 2: Nutritionsintag (Tabell) -->
+                <div style="font-weight: bold; font-size: 0.85rem; margin-top: 15px; margin-bottom: 4px; color: var(--text-label); border-bottom: 1px solid var(--border-color); padding-bottom: 2px;">Nutrition</div>
+                <table style="width:100%; border-collapse: collapse; font-size: 0.85rem;">
+                    <tbody>
+                        <tr>
+                            <td style="padding: 4px;">Energi</td>
+                            <td style="text-align:right; padding: 4px;"><span id="totalIntakeKcal">0</span> kcal</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 4px;">Protein</td>
+                            <td style="text-align:right; padding: 4px;"><span id="totalIntakeProtein">0</span> g</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- NY SEKTION: Näringsmål -->
+                <div class="nutrition-goals-container">
+                    <div class="nutrition-goals-header" data-action="toggleNutrition">
+                        <div style="display: flex; align-items: center;">
+                            <i class="fas fa-chevron-right nutrition-toggle-icon" id="nutritionToggleIcon"></i>
+                            <span>Nutritionsmål (dygn)</span>
+                        </div>
+                        <div style="display: inline-block;">
+                            <a href="https://mellanarkiv-offentlig.vgregion.se/alfresco/s/archive/stream/public/v1/source/available/SOFIA/SKAS9696-242963441-9/SURROGATE/Nutrition%20-%20intensivv%c3%a5rd.pdf" target="_blank" title="Styrdokument: Nutrition - intensivvård" style="margin-left: 10px; font-size: 0.8rem; color: var(--primary-color); text-decoration: underline; font-weight: normal; cursor: pointer;" onclick="event.stopPropagation();">
+                                <i class="fas fa-file-pdf"></i> Nutrition - Intensivvård
+                            </a>
+                            <span class="tooltip" style="margin-left: 5px; font-weight: normal; font-size: 0.9em; color: var(--text-label);">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="tooltiptext">Standardvärden: 1,3 g protein/kg och 25 kcal/kg. Justera faktorerna vid behov.</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Innehåll som kan döljas/visas -->
+                    <div id="nutritionGoalsContent" style="display: none;">
+                        <div style="margin-bottom: 8px;">
+                        <label style="font-size: 0.8rem; display: block; margin-bottom: 4px;">Mål baserat på:</label>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <select id="nutritionBaseWeightSelect">
+                                <option value="actual">Aktuell vikt</option>
+                                <option value="ideal">Idealvikt</option>
+                                <option value="custom">Annan vikt</option>
+                                <option value="fixed">Eget totalmål</option>
+                            </select>
+                            <input type="text" id="nutritionCustomWeightInput" placeholder="kg" style="display: none; width: 60px; text-align: center;">
+                            <span id="nutritionWeightDisplay" style="font-size: 0.85rem; font-weight: 500; margin-left: 5px;"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Protein Rad -->
+                    <div style="margin-bottom: 10px;">
+                        <div class="nutrition-input-row" style="margin-bottom: 2px;">
+                            <input type="text" id="nutritionProteinFactor" value="1.3" class="nutrition-input-small">
+                            <span id="nutritionProteinUnit" style="font-size: 0.8rem;">g protein/kg</span>
+                            <div class="nutrition-result-text">
+                                <span id="nutritionProteinResultText">0 av 0 g (0%)</span>
+                            </div>
+                        </div>
+                        <div class="nutrition-progress-container">
+                            <div id="nutritionProteinBar" class="nutrition-progress-fill"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Kcal Rad -->
+                    <div style="margin-bottom: 5px;">
+                        <div class="nutrition-input-row" style="margin-bottom: 2px;">
+                            <input type="text" id="nutritionKcalFactor" value="25" class="nutrition-input-small">
+                            <span id="nutritionKcalUnit" style="font-size: 0.8rem;">kcal/kg</span>
+                            <div class="nutrition-result-text">
+                                <span id="nutritionKcalResultText">0 av 0 kcal (0%)</span>
+                            </div>
+                        </div>
+                        <div class="nutrition-progress-container">
+                            <div id="nutritionKcalBar" class="nutrition-progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Checkbox för utskrift -->
+                        <div style="margin-top: 8px;">
+                            <label style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" id="includeNutritionInPrint"> Inkludera i utskrift
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1501,6 +1694,17 @@
                         <li>Justerad vikt = Idealvikt + 0.4 * (Aktuell vikt - Idealvikt)</li>
                     </ul>
                     <p><em>Alla vikter avrundas till en decimal.</em></p>
+                    
+                    <h3>BMI</h3>
+                    <p>Vikt (kg) / (Längd (m))²</p>
+                    <ul>
+                        <li><strong>&lt; 18.5:</strong> Undervikt</li>
+                        <li><strong>18.5 - 24.9:</strong> Normalvikt</li>
+                        <li><strong>25.0 - 29.9:</strong> Övervikt</li>
+                        <li><strong>30.0 - 34.9:</strong> Obesitas grad 1</li>
+                        <li><strong>35.0 - 39.9:</strong> Obesitas grad 2</li>
+                        <li><strong>&ge; 40.0:</strong> Obesitas grad 3</li>
+                    </ul>
                 </div>
                 <!-- Nya Kcal-sektioner -->
                 <div class="grid-column-item" id="kcalKristalloiderContainer"></div>
@@ -1652,9 +1856,12 @@
             <button class="modal-close-button" data-action="closeModal" data-target="printDetailedSummaryModalOverlay">×</button>
             <h2>Vätskebalansräkning</h2>
 
-            <div class="summary-grid-container">
+            <!-- En gemensam container för hela utskriftslayouten -->
+            <div class="print-layout-container">
+                <!-- VÄNSTER KOLUMN -->
                 <div>
                     <div class="patient-label-placeholder">klistra patientetikett här</div>
+                    
                     <h3>Vikter</h3>
                     <table class="summary-table">
                         <tr>
@@ -1673,6 +1880,10 @@
                             <td id="printIdealWeightLabel">Idealvikt (beräknad/justerad):</td>
                             <td id="printIdealWeight" class="numeric-value"></td>
                         </tr>
+                        <tr id="printBMIRow" style="display: none;">
+                            <td>BMI:</td>
+                            <td id="printBMI" class="numeric-value"></td>
+                        </tr>
                         <tr>
                             <td>Differens mot utgångsvikt:</td>
                             <td id="printWeightDifference" class="numeric-value"></td>
@@ -1682,13 +1893,19 @@
                             <td id="printCumulativeBalancePrev" class="numeric-value"></td>
                         </tr>
                     </table>
+
+                    <!-- Detaljerat vätskeintag flyttat hit för att ligga dikt an -->
+                    <div id="print-details-intake"></div>
                 </div>
+
+                <!-- HÖGER KOLUMN -->
                 <div>
                     <div class="summary-info-box">
                         <p><strong>Datum:</strong> <span id="summaryDatePrint"></span></p>
                         <p><strong>Tidsperiod:</strong> <span id="summaryTimePeriodPrint"></span></p>
                         <p><strong>Plats:</strong> <span id="summaryLocationPrint"></span></p>
                     </div>
+                    
                     <h3>Sammanställning</h3>
                     <table class="summary-table">
                         <tr>
@@ -1711,14 +1928,34 @@
                             <td>Totalt kaloriintag:</td>
                             <td id="printTotalKcalIntake" class="numeric-value"></td>
                         </tr>
+                        <tr class="highlight-row-print">
+                            <td>Totalt proteinintag:</td>
+                            <td id="printTotalIntakeProtein" class="numeric-value"></td>
+                        </tr>
                     </table>
+
+                    <!-- Nutritionsmål i utskrift (inlindad i div för toggling) -->
+                    <div id="printNutritionContainer" style="display: none;">
+                        <h3>Nutritionsmål (dygn)</h3>
+                        <table class="summary-table">
+                            <tr>
+                                <td>Mål baserat på:</td>
+                                <td id="printNutritionBase" class="numeric-value"></td>
+                            </tr>
+                            <tr>
+                                <td>Protein (<span id="printNutritionProteinFactor"></span> g/kg):</td>
+                                <td id="printNutritionProteinResult" class="numeric-value"></td>
+                            </tr>
+                            <tr>
+                                <td>Energi (<span id="printNutritionKcalFactor"></span> kcal/kg):</td>
+                                <td id="printNutritionKcalResult" class="numeric-value"></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Detaljerade förluster flyttat hit -->
+                    <div id="print-details-loss"></div>
                 </div>
-            </div>
-            
-            <!-- Ny sektion för detaljerad lista -->
-            <div id="print-details-container" class="details-grid-container">
-                <div id="print-details-intake"></div>
-                <div id="print-details-loss"></div>
             </div>
 
             <!-- Utskriftsknapp -->
@@ -1734,7 +1971,7 @@
             <h2>Sparade filer i webbläsaren</h2>
             <div id="localStorageListContainer" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
                 <!-- Lista genereras här -->
-                <p style="text-align: center; color: #666; font-style: italic;">Inga sparade filer hittades.</p>
+                <p style="text-align: center; color: var(--text-label); font-style: italic;">Inga sparade filer hittades.</p>
             </div>
             <button data-action="closeModal" data-target="localStorageManagerModal" class="add-button">Stäng</button>
         </div>
@@ -1745,18 +1982,21 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
+            <h3>Version 2.5</h3>
+            <ul>
+                <li><b>BMI-kalkylator under patientinformation.</b> Visar BMI-värde samt klassificering (t.ex. Normalvikt).</li>
+                <li><b>Näringsmål i sammanställningen.</b> Beräknar protein- och energibehov baserat på vald vikt (Aktuell, Ideal/Justerad eller Annan).</li>
+                <li><b>Presentation av måluppfyllnad.</b> Visar procentuell uppfyllnad av protein- och energimål.</li>
+            </ul>
             <h3>Version 2.4</h3>
             <ul>
                 <li><b>Lagt till funktionalitet att spara i webläsarens local storage.</b></li>
                 <li><b>Lagt till mörkt läge.</b></li>
                 <li><b>Hämta från webbläsare visar nu en lista med alla sparade filer.</b></li>
-            </ul>
-            <h3>Version 2.3</h3>
-            <ul>
-                <li><b>Lagt till patientlängd i utskriftsvyn.</b></li>
-                <li><b>Ökat teckenstorleken i utskrift.</b></li>
-                <li><b>Ändrat från maxtemperatur till medeltemperatur i perspiratioberäkningen.</b></li>
-                <li><b>Förbättrad användarvänlighet med tooltips.</b></li>
+                <li><b>Lagt till proteininnehåll i bakgrundsdata (visas i referensvärden).</b></li>
+                <li><b>Ny struktur för TPN/Sondmat/Näringsdryck.</b></li>
+                <li><b>Möjlighet att lägga till "Övrigt protein" i gram under TPN/Sondmat-fliken.</b></li>
+                <li><b>Proteinsummering tillagd i sammanställning och utskrift.</b></li>
             </ul>
             <p style="font-size: 0.8rem; margin-top: 20px;">Feedback/input till johpa15@vgregion.se</p>
         </div>
@@ -1776,7 +2016,7 @@
 
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 2.4 - Ändringslogg
+            Version 2.5 - Ändringslogg
         </span>
         <button id="themeToggle" class="theme-toggle-btn" title="Växla mörkt läge" data-action="toggleTheme">
             <i class="fas fa-moon"></i>
@@ -1786,7 +2026,7 @@
     <script>
         const app = {
             state: {
-                totalIntakeMl: 0, totalIntakeKcal: 0, totalLossMl: 0, netBalanceMl: 0, cumulativeBalanceMl: 0,
+                totalIntakeMl: 0, totalIntakeKcal: 0, totalIntakeProtein: 0, totalLossMl: 0, netBalanceMl: 0, cumulativeBalanceMl: 0,
                 weightDifferenceKg: 0, totalDiuresisMl: 0, totalPerspiratioMl: 0, totalOtherLossMl: 0,
                 dailyWeight: 0, height: 0, gender: '', isUnder15: 'no', maxTemp: 37.0, breathingSupport: 'standard',
                 mainAppStartTime: '06:00', mainAppEndTime: '06:00',
@@ -1797,9 +2037,21 @@
                 naclSyringeVolume: 0,
                 pressureSetVolume: 0,
                 medicineCategoryTotals: { Sedering: 0, Antibiotika: 0, Vasoaktiva: 0, Övrigt: 0 },
-                kcalSummary: { peroralt: 0, sondmat: 0, tpn: 0, ivMedicine: 0, intravenousTotal: 0 }
+                kcalSummary: { peroralt: 0, sondmat: 0, tpn: 0, ivMedicine: 0, intravenousTotal: 0 },
+                nutrition: { 
+                    baseWeightSelect: 'actual', 
+                    customWeight: 0, 
+                    proteinFactor: 1.3, 
+                    kcalFactor: 25,
+                    calculatedProteinGoal: 0, 
+                    calculatedKcalGoal: 0 
+                }
             },
             counters: { fluid: 0, medicine: 0, bloodProduct: 0, tpnSondmat: 0, loss: 0 },
+            // Lagra state för UI (expanderad/kollapsad)
+            uiState: {
+                nutritionExpanded: false
+            },
             config: {
                 fluid: {
                     containerId: 'fluidEntriesContainer',
@@ -1818,7 +2070,26 @@
                 },
                 tpnSondmat: {
                     containerId: 'tpnSondmatEntriesContainer',
-                    template: (id) => `<div class="tpn-sondmat-entry-row" data-id="${id}" data-type="tpnSondmat"><div class="grid-item"><div class="custom-input-wrapper"><select class="select-main"></select><input type="text" class="custom-input" placeholder="Övrigt" style="display: none;"><button class="cancel-custom-input" data-action="cancelCustomInput" style="display: none;">&times;</button></div></div><div class="grid-item"><input type="text" class="ml-input" value="" placeholder=""></div><div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div><button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button></div>`,
+                    template: (id) => `<div class="tpn-sondmat-entry-row" data-id="${id}" data-type="tpnSondmat">
+                        <div class="grid-item">
+                            <div class="custom-input-wrapper">
+                                <select class="select-main"></select>
+                                <input type="text" class="custom-input" placeholder="Övrigt" style="display: none;">
+                                <button class="cancel-custom-input" data-action="cancelCustomInput" style="display: none;">&times;</button>
+                            </div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="input-with-tooltip" style="width: 100%;">
+                                <input type="text" class="ml-input" value="" placeholder="">
+                                <span class="tooltip" style="display: none; margin-left: 5px;">
+                                    <i class="fas fa-info-circle" style="color: #d93025;"></i>
+                                    <span class="tooltiptext">Ange mängd protein i gram (t.ex. från pulver). Detta värde adderas till totalt proteinintag men räknas som 0 ml i vätskebalansen.</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div>
+                        <button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button>
+                    </div>`,
                     populateSelect: (select) => app.populateSelect(select, 'tpnSondmat')
                 },
                 loss: {
@@ -1832,14 +2103,14 @@
                     placeholder: 'Välj vätska', customOption: 'Övrig vätska',
                     categories: {
                         "Glucos utan elektrolyter": [{ name: "Glukos 25 mg/ml", kcal: 0.1 }, { name: "Glukos 50 mg/ml", kcal: 0.2 }, { name: "Glukos 100 mg/ml", kcal: 0.4 }, { name: "Glukos 200 mg/ml", kcal: 0.8 }, { name: "Glukos 300 mg/ml", kcal: 1.2 }],
-                        "Kolloider": [{ name: "Albumin 20%", kcal: 0.8 }, { name: "Albumin 5%", kcal: 0 }],
-                        "Kristalloider med elektrolyter": [{ name: "Glukos 100 mg/ml med el", kcal: 0.4 }, { name: "Glukos 50 mg/ml med El", kcal: 0.2 }, { name: "NaCl Picco-Kalibrering", kcal: 0 }, { name: "Natriumbikarbonat 50 mg/ml", kcal: 0 }, { name: "Natriumklorid 9 mg/ml", kcal: 0 }, { name: "Natriumklorid hyperton", kcal: 0 }, { name: "Plasmolyte", kcal: 0 }, { name: "Ringer-Acetat", kcal: 0 }]
+                        "Kolloider": [{ name: "Albumin 20%", kcal: 0.8, protein: 0.2 }, { name: "Albumin 5%", kcal: 0, protein: 0.05 }],
+                        "Kristalloider med elektrolyter": [{ name: "Glukos 50 mg/ml med El", kcal: 0.2 }, { name: "Glukos 100 mg/ml med el", kcal: 0.4 }, { name: "NaCl Picco-Kalibrering", kcal: 0 }, { name: "Natriumbikarbonat 50 mg/ml", kcal: 0 }, { name: "Natriumklorid 9 mg/ml", kcal: 0 }, { name: "Natriumklorid hyperton", kcal: 0 }, { name: "Plasmolyte", kcal: 0 }, { name: "Ringer-Acetat", kcal: 0 }]
                     }
                 },
                 medicine: {
                     placeholder: 'Välj läkemedelsvätska', customOption: 'Övrigt läkemedel',
                     categories: {
-                        "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 0.9 }, { name: "Propofol 20mg/ml", kcal: 0.9 }, { name: "Remifentanil", kcal: 0 }],
+                        "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 1.1 }, { name: "Propofol 20mg/ml", kcal: 1.1 }, { name: "Remifentanil", kcal: 0 }],
                         "Antibiotika": [{ name: "Pip/Taz 4g x 3", kcal: 0, defaultMl: 60 }, { name: "Vancomycin 1g x 1", kcal: 0, defaultMl: 270 }, { name: "Övrig Antibiotika", kcal: 0 }, { name: "Kaspofungin", kcal: 0, defaultMl: 250 }],
                         "Vasoaktiva": [{ name: "Adrenalin", kcal: 0 }, { name: "Argipressin", kcal: 0 }, { name: "Dobutamin", kcal: 0 }, { name: "Levosimendan", kcal: 0.2 }, { name: "Milrinon", kcal: 0 }, { name: "Noradrenalin", kcal: 0 }],
                         "Övrigt": [{ name: "Amiodarone", kcal: 0.2 }, { name: "EDA", kcal: 0 }, { name: "Kalium/Kaliumklorid", kcal: 0 }, { name: "Lispro", kcal: 0 }, { name: "Paracetamol", kcal: 0 }]
@@ -1848,9 +2119,34 @@
                 bloodProduct: { placeholder: 'Välj blodprodukt', options: ['Erytrocyter', 'Trombocyter', 'Plasma'] },
                 tpnSondmat: {
                     placeholder: 'Välj TPN/Sondmat/Peroralt', customOption: 'Övrigt',
-                    options: [{ name: "Peroralt intag", kcal: 0 }],
+                    options: [
+                        { name: "Peroralt intag", kcal: 0 },
+                        { name: "Övrigt protein", kcal: 0, isProteinSupplement: true } 
+                    ],
                     categories: {
-                        "TPN/Sondmat": [{ name: "Vatten i sond", kcal: 0 }, { name: "Smof Kabiven 900 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1100 kcal", kcal: 1.12 }, { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68 }, { name: "Smof Kabiven 1350 kcal extra nitrogen", kcal: 0.9 }, { name: "Smof Kabiven 1600 kcal", kcal: 1.08 }, { name: "Smof Kabiven 1800 extra nitrogen", kcal: 1.1 }, { name: "Smof Kabiven 2200 kcal", kcal: 1.12 }, { name: "Sondmat Fresubin 2 kcal HP", kcal: 2.0 }, { name: "Sondmat Fresubin Original", kcal: 1 }, { name: "Sondmat Isosource standardfibre", kcal: 1 }]
+                        "TPN": [
+                            { name: "Smof Kabiven extra nitrogen 900 kcal", kcal: 0.9, protein: 0.07 },
+                            { name: "Smof Kabiven 1100 kcal", kcal: 1.1, protein: 0.05 },
+                            { name: "Smof Kabiven – extra nitrogen 1350 kcal", kcal: 0.9, protein: 0.07 },
+                            { name: "Smof Kabiven 1600 kcal", kcal: 1.0, protein: 0.05 },
+                            { name: "Smof Kabiven extra nitrogen 1800 kcal", kcal: 1.1, protein: 0.07 },
+                            { name: "Smof Kabiven 2200 kcal", kcal: 1.1, protein: 0.05 },
+                            { name: "Smof Kabiven perifer", kcal: 0.7, protein: 0.03 },
+                            { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68, protein: 0.03 }
+                        ],
+                        "Sondmat": [
+                            { name: "Fresubin 2 kcal HP fiber", kcal: 2.0, protein: 0.10 },
+                            { name: "Fresubin 1 kcal original", kcal: 1.0, protein: 0.04 },
+                            { name: "Isosource standardfibre", kcal: 1.0, protein: 0.04 },
+                            { name: "Vatten i sond", kcal: 0, protein: 0 }
+                        ],
+                        "Näringsdryck": [
+                            { name: "Fresubin PRO drink", kcal: 2.4, protein: 0.14 },
+                            { name: "Fresubin Diben", kcal: 1.5, protein: 0.08 },
+                            { name: "Fresubin Xtra", kcal: 1.5, protein: 0.04 },
+                            { name: "Fresubin Thickened II", kcal: 1.5, protein: 0.10 },
+                            { name: "Calogen extra shot", kcal: 4.0, protein: 0.05 }
+                        ]
                     }
                 },
                 loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Kräkning', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä', 'VAC-pump'] }
@@ -1871,6 +2167,9 @@
                     otherLocationInput: document.getElementById('otherLocationInput'),
                     loadFromFileInput: document.getElementById('loadFromFileInput'),
                     perspiratioWarning: document.getElementById('perspiratioWarning'),
+                    bmiDisplay: document.getElementById('bmiDisplay'),
+                    bmiCategory: document.getElementById('bmiCategory'),
+                    nutritionWeightDisplay: document.getElementById('nutritionWeightDisplay'), // Cache new element
                     containers: {
                         fluid: document.getElementById('fluidEntriesContainer'),
                         medicine: document.getElementById('medicineEntriesContainer'),
@@ -1881,6 +2180,7 @@
                     summary: {
                         totalIntakeMl: document.getElementById('totalIntakeMl'),
                         totalIntakeKcal: document.getElementById('totalIntakeKcal'),
+                        totalIntakeProtein: document.getElementById('totalIntakeProtein'),
                         totalLossMl: document.getElementById('totalLossMl'),
                         netBalanceMl: document.getElementById('netBalanceMl'),
                         cumulativeBalanceMl: document.getElementById('cumulativeBalanceMl'),
@@ -1896,6 +2196,7 @@
                 this.dom.dateInput.value = yesterday.toISOString().split('T')[0];
                 document.getElementById('naclSyringes').value = '0';
                 document.getElementById('pressureSets').value = '0';
+                // Nutrition defaults handled by HTML value attribute
             },
             addInitialRows() {
                 this.addRow('loss', { selectValue: 'Diures', isInitial: true });
@@ -1959,6 +2260,7 @@
                     case 'resetAll': this.resetAll(); break;
                     case 'cancelCustomInput': this.cancelCustomInput(targetElement); break;
                     case 'toggleTheme': this.toggleTheme(); break;
+                    case 'toggleNutrition': this.toggleNutrition(); break;
                 }
             },
             handleFormInput(e) {
@@ -1972,6 +2274,35 @@
                  if (target.id === 'diuresisCalcTime') {
                     document.getElementById('expectedPerspiratioRemaining').dataset.manualOverride = 'false';
                 }
+                
+                // Hantera växling av nutritions-läge
+                if (target.id === 'nutritionBaseWeightSelect') {
+                    const val = target.value;
+                    const customInput = document.getElementById('nutritionCustomWeightInput');
+                    const pInput = document.getElementById('nutritionProteinFactor');
+                    const kInput = document.getElementById('nutritionKcalFactor');
+                    
+                    // Visa/dölj fält för egen vikt
+                    customInput.style.display = val === 'custom' ? 'block' : 'none';
+
+                    // Logik för att byta värden i fälten när man byter till/från "Eget totalmål"
+                    if (val === 'fixed') {
+                        // Om vi byter TILL fasta mål, försök hämta det nyss beräknade målet som startvärde
+                        // Vi hämtar det från state istället för att försöka läsa DOM-element som inte längre finns som input-värden
+                        const currentProteinGoal = this.state.nutrition.calculatedProteinGoal || 100;
+                        const currentKcalGoal = this.state.nutrition.calculatedKcalGoal || 2000;
+                        
+                        // Sätt bara om nuvarande värde ser ut att vara en faktor (t.ex. < 10 för protein)
+                        if (parseFloat(pInput.value) < 10) pInput.value = currentProteinGoal;
+                        if (parseFloat(kInput.value) < 100) kInput.value = currentKcalGoal;
+                        
+                    } else {
+                        // Om vi byter FRÅN fasta mål TILL viktbaserat, återställ till standardfaktorer om värdena ser ut som totalmål
+                        if (parseFloat(pInput.value) > 10) pInput.value = '1.3';
+                        if (parseFloat(kInput.value) > 100) kInput.value = '25';
+                    }
+                }
+
                 const row = target.closest('[data-id]');
                 if (row) {
                     const kcalOutput = row.querySelector('.kcal-output');
@@ -1992,6 +2323,20 @@
                         const selectedOption = target.options[target.selectedIndex];
                         const defaultMl = selectedOption.dataset.defaultMl;
                         const mlInput = row.querySelector('.ml-input');
+                        
+                        // Byt platshållare och visa tooltip om det är proteintillskott
+                        const isProtein = target.value === 'Övrigt protein';
+                        
+                        if (isProtein) {
+                             mlInput.placeholder = 'gram';
+                             const tooltip = row.querySelector('.input-with-tooltip .tooltip');
+                             if(tooltip) tooltip.style.display = 'inline-block';
+                        } else {
+                             mlInput.placeholder = '';
+                             const tooltip = row.querySelector('.input-with-tooltip .tooltip');
+                             if(tooltip) tooltip.style.display = 'none';
+                        }
+
                         if (defaultMl && mlInput) {
                             mlInput.value = defaultMl;
                         }
@@ -2070,7 +2415,7 @@
                 addCustomOption(configData.customOption2);
                 if (configData.options) {
                     configData.options.forEach(opt => {
-                        if (typeof opt === 'object') this.addOption(selectElement, opt.name, opt.name, opt.kcal);
+                        if (typeof opt === 'object') this.addOption(selectElement, opt.name, opt.name, opt.kcal, null, opt.protein);
                         else this.addOption(selectElement, opt, opt);
                     });
                 }
@@ -2079,18 +2424,19 @@
                         const optgroup = document.createElement('optgroup');
                         optgroup.label = categoryLabel;
                         configData.categories[categoryLabel].forEach(item => {
-                            this.addOption(optgroup, item.name, item.name, item.kcal, item.defaultMl);
+                            this.addOption(optgroup, item.name, item.name, item.kcal, item.defaultMl, item.protein);
                         });
                         selectElement.appendChild(optgroup);
                     }
                 }
             },
-            addOption(parent, value, text, kcal = null, defaultMl = null) {
+            addOption(parent, value, text, kcal = null, defaultMl = null, protein = null) {
                 const option = document.createElement('option');
                 option.value = value;
                 option.textContent = text;
                 if (kcal !== null) option.dataset.kcalPerMl = kcal;
                 if (defaultMl !== null) option.dataset.defaultMl = defaultMl;
+                if (protein !== null) option.dataset.proteinPerMl = protein;
                 parent.appendChild(option);
             },
             toggleCustomInput(wrapper, showCustom) {
@@ -2114,6 +2460,8 @@
                 this.calculateIdealAndAdjustedWeight();
                 this.calculatePerspiratio();
                 this.calculateTotals();
+                this.calculateBMI(); // New
+                this.calculateNutrition(); // New
                 this.calculateDiuresis();
                 this.updateSummaryUI();
             },
@@ -2166,6 +2514,127 @@
                 }
                 idealWeightInput.value = (Math.round(displayWeight * 10) / 10).toFixed(1);
                 notice.style.display = this.state.adjustedWeight ? 'inline' : 'none';
+            },
+            calculateBMI() {
+                const weight = parseFloat(document.getElementById('dailyWeight').value);
+                const height = parseFloat(document.getElementById('height').value);
+                const bmiDisplay = document.getElementById('bmiDisplay');
+                const bmiCategory = document.getElementById('bmiCategory');
+
+                if (weight > 0 && height > 0) {
+                    const heightInMeters = height / 100;
+                    const bmi = weight / (heightInMeters * heightInMeters);
+                    const bmiRounded = bmi.toFixed(1);
+                    bmiDisplay.value = bmiRounded;
+
+                    let category = "";
+                    if (bmi < 18.5) category = "Undervikt";
+                    else if (bmi < 25) category = "Normalvikt";
+                    else if (bmi < 30) category = "Övervikt";
+                    else if (bmi < 35) category = "Obesitas grad 1";
+                    else if (bmi < 40) category = "Obesitas grad 2";
+                    else category = "Obesitas grad 3";
+                    
+                    bmiCategory.textContent = category;
+                } else {
+                    bmiDisplay.value = "-";
+                    bmiCategory.textContent = "";
+                }
+            },
+            calculateNutrition() {
+                const weightBasis = document.getElementById('nutritionBaseWeightSelect').value;
+                const idealOption = document.querySelector('#nutritionBaseWeightSelect option[value="ideal"]');
+                const pInput = document.getElementById('nutritionProteinFactor');
+                const kInput = document.getElementById('nutritionKcalFactor');
+                const pUnit = document.getElementById('nutritionProteinUnit');
+                const kUnit = document.getElementById('nutritionKcalUnit');
+                
+                // Uppdatera texten i select-alternativet beroende på om vikten är justerad eller ej
+                if (this.state.adjustedWeight) {
+                    idealOption.textContent = "Idealvikt (Justerad)";
+                } else {
+                    idealOption.textContent = "Idealvikt";
+                }
+
+                let weight = 0;
+                let isFixedGoal = false;
+
+                if (weightBasis === 'fixed') {
+                    isFixedGoal = true;
+                    // Dölj vikt-displayen
+                    this.dom.nutritionWeightDisplay.textContent = '';
+                    // Uppdatera enheter
+                    pUnit.textContent = 'g totalt';
+                    kUnit.textContent = 'kcal totalt';
+                } else {
+                    // Standard viktbaserad
+                    pUnit.textContent = 'g protein/kg';
+                    kUnit.textContent = 'kcal/kg';
+
+                    if (weightBasis === 'actual') {
+                        weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
+                    } else if (weightBasis === 'ideal') {
+                        const idealVal = parseFloat(document.getElementById('idealWeight').value);
+                        weight = isNaN(idealVal) ? 0 : idealVal;
+                    } else if (weightBasis === 'custom') {
+                        weight = parseFloat(document.getElementById('nutritionCustomWeightInput').value) || 0;
+                    }
+
+                    // Visa vikten bredvid fältet om det inte är "Annan vikt"
+                    if (weightBasis !== 'custom' && weight > 0) {
+                        this.dom.nutritionWeightDisplay.textContent = `${weight} kg`;
+                    } else {
+                        this.dom.nutritionWeightDisplay.textContent = '';
+                    }
+                }
+
+                const val1 = parseFloat(pInput.value) || 0;
+                const val2 = parseFloat(kInput.value) || 0;
+
+                let proteinGoal = 0;
+                let kcalGoal = 0;
+
+                if (isFixedGoal) {
+                    proteinGoal = Math.round(val1);
+                    kcalGoal = Math.round(val2);
+                } else {
+                    proteinGoal = Math.round(weight * val1);
+                    kcalGoal = Math.round(weight * val2);
+                }
+
+                // Spara till state istället för dolda DOM element för att förhindra krascher
+                this.state.nutrition.calculatedProteinGoal = proteinGoal;
+                this.state.nutrition.calculatedKcalGoal = kcalGoal;
+
+                // Uppdatera procent
+                const proteinPercent = proteinGoal > 0 ? Math.round((this.state.totalIntakeProtein / proteinGoal) * 100) : 0;
+                const kcalPercent = kcalGoal > 0 ? Math.round((this.state.totalIntakeKcal / kcalGoal) * 100) : 0;
+
+                // Textuppdatering
+                const proteinTextEl = document.getElementById('nutritionProteinResultText');
+                const kcalTextEl = document.getElementById('nutritionKcalResultText');
+
+                proteinTextEl.textContent = `${Math.round(this.state.totalIntakeProtein)} av ${proteinGoal} g (${proteinPercent}%)`;
+                kcalTextEl.textContent = `${Math.round(this.state.totalIntakeKcal)} av ${kcalGoal} kcal (${kcalPercent}%)`;
+
+                // Progress bar uppdatering
+                const updateBar = (barId, percent) => {
+                    const bar = document.getElementById(barId);
+                    const cappedPercent = Math.min(percent, 100);
+                    bar.style.width = `${cappedPercent}%`;
+                    
+                    // Färgkodning
+                    if (percent >= 90) {
+                        bar.style.backgroundColor = '#28a745'; // Grön
+                    } else if (percent >= 50) {
+                        bar.style.backgroundColor = '#ffc107'; // Gul
+                    } else {
+                        bar.style.backgroundColor = '#dc3545'; // Röd
+                    }
+                };
+
+                updateBar('nutritionProteinBar', proteinPercent);
+                updateBar('nutritionKcalBar', kcalPercent);
             },
             _calculatePerspiratioLogic(durationInHours) {
                 const isUnder15 = document.getElementById('isUnder15').value === 'yes';
@@ -2224,7 +2693,7 @@
                 this.state.height = parseFloat(document.getElementById('height').value) || 0;
 
                 Object.assign(this.state, {
-                    totalIntakeMl: 0, totalIntakeKcal: 0, totalLossMl: 0,
+                    totalIntakeMl: 0, totalIntakeKcal: 0, totalIntakeProtein: 0, totalLossMl: 0,
                     medicineCategoryTotals: { Sedering: 0, Antibiotika: 0, Vasoaktiva: 0, Övrigt: 0 },
                     kcalSummary: { peroralt: 0, sondmat: 0, tpn: 0, ivMedicine: 0, intravenousTotal: 0 },
                     totalDiuresisMl: 0, totalPerspiratioMl: 0, totalOtherLossMl: 0
@@ -2246,6 +2715,23 @@
                     const selectedOption = select?.options[select.selectedIndex];
                     const kcalOutput = row.querySelector('.kcal-output');
                     let kcalValue = 0;
+                    let proteinValue = 0;
+                    
+                    // Check if this is the protein supplement option
+                    const isProteinSupplement = select && select.value === 'Övrigt protein';
+
+                    if (selectedOption) {
+                        if (isProteinSupplement) {
+                            // mlValue is actually grams here
+                            proteinValue = mlValue;
+                            this.state.totalIntakeProtein += proteinValue;
+                        } else {
+                            const proteinPerMl = parseFloat(selectedOption.dataset.proteinPerMl || '0');
+                            proteinValue = mlValue * proteinPerMl;
+                            this.state.totalIntakeProtein += proteinValue;
+                        }
+                    }
+
                     if (kcalOutput && selectedOption) {
                         if (kcalOutput.dataset.manualOverride !== 'true') {
                             const kcalPerMl = parseFloat(selectedOption.dataset.kcalPerMl || '0');
@@ -2255,14 +2741,19 @@
                             kcalValue = parseFloat(kcalOutput.value) || 0;
                         }
                     }
+                    
                     if (['fluid', 'medicine', 'bloodProduct', 'tpnSondmat'].includes(type)) {
-                        this.state.totalIntakeMl += mlValue;
+                        // Only add to volume if it is NOT a pure protein supplement (dry weight)
+                        if (!isProteinSupplement) {
+                            this.state.totalIntakeMl += mlValue;
+                        }
                         this.state.totalIntakeKcal += kcalValue;
                     } else if (type === 'loss') {
                         this.state.totalLossMl += mlValue;
                         if (select?.value === 'Diures') this.state.totalDiuresisMl += mlValue;
                         else this.state.totalOtherLossMl += mlValue;
                     }
+                    
                     if (type === 'fluid') kcalFromKristalloider += kcalValue;
                     if (type === 'medicine') {
                         this.state.kcalSummary.ivMedicine += kcalValue;
@@ -2270,9 +2761,19 @@
                         this.state.medicineCategoryTotals[category] += mlValue;
                     }
                     if (type === 'tpnSondmat') {
-                        if (select.value === 'Peroralt intag') this.state.kcalSummary.peroralt += kcalValue;
-                        else if (select.value.startsWith('Sondmat') || select.value === 'Vatten i sond') this.state.kcalSummary.sondmat += kcalValue;
-                        else this.state.kcalSummary.tpn += kcalValue;
+                        const val = select.value;
+                        // Safe category check
+                        const isPeroralt = val === 'Peroralt intag' || (this.data.tpnSondmat.categories['Näringsdryck'] && this.data.tpnSondmat.categories['Näringsdryck'].some(i => i.name === val));
+                        
+                        if (isPeroralt) {
+                            this.state.kcalSummary.peroralt += kcalValue;
+                        } else if (val === 'Vatten i sond' || (this.data.tpnSondmat.categories['Sondmat'] && this.data.tpnSondmat.categories['Sondmat'].some(i => i.name === val))) {
+                            this.state.kcalSummary.sondmat += kcalValue;
+                        } else if (isProteinSupplement) {
+                             // Do nothing
+                        } else {
+                            this.state.kcalSummary.tpn += kcalValue;
+                        }
                     }
                 });
                 const naclSyringes = parseFloat(document.getElementById('naclSyringes').value) || 0;
@@ -2304,6 +2805,8 @@
                         if (key === 'avgHourlyDiuresis') {
                             this.dom.summary[key].textContent = value.toFixed(2);
                             this.dom.summary[key].classList.toggle('low-diuresis', value < 0.5 && this.state.totalDiuresisMl > 0);
+                        } else if (key === 'totalIntakeProtein') {
+                            this.dom.summary[key].textContent = value.toFixed(1);
                         } else {
                             this.dom.summary[key].textContent = typeof value === 'number' ? (key.includes('Kg') ? value.toFixed(1) : Math.round(value)) : value;
                         }
@@ -2377,20 +2880,20 @@
 
                     container.innerHTML = `<h3>Kaloriinnehåll ${mapping.name}</h3>`;
                     const table = document.createElement('table');
-                    table.innerHTML = '<thead><tr><th>Vätska/Produkt</th><th style="text-align:right;">Kcal/ml</th></tr></thead>';
+                    table.innerHTML = '<thead><tr><th>Vätska/Produkt</th><th style="text-align:right;">Kcal/ml</th><th style="text-align:right;">Protein (g/ml)</th></tr></thead>';
                     const tbody = document.createElement('tbody');
                     
                     const dataSet = this.data[mapping.key];
                     const items = [];
 
-                    if (dataSet.customOption) items.push({ name: dataSet.customOption, kcal: 0 });
-                    if (dataSet.customOption2) items.push({ name: dataSet.customOption2, kcal: 0 });
+                    if (dataSet.customOption) items.push({ name: dataSet.customOption, kcal: 0, protein: 0 });
+                    if (dataSet.customOption2) items.push({ name: dataSet.customOption2, kcal: 0, protein: 0 });
                     if (dataSet.options) {
                         dataSet.options.forEach(opt => {
                             if (typeof opt === 'object') {
                                 items.push(opt);
                             } else {
-                                items.push({ name: opt, kcal: 0 });
+                                items.push({ name: opt, kcal: 0, protein: 0 });
                             }
                         });
                     }
@@ -2411,6 +2914,7 @@
                     uniqueItems.forEach(item => {
                         const name = item.name || item;
                         const kcal = item.kcal ?? 0;
+                        const protein = item.protein !== undefined ? item.protein : '-';
                         let tooltipHtml = '';
                         if (name.includes('Propofol')) {
                             tooltipHtml = `
@@ -2419,7 +2923,7 @@
                                     <span class="tooltiptext">Källa: ePed</span>
                                 </span>`;
                         }
-                        tbody.innerHTML += `<tr><td>${name} ${tooltipHtml}</td><td style="text-align:right;">${kcal}</td></tr>`;
+                        tbody.innerHTML += `<tr><td>${name} ${tooltipHtml}</td><td style="text-align:right;">${kcal}</td><td style="text-align:right;">${protein}</td></tr>`;
                     });
 
                     table.appendChild(tbody);
@@ -2451,6 +2955,17 @@
                 } else {
                     idealWeightRow.style.display = 'none';
                 }
+
+                // --- BMI Logic for Print ---
+                const bmiValue = document.getElementById('bmiDisplay').value;
+                const bmiRow = document.getElementById('printBMIRow');
+                if (bmiValue && bmiValue !== '-' && !isNaN(parseFloat(bmiValue))) {
+                    bmiRow.style.display = '';
+                    document.getElementById('printBMI').textContent = bmiValue;
+                } else {
+                    bmiRow.style.display = 'none';
+                }
+                // ---------------------------
                 
                 document.getElementById('printWeightDifference').textContent = `${this.state.weightDifferenceKg.toFixed(1)} kg`;
                 document.getElementById('printCumulativeBalancePrev').textContent = `${document.getElementById('cumulativeBalancePrev').value} ml`;
@@ -2460,6 +2975,71 @@
                 document.getElementById('printNetBalanceMl').textContent = `${Math.round(this.state.netBalanceMl)} ml`;
                 document.getElementById('printCumulativeBalanceMl').textContent = `${Math.round(this.state.cumulativeBalanceMl)} ml`;
                 document.getElementById('printTotalKcalIntake').textContent = `${Math.round(this.state.totalIntakeKcal)} Kcal`;
+                document.getElementById('printTotalIntakeProtein').textContent = `${this.state.totalIntakeProtein.toFixed(1)} g`;
+
+                // --- NYTT: Fyll i Nutritionsmål för utskrift (om vald) ---
+                const includeNutrition = document.getElementById('includeNutritionInPrint').checked;
+                const printNutritionContainer = document.getElementById('printNutritionContainer');
+
+                if (includeNutrition) {
+                    printNutritionContainer.style.display = 'block';
+                    
+                    const weightBasis = document.getElementById('nutritionBaseWeightSelect').value;
+                    let weight = 0;
+                    let weightLabel = '';
+                    let isFixed = false;
+
+                    if (weightBasis === 'actual') {
+                        weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
+                        weightLabel = 'Aktuell vikt';
+                    } else if (weightBasis === 'ideal') {
+                        weight = parseFloat(document.getElementById('idealWeight').value) || 0;
+                        weightLabel = this.state.adjustedWeight ? 'Idealvikt (Justerad)' : 'Idealvikt';
+                    } else if (weightBasis === 'custom') {
+                        weight = parseFloat(document.getElementById('nutritionCustomWeightInput').value) || 0;
+                        weightLabel = 'Annan vikt';
+                    } else if (weightBasis === 'fixed') {
+                        isFixed = true;
+                        weightLabel = 'Eget totalmål';
+                    }
+
+                    const val1 = parseFloat(document.getElementById('nutritionProteinFactor').value) || 0;
+                    const val2 = parseFloat(document.getElementById('nutritionKcalFactor').value) || 0;
+
+                    let proteinGoal = 0;
+                    let kcalGoal = 0;
+                    let proteinLabel = '';
+                    let kcalLabel = '';
+
+                    if (isFixed) {
+                        proteinGoal = Math.round(val1);
+                        kcalGoal = Math.round(val2);
+                        proteinLabel = 'Protein (Eget mål)';
+                        kcalLabel = 'Energi (Eget mål)';
+                        // Inget behov av att visa vikt för fasta mål, men vi visar etiketten
+                        document.getElementById('printNutritionBase').textContent = weightLabel;
+                        // Rensa faktorer i utskrift då de är totaler
+                        document.getElementById('printNutritionProteinFactor').parentElement.innerHTML = 'Protein (Mål):';
+                        document.getElementById('printNutritionKcalFactor').parentElement.innerHTML = 'Energi (Mål):';
+                    } else {
+                        proteinGoal = Math.round(weight * val1);
+                        kcalGoal = Math.round(weight * val2);
+                        document.getElementById('printNutritionBase').textContent = `${weightLabel} (${weight} kg)`;
+                        // Återställ labels om de ändrats av fixed-läget tidigare (lite hackigt men funkar för enkelhetens skull)
+                        // Bättre: skriv om innehållet helt
+                        document.getElementById('printNutritionProteinFactor').parentElement.innerHTML = `Protein (<span id="printNutritionProteinFactor">${val1}</span> g/kg):`;
+                        document.getElementById('printNutritionKcalFactor').parentElement.innerHTML = `Energi (<span id="printNutritionKcalFactor">${val2}</span> kcal/kg):`;
+                    }
+
+                    const proteinPercent = proteinGoal > 0 ? Math.round((this.state.totalIntakeProtein / proteinGoal) * 100) : 0;
+                    const kcalPercent = kcalGoal > 0 ? Math.round((this.state.totalIntakeKcal / kcalGoal) * 100) : 0;
+
+                    document.getElementById('printNutritionProteinResult').textContent = `${this.state.totalIntakeProtein.toFixed(1)} av ${proteinGoal} g (${proteinPercent}%)`;
+                    document.getElementById('printNutritionKcalResult').textContent = `${Math.round(this.state.totalIntakeKcal)} av ${kcalGoal} kcal (${kcalPercent}%)`;
+                } else {
+                    printNutritionContainer.style.display = 'none';
+                }
+                // -----------------------------------------------
 
                 const intakeContainer = document.getElementById('print-details-intake');
                 const lossContainer = document.getElementById('print-details-loss');
@@ -2489,7 +3069,10 @@
                                 name = row.querySelector('.custom-input')?.value || name;
                             }
                             const kcalValue = parseFloat(row.querySelector('.kcal-output')?.value) || 0;
-                            entries.push({ name, ml: mlValue, kcal: kcalValue });
+                            
+                            const isProteinSupplement = select.value === 'Övrigt protein';
+                            
+                            entries.push({ name, ml: mlValue, kcal: kcalValue, isProteinSupplement: isProteinSupplement });
                         }
                     });
 
@@ -2513,7 +3096,8 @@
                         intakeHtml += `<tr class="category-row"><td colspan="2"><strong>${section.category}</strong></td></tr>`;
                         section.items.forEach(item => {
                             const kcalText = item.kcal > 0 ? ` (${item.kcal} Kcal)` : '';
-                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${Math.round(item.ml)} ml${kcalText}</td></tr>`;
+                            const unit = item.isProteinSupplement ? 'g' : 'ml';
+                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${Math.round(item.ml)} ${unit}${kcalText}</td></tr>`;
                         });
                     });
                     intakeHtml += '</table>';
@@ -2581,7 +3165,7 @@
                 lossContainer.innerHTML = lossAndGoalHtml;
             },
             collectFormData() {
-                const data = { patientInfo: {}, fluidEntries: [], medicineEntries: [], bloodProductEntries: [], tpnSondmatEntries: [], lossEntries: [], perspiratioCalc: {}, diuresisCalc: {} };
+                const data = { patientInfo: {}, fluidEntries: [], medicineEntries: [], bloodProductEntries: [], tpnSondmatEntries: [], lossEntries: [], perspiratioCalc: {}, diuresisCalc: {}, nutritionCalc: {} };
                 ['dateInput', 'startTime', 'endTime', 'bedSelect', 'otherLocationInput', 'initialWeight', 'dailyWeight', 'height', 'gender', 'isUnder15', 'cumulativeBalancePrev', 'naclSyringes', 'pressureSets'].forEach(id => data.patientInfo[id] = document.getElementById(id).value);
                 
                 document.querySelectorAll('#fluidEntriesContainer [data-id]').forEach(row => data.fluidEntries.push({ selectValue: row.querySelector('.select-main').value, mlValue: row.querySelector('.ml-input').value, kcalValue: row.querySelector('.kcal-output').value, customValue: row.querySelector('.custom-input').value }));
@@ -2595,6 +3179,15 @@
                 
                 data.perspiratioCalc = { breathingSupport: document.getElementById('breathingSupport').value, maxTemp: document.getElementById('maxTemp').value };
                 data.diuresisCalc = { desiredBalanceTomorrow: document.getElementById('desiredBalanceTomorrow').value, diuresisCalcTime: document.getElementById('diuresisCalcTime').value, plannedSingleIntake: document.getElementById('plannedSingleIntake').value, plannedHourlyIntake: document.getElementById('plannedHourlyIntake').value, plannedSingleLosses: document.getElementById('plannedSingleLosses').value };
+                
+                data.nutritionCalc = {
+                    baseWeightSelect: document.getElementById('nutritionBaseWeightSelect').value,
+                    customWeightInput: document.getElementById('nutritionCustomWeightInput').value,
+                    proteinFactor: document.getElementById('nutritionProteinFactor').value,
+                    kcalFactor: document.getElementById('nutritionKcalFactor').value,
+                    includeInPrint: document.getElementById('includeNutritionInPrint').checked
+                };
+
                 return data;
             },
             saveDataToFile() {
@@ -2641,10 +3234,10 @@
 
                     let saveName;
                     try {
-                         saveName = prompt("Ange ett namn för att spara (eller tryck OK för standardnamn):", defaultName);
-                         if (saveName === null) return; // User cancelled
+                          saveName = prompt("Ange ett namn för att spara (eller tryck OK för standardnamn):", defaultName);
+                          if (saveName === null) return; // User cancelled
                     } catch(e) {
-                         saveName = defaultName;
+                          saveName = defaultName;
                     }
 
                     const finalName = (!saveName || saveName.trim() === "") ? defaultName : saveName;
@@ -2799,6 +3392,17 @@
                         if(el) el.value = data.diuresisCalc[id];
                     }
                 }
+                if (data.nutritionCalc) {
+                    document.getElementById('nutritionBaseWeightSelect').value = data.nutritionCalc.baseWeightSelect || 'actual';
+                    document.getElementById('nutritionCustomWeightInput').value = data.nutritionCalc.customWeightInput || '';
+                    document.getElementById('nutritionProteinFactor').value = data.nutritionCalc.proteinFactor || 1.3;
+                    document.getElementById('nutritionKcalFactor').value = data.nutritionCalc.kcalFactor || 25;
+                    document.getElementById('includeNutritionInPrint').checked = data.nutritionCalc.includeInPrint || false;
+                    
+                    // Trigger visibility update for custom weight input
+                    const customInput = document.getElementById('nutritionCustomWeightInput');
+                    customInput.style.display = data.nutritionCalc.baseWeightSelect === 'custom' ? 'block' : 'none';
+                }
 
                 this.checkInitialInputColors();
                 this.updateAllCalculations();
@@ -2814,10 +3418,25 @@
                         el.value = 'no';
                     } else if (el.tagName === 'SELECT') {
                         el.selectedIndex = 0;
+                    } else if (el.id === 'nutritionProteinFactor') {
+                        el.value = '1.3';
+                    } else if (el.id === 'nutritionKcalFactor') {
+                        el.value = '25';
+                    } else if (el.id === 'nutritionBaseWeightSelect') {
+                        el.value = 'actual';
                     } else {
                         el.value = '';
                     }
                 });
+                
+                // Göm custom weight input
+                document.getElementById('nutritionCustomWeightInput').style.display = 'none';
+                // Avmarkera print checkbox
+                document.getElementById('includeNutritionInPrint').checked = false;
+                
+                // Stäng nutritionsflik om öppen (valfritt, men snyggt vid reset)
+                this.uiState.nutritionExpanded = false;
+                this.updateNutritionToggleUI();
 
                 // Rensa alla dynamiska rader
                 Object.values(this.dom.containers).forEach(container => {
@@ -2858,6 +3477,22 @@
                     icon.classList.add('fa-moon');
                 }
                 this.saveThemePreference(isDark ? 'dark' : 'light');
+            },
+            toggleNutrition() {
+                this.uiState.nutritionExpanded = !this.uiState.nutritionExpanded;
+                this.updateNutritionToggleUI();
+            },
+            updateNutritionToggleUI() {
+                const content = document.getElementById('nutritionGoalsContent');
+                const header = document.querySelector('.nutrition-goals-header');
+                
+                if (this.uiState.nutritionExpanded) {
+                    content.style.display = 'block';
+                    header.classList.add('expanded');
+                } else {
+                    content.style.display = 'none';
+                    header.classList.remove('expanded');
+                }
             },
             saveThemePreference(theme) {
                 try {
