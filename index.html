@@ -173,7 +173,7 @@
         /* Stil för alla inmatningsfält och select-menyer */
         .grid-item input[type="date"],
         .grid-item input[type="time"],
-        .grid-item input[type="text"], /* Changed from type="number" to type="text" for formula input */
+        .grid-item input[type="text"], 
         .grid-item select {
             width: calc(100% - 10px);
             padding: 6px;
@@ -241,7 +241,6 @@
             align-items: center;
             gap: 2px;
         }
-        /* Changed from type="number" to type="text" */
         .number-input-buttons input[type="text"] {
             flex-grow: 1;
             text-align: center;
@@ -500,7 +499,7 @@
 
         /* Justera knappen i den nya gruppen */
         .calculated-perspiratio-group button {
-            width: fit-content; /* KORRIGERING: Återställer bredden för denna specifika knapp */
+            width: fit-content;
             margin-top: 0 !important;
             flex-shrink: 0;
             padding: 6px 12px;
@@ -581,7 +580,7 @@
         .tool-buttons-group {
             display: flex;
             gap: 8px;
-            margin-top: 0; /* Tar bort marginalen för den här gruppen */
+            margin-top: 0; 
         }
         .tool-buttons-group .add-button {
             margin-top: 0;
@@ -595,7 +594,6 @@
         .tool-buttons-group .reset-button:hover {
             background-color: #c82333;
         }
-
 
         #perspiratioWarning {
             font-size: 0.75rem;
@@ -618,7 +616,7 @@
         }
 
         .label-with-tooltip label {
-            margin-bottom: 0; /* Remove default margin from label inside this container */
+            margin-bottom: 0;
         }
         
         .tooltip {
@@ -690,36 +688,31 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            max-width: 950px; /* Increased max-width for 3 columns */
-            width: 90%; /* Responsive width */
+            max-width: 950px; 
+            width: 90%; 
             position: relative;
-            transform: translateY(-20px); /* Small animation effect */
+            transform: translateY(-20px); 
             transition-property: transform;
             transition-duration: 0.3s;
             transition-timing-function: ease;
-            /* För att modal-content ska anpassa sin höjd efter innehållet och ha egen scroll */
-            max-height: 90vh; /* Sätter maxhöjden till 90% av viewportens höjd */
-            overflow-y: auto; /* Lägger till scroll om innehållet överskrider maxhöjden */
-            box-sizing: border-box; /* Inkluderar padding i höjden */
+            max-height: 90vh; 
+            overflow-y: auto; 
+            box-sizing: border-box; 
             color: var(--text-main);
         }
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
-        /* Adjusted grid for modal content to be 3 columns */
-        .modal-content .grid-container.modal-three-column-grid { /* New class for specific modal grid */
+        .modal-content .grid-container.modal-three-column-grid { 
             display: grid;
-            /* Using minmax(0, 1fr) to ensure columns don't grow beyond 1fr due to content */
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 15px;
-            /* Säkerställer att alla grid-items sträcker sig till samma höjd */
             align-items: stretch;
         }
-        /* Added to explicitly make grid-column-items fill their grid cells */
         .modal-content .grid-container.modal-three-column-grid > .grid-column-item {
-            width: 100%; /* Ensure it takes full width of its grid cell */
-            height: 100%; /* Ensure it takes full height of its grid cell */
-            box-sizing: border-box; /* Ensures padding/border are included in width/height */
+            width: 100%; 
+            height: 100%; 
+            box-sizing: border-box; 
         }
         .modal-content h3 {
             color: var(--primary-color);
@@ -729,13 +722,12 @@
             margin-bottom: 6px;
             font-size: 1.1em;
         }
-        /* Justerad font-storlek för modal-p och modal-ul */
         .modal-content p {
-            font-size: 0.7rem; /* Något mindre */
+            font-size: 0.7rem; 
             margin-bottom: 5px;
             line-height: 1.4;
-            word-wrap: break-word; /* Lägg till för att tvinga radbrytning */
-            overflow-wrap: break-word; /* Fallback för word-wrap */
+            word-wrap: break-word; 
+            overflow-wrap: break-word; 
         }
         .modal-content ul {
             list-style: none;
@@ -755,11 +747,11 @@
         .modal-content table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.7rem; /* Smaller text for tables to fit 3 columns */
+            font-size: 0.7rem; 
         }
         .modal-content th, .modal-content td {
             border: 1px solid var(--border-color);
-            padding: 4px; /* Reduced padding for table cells */
+            padding: 4px; 
             text-align: left;
         }
         .modal-content th {
@@ -777,7 +769,7 @@
             margin-top: 8px;
             margin-bottom: 4px;
             border-radius: 3px;
-            font-size: 0.75rem; /* Smaller category heading */
+            font-size: 0.75rem; 
         }
         .modal-close-button {
             position: absolute;
@@ -795,23 +787,23 @@
         .modal-close-button:hover {
             color: var(--text-main);
         }
-        /* Stil för den statiska Perspiratio-selecten för att säkerställa att den syns tydligt */
+        
         #lossSelect_perspiratio_static {
-            color: var(--input-text) !important; /* Force correct text color */
-            font-weight: bold; /* Make it bold */
-            opacity: 1; /* Ensure full opacity */
+            color: var(--input-text) !important; 
+            font-weight: bold; 
+            opacity: 1; 
         }
 
         /* Specific styles for Diuresis Calculator modal */
         #diuresisCalculatorModalOverlay .modal-content {
-            max-width: 800px; /* Slightly narrower for this calculator */
+            max-width: 800px; 
         }
         #diuresisCalculatorModalOverlay .grid-container {
-            grid-template-columns: 1fr; /* Stack columns on smaller screens */
-            gap: 15px; /* Consistent gap */
+            grid-template-columns: 1fr; 
+            gap: 15px; 
         }
         #diuresisCalculatorModalOverlay .grid-container.two-column-diuresis {
-            grid-template-columns: 1fr 1fr; /* Two columns for sections */
+            grid-template-columns: 1fr 1fr; 
             gap: 15px;
         }
         #diuresisCalculatorModalOverlay .grid-column-item {
@@ -821,7 +813,7 @@
         }
         #diuresisCalculatorModalOverlay .diuresis-summary-table td,
         #diuresisCalculatorModalOverlay .diuresis-summary-table th {
-            padding: 5px; /* Adjusted padding for summary table */
+            padding: 5px; 
             font-size: 0.8rem;
         }
         #diuresisCalculatorModalOverlay .diuresis-summary-table .detail-row {
@@ -830,7 +822,7 @@
             padding-left: 15px;
         }
         .highlight-row {
-            background-color: var(--filled-bg); /* Use variable for filled bg */
+            background-color: var(--filled-bg); 
             font-weight: bold;
         }
 
@@ -839,14 +831,14 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
-            font-size: 0.8rem; /* Anpassa storlek för utskrift */
-            table-layout: fixed; /* Nytt för jämna kolumner */
+            font-size: 0.8rem; 
+            table-layout: fixed; 
         }
         .summary-table th, .summary-table td {
             border: 1px solid var(--border-color);
             padding: 6px 8px;
             text-align: left;
-            width: 50%; /* Nytt för jämna kolumner */
+            width: 50%; 
         }
         .summary-table th {
             background-color: var(--modal-th-bg);
@@ -860,7 +852,7 @@
             font-weight: 500;
         }
         .summary-table .highlight-row-print {
-            background-color: var(--category-bg); /* Variable for bg */
+            background-color: var(--category-bg); 
             font-weight: bold;
         }
         .summary-table .category-row td {
@@ -980,11 +972,11 @@
             font-weight: bold;
             color: var(--primary-color);
             margin-bottom: 8px;
-            cursor: pointer; /* Gör muspekaren till en hand */
+            cursor: pointer; 
             display: flex;
             justify-content: space-between;
             align-items: center;
-            user-select: none; /* Förhindra textmarkering vid klick */
+            user-select: none; 
         }
         
         .nutrition-toggle-icon {
@@ -1051,7 +1043,7 @@
         
         .nutrition-progress-fill {
             height: 100%;
-            background-color: #dc3545; /* Startar röd */
+            background-color: #dc3545; 
             width: 0%;
             transition: width 0.5s ease, background-color 0.5s ease;
         }
@@ -1117,8 +1109,8 @@
             }
             /* Modal justeringar för små skärmar */
             .modal-content .grid-container.modal-three-column-grid,
-            #diuresisCalculatorModalOverlay .grid-container.two-column-diuresis { /* Applies to modal's inner grids */
-                grid-template-columns: 1fr; /* Single column on smaller screens */
+            #diuresisCalculatorModalOverlay .grid-container.two-column-diuresis { 
+                grid-template-columns: 1fr; 
             }
             .modal-content p {
                 font-size: 0.8rem;
@@ -1133,44 +1125,58 @@
 
         /* --- Print-specifika stilar --- */
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
             body > *:not(#printDetailedSummaryModalOverlay) {
-                display: none !important; /* Hide everything except the print modal overlay */
+                display: none !important; 
             }
 
             body {
-                background-color: #fff !important; /* Force white background on print */
-                color: #000 !important; /* Force black text on print */
+                background-color: #fff !important; 
+                color: #000 !important; 
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             #printDetailedSummaryModalOverlay {
-                position: static !important; /* Remove fixed positioning for print */
+                position: static !important; 
                 top: auto !important;
                 left: auto !important;
                 width: 100% !important;
                 height: auto !important;
-                background-color: transparent !important; /* No dimmed background on print */
-                display: flex !important; /* Ändrad till flex för att kunna justera */
-                justify-content: flex-start !important; /* Tvingar allt innehåll till vänster */
+                background-color: transparent !important; 
+                display: block !important; 
                 visibility: visible !important;
                 opacity: 1 !important;
-                box-shadow: none !important; /* No shadow on print */
+                box-shadow: none !important; 
             }
 
             #printDetailedSummaryModalOverlay .modal-content {
-                max-width: 100% !important; /* Use full width for print */
+                max-width: 100% !important; 
                 width: 100% !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
-                padding: 0 !important; /* No padding on content for full use of paper */
-                transform: none !important; /* Remove translation */
-                max-height: none !important; /* No max height for print */
-                overflow-y: visible !important; /* Allow content to flow */
-                background-color: transparent !important; /* No background on print */
+                padding: 0 !important; 
+                transform: none !important; 
+                max-height: none !important; 
+                overflow-y: visible !important; 
+                background-color: transparent !important; 
                 color: #000 !important;
             }
 
+            /* Extra viktigt att kolumnerna håller ihop vid utskrift */
+            .print-layout-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 20px !important;
+                align-items: start !important;
+            }
+
             .modal-close-button, .add-button, .app-footer, .theme-toggle-btn {
-                display: none !important; /* Hide close button, add buttons, footer, theme toggle on print */
+                display: none !important; 
             }
 
             .summary-table {
@@ -1179,18 +1185,17 @@
             .summary-table th, .summary-table td {
                 border: none !important;
                 border-bottom: 1px solid #eee !important;
-                padding: 4px !important; /* Adjust padding for print if needed */
+                padding: 4px !important; 
             }
             .summary-table th {
                 border-bottom: 2px solid #ccc !important;
-                background-color: #f2f2f2 !important; /* Ensure header bg in print */
+                background-color: #f2f2f2 !important; 
                 color: #000 !important;
             }
             .summary-table tr:last-child td {
                 border-bottom: none !important;
             }
 
-            /* Adjust font sizes for better print readability */
             .modal-content h2 {
                 font-size: 1.4em !important;
                 color: #000 !important;
@@ -1211,7 +1216,7 @@
                 background-color: #f0f0f0 !important;
             }
 
-            /* Page breaks for tables if necessary */
+            /* Undvik att tabeller bryts isär konstigt på utskrifter */
             .summary-table {
                 page-break-inside: avoid !important;
             }
@@ -1360,10 +1365,10 @@
             <div class="grid-item">
                 <div class="label-with-tooltip">
                     <label for="pressureSets">Antal tryckset:</label>
-                       <span class="tooltip">
+                        <span class="tooltip">
                             <i class="fas fa-info-circle"></i>
                             <span class="tooltiptext">Varje tryckset beräknas ge 3 ml/timme. Ett CVP-set räknas som två tryckset.</span>
-                       </span>
+                        </span>
                 </div>
                 <div class="number-input-buttons">
                     <button data-action="changeNumber" data-target="pressureSets" data-delta="-1"><i class="fas fa-minus"></i></button>
@@ -1614,7 +1619,7 @@
                         <div style="display: flex; gap: 5px; align-items: center;">
                             <select id="nutritionBaseWeightSelect">
                                 <option value="actual">Aktuell vikt</option>
-                                <option value="ideal">Idealvikt</option>
+                                <option value="ideal" selected>Idealvikt</option>
                                 <option value="custom">Annan vikt</option>
                                 <option value="fixed">Eget totalmål</option>
                             </select>
@@ -1654,7 +1659,7 @@
                     <!-- Checkbox för utskrift -->
                         <div style="margin-top: 8px;">
                             <label style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
-                                <input type="checkbox" id="includeNutritionInPrint"> Inkludera i utskrift
+                                <input type="checkbox" id="includeNutritionInPrint" checked> Inkludera i utskrift
                             </label>
                         </div>
                     </div>
@@ -1877,7 +1882,7 @@
                             <td id="printHeight" class="numeric-value"></td>
                         </tr>
                         <tr>
-                            <td id="printIdealWeightLabel">Idealvikt (beräknad/justerad):</td>
+                            <td id="printIdealWeightLabel">Idealvikt:</td>
                             <td id="printIdealWeight" class="numeric-value"></td>
                         </tr>
                         <tr id="printBMIRow" style="display: none;">
@@ -1943,11 +1948,11 @@
                                 <td id="printNutritionBase" class="numeric-value"></td>
                             </tr>
                             <tr>
-                                <td>Protein (<span id="printNutritionProteinFactor"></span> g/kg):</td>
+                                <td id="printNutritionProteinLabelCell">Protein (<span id="printNutritionProteinFactor"></span> g/kg):</td>
                                 <td id="printNutritionProteinResult" class="numeric-value"></td>
                             </tr>
                             <tr>
-                                <td>Energi (<span id="printNutritionKcalFactor"></span> kcal/kg):</td>
+                                <td id="printNutritionKcalLabelCell">Energi (<span id="printNutritionKcalFactor"></span> kcal/kg):</td>
                                 <td id="printNutritionKcalResult" class="numeric-value"></td>
                             </tr>
                         </table>
@@ -2030,7 +2035,7 @@
                 weightDifferenceKg: 0, totalDiuresisMl: 0, totalPerspiratioMl: 0, totalOtherLossMl: 0,
                 dailyWeight: 0, height: 0, gender: '', isUnder15: 'no', maxTemp: 37.0, breathingSupport: 'standard',
                 mainAppStartTime: '06:00', mainAppEndTime: '06:00',
-                patientDate: '', patientTimePeriod: '', patientLocation: '', initialWeight: 0, idealWeight: 0,
+                patientDate: '', patientTimePeriod: '', patientLocation: '', initialWeight: 0, idealWeight: 0, devineIdealWeight: 0,
                 adjustedWeight: false,
                 avgHourlyDiuresis: 0,
                 perspiratioWarning: '',
@@ -2039,7 +2044,7 @@
                 medicineCategoryTotals: { Sedering: 0, Antibiotika: 0, Vasoaktiva: 0, Övrigt: 0 },
                 kcalSummary: { peroralt: 0, sondmat: 0, tpn: 0, ivMedicine: 0, intravenousTotal: 0 },
                 nutrition: { 
-                    baseWeightSelect: 'actual', 
+                    baseWeightSelect: 'ideal', 
                     customWeight: 0, 
                     proteinFactor: 1.3, 
                     kcalFactor: 25,
@@ -2086,6 +2091,7 @@
                                     <span class="tooltiptext">Ange mängd protein i gram (t.ex. från pulver). Detta värde adderas till totalt proteinintag men räknas som 0 ml i vätskebalansen.</span>
                                 </span>
                             </div>
+                            <span class="effective-ml-text" style="font-size: 0.75rem; color: var(--primary-color); display: none; margin-top: 2px;"></span>
                         </div>
                         <div class="grid-item"><input type="text" class="kcal-output" value="" placeholder=""></div>
                         <button class="remove-fluid-button" data-action="removeRow"><i class="fas fa-trash"></i></button>
@@ -2135,9 +2141,11 @@
                             { name: "Smof Kabiven PI 1300 kcal", kcal: 0.68, protein: 0.03 }
                         ],
                         "Sondmat": [
-                            { name: "Fresubin 2 kcal HP fiber", kcal: 2.0, protein: 0.10 },
-                            { name: "Fresubin 1 kcal original", kcal: 1.0, protein: 0.04 },
-                            { name: "Isosource standardfibre", kcal: 1.0, protein: 0.04 },
+                            { name: "Isosource Standard Fibre", kcal: 1.03, protein: 0.039, waterFactor: 0.80 },
+                            { name: "Isosource Standard", kcal: 1.0, protein: 0.039, waterFactor: 0.85 },
+                            { name: "Isosource Protein Fibre", kcal: 1.33, protein: 0.067, waterFactor: 0.79 },
+                            { name: "Fresubin 2 kcal HP Fibre", kcal: 2.0, protein: 0.10, waterFactor: 0.72 },
+                            { name: "Fresubin 2 kcal HP", kcal: 2.0, protein: 0.10, waterFactor: 0.72 },
                             { name: "Vatten i sond", kcal: 0, protein: 0 }
                         ],
                         "Näringsdryck": [
@@ -2169,7 +2177,7 @@
                     perspiratioWarning: document.getElementById('perspiratioWarning'),
                     bmiDisplay: document.getElementById('bmiDisplay'),
                     bmiCategory: document.getElementById('bmiCategory'),
-                    nutritionWeightDisplay: document.getElementById('nutritionWeightDisplay'), // Cache new element
+                    nutritionWeightDisplay: document.getElementById('nutritionWeightDisplay'),
                     containers: {
                         fluid: document.getElementById('fluidEntriesContainer'),
                         medicine: document.getElementById('medicineEntriesContainer'),
@@ -2287,17 +2295,13 @@
 
                     // Logik för att byta värden i fälten när man byter till/från "Eget totalmål"
                     if (val === 'fixed') {
-                        // Om vi byter TILL fasta mål, försök hämta det nyss beräknade målet som startvärde
-                        // Vi hämtar det från state istället för att försöka läsa DOM-element som inte längre finns som input-värden
                         const currentProteinGoal = this.state.nutrition.calculatedProteinGoal || 100;
                         const currentKcalGoal = this.state.nutrition.calculatedKcalGoal || 2000;
                         
-                        // Sätt bara om nuvarande värde ser ut att vara en faktor (t.ex. < 10 för protein)
                         if (parseFloat(pInput.value) < 10) pInput.value = currentProteinGoal;
                         if (parseFloat(kInput.value) < 100) kInput.value = currentKcalGoal;
                         
                     } else {
-                        // Om vi byter FRÅN fasta mål TILL viktbaserat, återställ till standardfaktorer om värdena ser ut som totalmål
                         if (parseFloat(pInput.value) > 10) pInput.value = '1.3';
                         if (parseFloat(kInput.value) > 100) kInput.value = '25';
                     }
@@ -2415,7 +2419,7 @@
                 addCustomOption(configData.customOption2);
                 if (configData.options) {
                     configData.options.forEach(opt => {
-                        if (typeof opt === 'object') this.addOption(selectElement, opt.name, opt.name, opt.kcal, null, opt.protein);
+                        if (typeof opt === 'object') this.addOption(selectElement, opt.name, opt.name, opt.kcal, null, opt.protein, opt.waterFactor);
                         else this.addOption(selectElement, opt, opt);
                     });
                 }
@@ -2424,19 +2428,20 @@
                         const optgroup = document.createElement('optgroup');
                         optgroup.label = categoryLabel;
                         configData.categories[categoryLabel].forEach(item => {
-                            this.addOption(optgroup, item.name, item.name, item.kcal, item.defaultMl, item.protein);
+                            this.addOption(optgroup, item.name, item.name, item.kcal, item.defaultMl, item.protein, item.waterFactor);
                         });
                         selectElement.appendChild(optgroup);
                     }
                 }
             },
-            addOption(parent, value, text, kcal = null, defaultMl = null, protein = null) {
+            addOption(parent, value, text, kcal = null, defaultMl = null, protein = null, waterFactor = null) {
                 const option = document.createElement('option');
                 option.value = value;
                 option.textContent = text;
                 if (kcal !== null) option.dataset.kcalPerMl = kcal;
                 if (defaultMl !== null) option.dataset.defaultMl = defaultMl;
                 if (protein !== null) option.dataset.proteinPerMl = protein;
+                if (waterFactor !== null) option.dataset.waterFactor = waterFactor;
                 parent.appendChild(option);
             },
             toggleCustomInput(wrapper, showCustom) {
@@ -2460,8 +2465,8 @@
                 this.calculateIdealAndAdjustedWeight();
                 this.calculatePerspiratio();
                 this.calculateTotals();
-                this.calculateBMI(); // New
-                this.calculateNutrition(); // New
+                this.calculateBMI(); 
+                this.calculateNutrition(); 
                 this.calculateDiuresis();
                 this.updateSummaryUI();
             },
@@ -2498,21 +2503,33 @@
                 const dailyWeight = parseFloat(document.getElementById('dailyWeight').value);
                 const idealWeightInput = document.getElementById('idealWeight');
                 const notice = document.getElementById('adjustedWeightNotice');
+                
                 if (!idealWeightInput || !notice) return; // Guard clause
+                
                 if (!height || !gender) {
                     idealWeightInput.value = "Var god ange längd och kön";
                     notice.style.display = 'none';
+                    this.state.idealWeight = 0;
+                    this.state.devineIdealWeight = 0;
+                    this.state.adjustedWeight = false;
                     return;
                 }
+                
                 let idealWeight = (gender === 'Man') ? (50 + 0.91 * (height - 152.4)) : (45.5 + 0.91 * (height - 152.4));
                 idealWeight = Math.round(idealWeight * 10) / 10;
                 let displayWeight = idealWeight;
-                this.state.adjustedWeight = false; // Reset before check
+                this.state.adjustedWeight = false;
+                
                 if (dailyWeight > (idealWeight * 1.20)) {
                     displayWeight = idealWeight + 0.4 * (dailyWeight - idealWeight);
                     this.state.adjustedWeight = true;
                 }
-                idealWeightInput.value = (Math.round(displayWeight * 10) / 10).toFixed(1);
+                
+                // Store safely in state
+                this.state.devineIdealWeight = idealWeight;
+                this.state.idealWeight = Math.round(displayWeight * 10) / 10;
+                
+                idealWeightInput.value = this.state.idealWeight.toFixed(1);
                 notice.style.display = this.state.adjustedWeight ? 'inline' : 'none';
             },
             calculateBMI() {
@@ -2574,8 +2591,8 @@
                     if (weightBasis === 'actual') {
                         weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
                     } else if (weightBasis === 'ideal') {
-                        const idealVal = parseFloat(document.getElementById('idealWeight').value);
-                        weight = isNaN(idealVal) ? 0 : idealVal;
+                        // Use state instead of DOM which may say "Var god ange..."
+                        weight = this.state.idealWeight || 0;
                     } else if (weightBasis === 'custom') {
                         weight = parseFloat(document.getElementById('nutritionCustomWeightInput').value) || 0;
                     }
@@ -2742,10 +2759,26 @@
                         }
                     }
                     
+                    let effectiveMlValue = mlValue;
+                    if (selectedOption && selectedOption.dataset.waterFactor) {
+                        effectiveMlValue = mlValue * parseFloat(selectedOption.dataset.waterFactor);
+                    }
+
+                    const effectiveMlText = row.querySelector('.effective-ml-text');
+                    if (effectiveMlText && selectedOption) {
+                        const waterFactor = parseFloat(selectedOption.dataset.waterFactor);
+                        if (!isNaN(waterFactor) && waterFactor < 1 && mlValue > 0 && !isProteinSupplement) {
+                            effectiveMlText.textContent = `Vätska: ${Math.round(effectiveMlValue)} ml`;
+                            effectiveMlText.style.display = 'block';
+                        } else {
+                            effectiveMlText.style.display = 'none';
+                        }
+                    }
+                    
                     if (['fluid', 'medicine', 'bloodProduct', 'tpnSondmat'].includes(type)) {
                         // Only add to volume if it is NOT a pure protein supplement (dry weight)
                         if (!isProteinSupplement) {
-                            this.state.totalIntakeMl += mlValue;
+                            this.state.totalIntakeMl += effectiveMlValue;
                         }
                         this.state.totalIntakeKcal += kcalValue;
                     } else if (type === 'loss') {
@@ -2915,6 +2948,8 @@
                         const name = item.name || item;
                         const kcal = item.kcal ?? 0;
                         const protein = item.protein !== undefined ? item.protein : '-';
+                        const waterFactorHtml = item.waterFactor ? ` <br><span style="font-size: 0.8em; color: var(--text-label); font-weight: normal;">(Vätska ${(item.waterFactor * 100).toFixed(0)}%)</span>` : '';
+                        
                         let tooltipHtml = '';
                         if (name.includes('Propofol')) {
                             tooltipHtml = `
@@ -2923,7 +2958,7 @@
                                     <span class="tooltiptext">Källa: ePed</span>
                                 </span>`;
                         }
-                        tbody.innerHTML += `<tr><td>${name} ${tooltipHtml}</td><td style="text-align:right;">${kcal}</td><td style="text-align:right;">${protein}</td></tr>`;
+                        tbody.innerHTML += `<tr><td>${name}${waterFactorHtml} ${tooltipHtml}</td><td style="text-align:right;">${kcal}</td><td style="text-align:right;">${protein}</td></tr>`;
                     });
 
                     table.appendChild(tbody);
@@ -2943,15 +2978,20 @@
                 document.getElementById('printDailyWeight').textContent = `${this.state.dailyWeight.toFixed(1)} kg`;
                 document.getElementById('printHeight').textContent = `${this.state.height.toFixed(0)} cm`;
                 
-                const idealWeightValue = document.getElementById('idealWeight').value;
+                // --- IDEAL WEIGHT LOGIC FOR PRINT ---
                 const printIdealWeightLabelElement = document.getElementById('printIdealWeightLabel');
                 const printIdealWeightValueElement = document.getElementById('printIdealWeight');
                 const idealWeightRow = printIdealWeightValueElement.parentElement; // This gets the <tr>
 
-                if (idealWeightValue && !isNaN(parseFloat(idealWeightValue))) {
-                    idealWeightRow.style.display = ''; // or 'table-row' to be specific
-                    printIdealWeightLabelElement.textContent = this.state.adjustedWeight ? 'Justerad idealvikt:' : 'Beräknad idealvikt:';
-                    printIdealWeightValueElement.textContent = `${idealWeightValue} kg`;
+                if (this.state.idealWeight > 0) {
+                    idealWeightRow.style.display = ''; 
+                    if (this.state.adjustedWeight) {
+                        printIdealWeightLabelElement.textContent = 'Justerad idealvikt:';
+                        printIdealWeightValueElement.textContent = `${this.state.idealWeight.toFixed(1)} kg (Devine: ${this.state.devineIdealWeight.toFixed(1)} kg)`;
+                    } else {
+                        printIdealWeightLabelElement.textContent = 'Beräknad idealvikt:';
+                        printIdealWeightValueElement.textContent = `${this.state.idealWeight.toFixed(1)} kg`;
+                    }
                 } else {
                     idealWeightRow.style.display = 'none';
                 }
@@ -2977,7 +3017,7 @@
                 document.getElementById('printTotalKcalIntake').textContent = `${Math.round(this.state.totalIntakeKcal)} Kcal`;
                 document.getElementById('printTotalIntakeProtein').textContent = `${this.state.totalIntakeProtein.toFixed(1)} g`;
 
-                // --- NYTT: Fyll i Nutritionsmål för utskrift (om vald) ---
+                // --- Fyll i Nutritionsmål för utskrift (om vald) ---
                 const includeNutrition = document.getElementById('includeNutritionInPrint').checked;
                 const printNutritionContainer = document.getElementById('printNutritionContainer');
 
@@ -2993,7 +3033,7 @@
                         weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
                         weightLabel = 'Aktuell vikt';
                     } else if (weightBasis === 'ideal') {
-                        weight = parseFloat(document.getElementById('idealWeight').value) || 0;
+                        weight = this.state.idealWeight || 0;
                         weightLabel = this.state.adjustedWeight ? 'Idealvikt (Justerad)' : 'Idealvikt';
                     } else if (weightBasis === 'custom') {
                         weight = parseFloat(document.getElementById('nutritionCustomWeightInput').value) || 0;
@@ -3008,27 +3048,19 @@
 
                     let proteinGoal = 0;
                     let kcalGoal = 0;
-                    let proteinLabel = '';
-                    let kcalLabel = '';
 
                     if (isFixed) {
                         proteinGoal = Math.round(val1);
                         kcalGoal = Math.round(val2);
-                        proteinLabel = 'Protein (Eget mål)';
-                        kcalLabel = 'Energi (Eget mål)';
-                        // Inget behov av att visa vikt för fasta mål, men vi visar etiketten
                         document.getElementById('printNutritionBase').textContent = weightLabel;
-                        // Rensa faktorer i utskrift då de är totaler
-                        document.getElementById('printNutritionProteinFactor').parentElement.innerHTML = 'Protein (Mål):';
-                        document.getElementById('printNutritionKcalFactor').parentElement.innerHTML = 'Energi (Mål):';
+                        document.getElementById('printNutritionProteinLabelCell').textContent = 'Protein (Eget mål):';
+                        document.getElementById('printNutritionKcalLabelCell').textContent = 'Energi (Eget mål):';
                     } else {
                         proteinGoal = Math.round(weight * val1);
                         kcalGoal = Math.round(weight * val2);
                         document.getElementById('printNutritionBase').textContent = `${weightLabel} (${weight} kg)`;
-                        // Återställ labels om de ändrats av fixed-läget tidigare (lite hackigt men funkar för enkelhetens skull)
-                        // Bättre: skriv om innehållet helt
-                        document.getElementById('printNutritionProteinFactor').parentElement.innerHTML = `Protein (<span id="printNutritionProteinFactor">${val1}</span> g/kg):`;
-                        document.getElementById('printNutritionKcalFactor').parentElement.innerHTML = `Energi (<span id="printNutritionKcalFactor">${val2}</span> kcal/kg):`;
+                        document.getElementById('printNutritionProteinLabelCell').innerHTML = `Protein (<span id="printNutritionProteinFactor">${val1}</span> g/kg):`;
+                        document.getElementById('printNutritionKcalLabelCell').innerHTML = `Energi (<span id="printNutritionKcalFactor">${val2}</span> kcal/kg):`;
                     }
 
                     const proteinPercent = proteinGoal > 0 ? Math.round((this.state.totalIntakeProtein / proteinGoal) * 100) : 0;
@@ -3072,7 +3104,14 @@
                             
                             const isProteinSupplement = select.value === 'Övrigt protein';
                             
-                            entries.push({ name, ml: mlValue, kcal: kcalValue, isProteinSupplement: isProteinSupplement });
+                            const waterFactor = select.options[select.selectedIndex]?.dataset.waterFactor;
+                            let effectiveMlText = '';
+                            if (waterFactor && !isProteinSupplement) {
+                                const effectiveMl = mlValue * parseFloat(waterFactor);
+                                effectiveMlText = ` (varav vätska ${Math.round(effectiveMl)} ml)`;
+                            }
+                            
+                            entries.push({ name, ml: mlValue, kcal: kcalValue, isProteinSupplement: isProteinSupplement, effectiveMlText: effectiveMlText });
                         }
                     });
 
@@ -3097,7 +3136,7 @@
                         section.items.forEach(item => {
                             const kcalText = item.kcal > 0 ? ` (${item.kcal} Kcal)` : '';
                             const unit = item.isProteinSupplement ? 'g' : 'ml';
-                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${Math.round(item.ml)} ${unit}${kcalText}</td></tr>`;
+                            intakeHtml += `<tr class="item-row"><td>${item.name}</td><td class="numeric-value">${Math.round(item.ml)} ${unit}${item.effectiveMlText || ''}${kcalText}</td></tr>`;
                         });
                     });
                     intakeHtml += '</table>';
@@ -3393,7 +3432,7 @@
                     }
                 }
                 if (data.nutritionCalc) {
-                    document.getElementById('nutritionBaseWeightSelect').value = data.nutritionCalc.baseWeightSelect || 'actual';
+                    document.getElementById('nutritionBaseWeightSelect').value = data.nutritionCalc.baseWeightSelect || 'ideal';
                     document.getElementById('nutritionCustomWeightInput').value = data.nutritionCalc.customWeightInput || '';
                     document.getElementById('nutritionProteinFactor').value = data.nutritionCalc.proteinFactor || 1.3;
                     document.getElementById('nutritionKcalFactor').value = data.nutritionCalc.kcalFactor || 25;
@@ -3416,14 +3455,14 @@
                         el.value = '37.0';
                     } else if (el.id === 'isUnder15') {
                         el.value = 'no';
-                    } else if (el.tagName === 'SELECT') {
-                        el.selectedIndex = 0;
                     } else if (el.id === 'nutritionProteinFactor') {
                         el.value = '1.3';
                     } else if (el.id === 'nutritionKcalFactor') {
                         el.value = '25';
                     } else if (el.id === 'nutritionBaseWeightSelect') {
-                        el.value = 'actual';
+                        el.value = 'ideal';
+                    } else if (el.tagName === 'SELECT') {
+                        el.selectedIndex = 0;
                     } else {
                         el.value = '';
                     }
@@ -3431,8 +3470,8 @@
                 
                 // Göm custom weight input
                 document.getElementById('nutritionCustomWeightInput').style.display = 'none';
-                // Avmarkera print checkbox
-                document.getElementById('includeNutritionInPrint').checked = false;
+                // Återställ print checkbox till default (ikryssad)
+                document.getElementById('includeNutritionInPrint').checked = true;
                 
                 // Stäng nutritionsflik om öppen (valfritt, men snyggt vid reset)
                 this.uiState.nutritionExpanded = false;
