@@ -411,6 +411,13 @@
             background-color: #218838;
             transform: translateY(-1px);
         }
+        .add-button:disabled {
+            background-color: #cccccc !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
 
         /* Stil för tabellrubrikerna */
         .fluid-table-header {
@@ -1291,13 +1298,13 @@
             </div>
             <!-- Längd -->
             <div class="grid-item">
-                <label for="height">Längd (cm):</label>
-                <input type="text" id="height" placeholder="t.ex. 175.0">
+                <label for="height">Längd (cm): <span style="color: #dc3545; font-weight: bold;">*</span></label>
+                <input type="text" id="height" class="important-input" placeholder="t.ex. 175.0">
             </div>
             <!-- Kön -->
             <div class="grid-item">
-                <label for="gender">Kön:</label>
-                <select id="gender">
+                <label for="gender">Kön: <span style="color: #dc3545; font-weight: bold;">*</span></label>
+                <select id="gender" class="important-input">
                     <option value="">Välj kön</option>
                     <option value="Man">Man</option>
                     <option value="Kvinna">Kvinna</option>
@@ -1656,12 +1663,6 @@
                         </div>
                     </div>
 
-                    <!-- Checkbox för utskrift -->
-                        <div style="margin-top: 8px;">
-                            <label style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
-                                <input type="checkbox" id="includeNutritionInPrint" checked> Inkludera i utskrift
-                            </label>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1881,9 +1882,13 @@
                             <td>Längd:</td>
                             <td id="printHeight" class="numeric-value"></td>
                         </tr>
-                        <tr>
-                            <td id="printIdealWeightLabel">Idealvikt:</td>
+                        <tr id="printIdealWeightRow" style="display: none;">
+                            <td>Idealvikt:</td>
                             <td id="printIdealWeight" class="numeric-value"></td>
+                        </tr>
+                        <tr id="printAdjustedWeightRow" style="display: none;">
+                            <td>Justerad idealvikt:</td>
+                            <td id="printAdjustedWeight" class="numeric-value"></td>
                         </tr>
                         <tr id="printBMIRow" style="display: none;">
                             <td>BMI:</td>
@@ -1939,8 +1944,8 @@
                         </tr>
                     </table>
 
-                    <!-- Nutritionsmål i utskrift (inlindad i div för toggling) -->
-                    <div id="printNutritionContainer" style="display: none;">
+                    <!-- Nutritionsmål i utskrift -->
+                    <div id="printNutritionContainer" style="display: block;">
                         <h3>Nutritionsmål (dygn)</h3>
                         <table class="summary-table">
                             <tr>
@@ -1987,6 +1992,11 @@
         <div class="modal-content">
             <button class="modal-close-button" data-action="closeModal" data-target="changelogModalOverlay">×</button>
             <h2>Ändringslogg / Versioner</h2>
+            <h3>Version 2.6</h3>
+            <ul>
+                <li><b>Korrigerad beräkning för sondmat:</b> Visar nu korrekt faktisk vätskemängd.</li>
+                <li><b>Utskrift av nutritionsmål:</b> Nutritionsmål och uppfyllnad inkluderas nu alltid i utskriften (valet att bocka ur är borttaget).</li>
+            </ul>
             <h3>Version 2.5</h3>
             <ul>
                 <li><b>BMI-kalkylator under patientinformation.</b> Visar BMI-värde samt klassificering (t.ex. Normalvikt).</li>
@@ -2019,9 +2029,21 @@
         </div>
     </div>
 
+    <!-- Nytt: Modal för valideringsvarning (Utskrift) med Forcera-knapp -->
+    <div id="validationWarningModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h3 style="color: #dc3545;"><i class="fas fa-exclamation-triangle"></i> Obligatoriska uppgifter</h3>
+            <p style="font-size: 0.95rem;">Var god fyll i patientens <strong>kön</strong> och <strong>längd</strong> för att göra utskrift.<br><br><span style="font-size: 0.8rem; color: var(--text-label);">(Detta krävs för att nutritionsberäkning garanterat ska komma med på sammanställningen).<br><br><strong>OBS:</strong> Dubbelkontrollera att nutritionsmålet stämmer med ordinationen på IVA-kurvan.</span></p>
+            <div class="tool-buttons-group" style="margin-top: 15px;">
+                <button data-action="closeModal" data-target="validationWarningModal" class="add-button">Ok, jag förstår</button>
+                <button id="forcePrintButton" data-action="forcePrint" class="add-button" disabled>Forcera (30)</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="app-footer">
         <span class="changelog-link" data-action="openModal" data-target="changelogModalOverlay">
-            Version 2.5 - Ändringslogg
+            Version 2.6 - Ändringslogg
         </span>
         <button id="themeToggle" class="theme-toggle-btn" title="Växla mörkt läge" data-action="toggleTheme">
             <i class="fas fa-moon"></i>
@@ -2053,6 +2075,7 @@
                 }
             },
             counters: { fluid: 0, medicine: 0, bloodProduct: 0, tpnSondmat: 0, loss: 0 },
+            forcePrintTimer: null, // Timer-variabel för forcera-knappen
             // Lagra state för UI (expanderad/kollapsad)
             uiState: {
                 nutritionExpanded: false
@@ -2254,11 +2277,26 @@
                         this.updateAllCalculations();
                         break;
                     case 'transferPerspiratio': this.transferPerspiratioToLoss(); break;
+                    case 'forcePrint': this.forcePrint(); break; // Ny hanterare för forcering
                     case 'openModal': 
+                        if (targetId === 'printDetailedSummaryModalOverlay') {
+                            const heightVal = document.getElementById('height').value.trim();
+                            const genderVal = document.getElementById('gender').value.trim();
+                            if (!heightVal || !genderVal) {
+                                this.startForcePrintTimer(); // Starta nedräkning för forcering
+                                this.openModal('validationWarningModal');
+                                return; // Blockera utskriftsmodalen från att öppnas
+                            }
+                        }
                         if (targetId === 'localStorageManagerModal') this.renderLocalStorageList();
                         this.openModal(targetId); 
                         break;
-                    case 'closeModal': this.closeModal(targetId); break;
+                    case 'closeModal': 
+                        this.closeModal(targetId); 
+                        if (targetId === 'validationWarningModal') {
+                            clearInterval(this.forcePrintTimer); // Rensa timern om vi stänger modalen
+                        }
+                        break;
                     case 'save': this.saveDataToFile(); break;
                     case 'load': this.dom.loadFromFileInput.click(); break;
                     case 'saveLocal': this.saveDataToLocalStorage(targetElement); break;
@@ -2979,21 +3017,22 @@
                 document.getElementById('printHeight').textContent = `${this.state.height.toFixed(0)} cm`;
                 
                 // --- IDEAL WEIGHT LOGIC FOR PRINT ---
-                const printIdealWeightLabelElement = document.getElementById('printIdealWeightLabel');
-                const printIdealWeightValueElement = document.getElementById('printIdealWeight');
-                const idealWeightRow = printIdealWeightValueElement.parentElement; // This gets the <tr>
+                const idealWeightRow = document.getElementById('printIdealWeightRow');
+                const adjustedWeightRow = document.getElementById('printAdjustedWeightRow');
 
-                if (this.state.idealWeight > 0) {
-                    idealWeightRow.style.display = ''; 
+                if (this.state.devineIdealWeight > 0) {
+                    idealWeightRow.style.display = '';
+                    document.getElementById('printIdealWeight').textContent = `${this.state.devineIdealWeight.toFixed(1)} kg`;
+                    
                     if (this.state.adjustedWeight) {
-                        printIdealWeightLabelElement.textContent = 'Justerad idealvikt:';
-                        printIdealWeightValueElement.textContent = `${this.state.idealWeight.toFixed(1)} kg (Devine: ${this.state.devineIdealWeight.toFixed(1)} kg)`;
+                        adjustedWeightRow.style.display = '';
+                        document.getElementById('printAdjustedWeight').textContent = `${this.state.idealWeight.toFixed(1)} kg`;
                     } else {
-                        printIdealWeightLabelElement.textContent = 'Beräknad idealvikt:';
-                        printIdealWeightValueElement.textContent = `${this.state.idealWeight.toFixed(1)} kg`;
+                        adjustedWeightRow.style.display = 'none';
                     }
                 } else {
                     idealWeightRow.style.display = 'none';
+                    adjustedWeightRow.style.display = 'none';
                 }
 
                 // --- BMI Logic for Print ---
@@ -3017,60 +3056,54 @@
                 document.getElementById('printTotalKcalIntake').textContent = `${Math.round(this.state.totalIntakeKcal)} Kcal`;
                 document.getElementById('printTotalIntakeProtein').textContent = `${this.state.totalIntakeProtein.toFixed(1)} g`;
 
-                // --- Fyll i Nutritionsmål för utskrift (om vald) ---
-                const includeNutrition = document.getElementById('includeNutritionInPrint').checked;
+                // --- Fyll i Nutritionsmål för utskrift ---
                 const printNutritionContainer = document.getElementById('printNutritionContainer');
+                printNutritionContainer.style.display = 'block'; // Alltid synlig nu
+                
+                const weightBasis = document.getElementById('nutritionBaseWeightSelect').value;
+                let weight = 0;
+                let weightLabel = '';
+                let isFixed = false;
 
-                if (includeNutrition) {
-                    printNutritionContainer.style.display = 'block';
-                    
-                    const weightBasis = document.getElementById('nutritionBaseWeightSelect').value;
-                    let weight = 0;
-                    let weightLabel = '';
-                    let isFixed = false;
-
-                    if (weightBasis === 'actual') {
-                        weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
-                        weightLabel = 'Aktuell vikt';
-                    } else if (weightBasis === 'ideal') {
-                        weight = this.state.idealWeight || 0;
-                        weightLabel = this.state.adjustedWeight ? 'Idealvikt (Justerad)' : 'Idealvikt';
-                    } else if (weightBasis === 'custom') {
-                        weight = parseFloat(document.getElementById('nutritionCustomWeightInput').value) || 0;
-                        weightLabel = 'Annan vikt';
-                    } else if (weightBasis === 'fixed') {
-                        isFixed = true;
-                        weightLabel = 'Eget totalmål';
-                    }
-
-                    const val1 = parseFloat(document.getElementById('nutritionProteinFactor').value) || 0;
-                    const val2 = parseFloat(document.getElementById('nutritionKcalFactor').value) || 0;
-
-                    let proteinGoal = 0;
-                    let kcalGoal = 0;
-
-                    if (isFixed) {
-                        proteinGoal = Math.round(val1);
-                        kcalGoal = Math.round(val2);
-                        document.getElementById('printNutritionBase').textContent = weightLabel;
-                        document.getElementById('printNutritionProteinLabelCell').textContent = 'Protein (Eget mål):';
-                        document.getElementById('printNutritionKcalLabelCell').textContent = 'Energi (Eget mål):';
-                    } else {
-                        proteinGoal = Math.round(weight * val1);
-                        kcalGoal = Math.round(weight * val2);
-                        document.getElementById('printNutritionBase').textContent = `${weightLabel} (${weight} kg)`;
-                        document.getElementById('printNutritionProteinLabelCell').innerHTML = `Protein (<span id="printNutritionProteinFactor">${val1}</span> g/kg):`;
-                        document.getElementById('printNutritionKcalLabelCell').innerHTML = `Energi (<span id="printNutritionKcalFactor">${val2}</span> kcal/kg):`;
-                    }
-
-                    const proteinPercent = proteinGoal > 0 ? Math.round((this.state.totalIntakeProtein / proteinGoal) * 100) : 0;
-                    const kcalPercent = kcalGoal > 0 ? Math.round((this.state.totalIntakeKcal / kcalGoal) * 100) : 0;
-
-                    document.getElementById('printNutritionProteinResult').textContent = `${this.state.totalIntakeProtein.toFixed(1)} av ${proteinGoal} g (${proteinPercent}%)`;
-                    document.getElementById('printNutritionKcalResult').textContent = `${Math.round(this.state.totalIntakeKcal)} av ${kcalGoal} kcal (${kcalPercent}%)`;
-                } else {
-                    printNutritionContainer.style.display = 'none';
+                if (weightBasis === 'actual') {
+                    weight = parseFloat(document.getElementById('dailyWeight').value) || 0;
+                    weightLabel = 'Aktuell vikt';
+                } else if (weightBasis === 'ideal') {
+                    weight = this.state.idealWeight || 0;
+                    weightLabel = this.state.adjustedWeight ? 'Idealvikt (Justerad)' : 'Idealvikt';
+                } else if (weightBasis === 'custom') {
+                    weight = parseFloat(document.getElementById('nutritionCustomWeightInput').value) || 0;
+                    weightLabel = 'Annan vikt';
+                } else if (weightBasis === 'fixed') {
+                    isFixed = true;
+                    weightLabel = 'Eget totalmål';
                 }
+
+                const val1 = parseFloat(document.getElementById('nutritionProteinFactor').value) || 0;
+                const val2 = parseFloat(document.getElementById('nutritionKcalFactor').value) || 0;
+
+                let proteinGoal = 0;
+                let kcalGoal = 0;
+
+                if (isFixed) {
+                    proteinGoal = Math.round(val1);
+                    kcalGoal = Math.round(val2);
+                    document.getElementById('printNutritionBase').textContent = weightLabel;
+                    document.getElementById('printNutritionProteinLabelCell').textContent = 'Protein (Eget mål):';
+                    document.getElementById('printNutritionKcalLabelCell').textContent = 'Energi (Eget mål):';
+                } else {
+                    proteinGoal = Math.round(weight * val1);
+                    kcalGoal = Math.round(weight * val2);
+                    document.getElementById('printNutritionBase').textContent = `${weightLabel} (${weight} kg)`;
+                    document.getElementById('printNutritionProteinLabelCell').innerHTML = `Protein (<span id="printNutritionProteinFactor">${val1}</span> g/kg):`;
+                    document.getElementById('printNutritionKcalLabelCell').innerHTML = `Energi (<span id="printNutritionKcalFactor">${val2}</span> kcal/kg):`;
+                }
+
+                const proteinPercent = proteinGoal > 0 ? Math.round((this.state.totalIntakeProtein / proteinGoal) * 100) : 0;
+                const kcalPercent = kcalGoal > 0 ? Math.round((this.state.totalIntakeKcal / kcalGoal) * 100) : 0;
+
+                document.getElementById('printNutritionProteinResult').textContent = `${this.state.totalIntakeProtein.toFixed(1)} av ${proteinGoal} g (${proteinPercent}%)`;
+                document.getElementById('printNutritionKcalResult').textContent = `${Math.round(this.state.totalIntakeKcal)} av ${kcalGoal} kcal (${kcalPercent}%)`;
                 // -----------------------------------------------
 
                 const intakeContainer = document.getElementById('print-details-intake');
@@ -3223,8 +3256,7 @@
                     baseWeightSelect: document.getElementById('nutritionBaseWeightSelect').value,
                     customWeightInput: document.getElementById('nutritionCustomWeightInput').value,
                     proteinFactor: document.getElementById('nutritionProteinFactor').value,
-                    kcalFactor: document.getElementById('nutritionKcalFactor').value,
-                    includeInPrint: document.getElementById('includeNutritionInPrint').checked
+                    kcalFactor: document.getElementById('nutritionKcalFactor').value
                 };
 
                 return data;
@@ -3436,7 +3468,6 @@
                     document.getElementById('nutritionCustomWeightInput').value = data.nutritionCalc.customWeightInput || '';
                     document.getElementById('nutritionProteinFactor').value = data.nutritionCalc.proteinFactor || 1.3;
                     document.getElementById('nutritionKcalFactor').value = data.nutritionCalc.kcalFactor || 25;
-                    document.getElementById('includeNutritionInPrint').checked = data.nutritionCalc.includeInPrint || false;
                     
                     // Trigger visibility update for custom weight input
                     const customInput = document.getElementById('nutritionCustomWeightInput');
@@ -3470,8 +3501,6 @@
                 
                 // Göm custom weight input
                 document.getElementById('nutritionCustomWeightInput').style.display = 'none';
-                // Återställ print checkbox till default (ikryssad)
-                document.getElementById('includeNutritionInPrint').checked = true;
                 
                 // Stäng nutritionsflik om öppen (valfritt, men snyggt vid reset)
                 this.uiState.nutritionExpanded = false;
@@ -3503,6 +3532,38 @@
                 this.updateAllCalculations();
                 this.closeModal('confirmationModalOverlay');
             },
+            
+            // --- NYTT: Logik för att forcera utskrift ---
+            startForcePrintTimer() {
+                const btn = document.getElementById('forcePrintButton');
+                if (!btn) return;
+                
+                btn.disabled = true;
+                let timeLeft = 30;
+                btn.textContent = `Forcera (${timeLeft})`;
+                btn.style.backgroundColor = ""; // Nollställ ev färg så CSS för disabled tar över
+                
+                clearInterval(this.forcePrintTimer); // Rensa om det fanns en gammal
+                
+                this.forcePrintTimer = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft > 0) {
+                        btn.textContent = `Forcera (${timeLeft})`;
+                    } else {
+                        clearInterval(this.forcePrintTimer);
+                        btn.disabled = false;
+                        btn.textContent = "Forcera utskrift";
+                        btn.style.backgroundColor = "#dc3545"; // Varningsröd när den blir aktiv
+                    }
+                }, 1000);
+            },
+            forcePrint() {
+                clearInterval(this.forcePrintTimer);
+                this.closeModal('validationWarningModal');
+                this.openModal('printDetailedSummaryModalOverlay');
+            },
+            // --------------------------------------------
+
             // --- Tema-hantering ---
             toggleTheme() {
                 this.dom.body.classList.toggle('dark-mode');
