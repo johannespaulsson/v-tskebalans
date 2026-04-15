@@ -365,7 +365,54 @@ Object.assign(window.app, {
         this.calculateBMI(); 
         this.calculateNutrition(); 
         this.calculateDiuresis();
+        this.validateInputs(); // Ny validering
         this.updateSummaryUI();
+    },
+
+    validateInputs() {
+        const constraints = this.data.constraints;
+        if (!constraints) return;
+
+        const fieldsToValidate = [
+            { id: 'initialWeight', constraint: constraints.initialWeight },
+            { id: 'dailyWeight', constraint: constraints.dailyWeight },
+            { id: 'height', constraint: constraints.height },
+            { id: 'maxTemp', constraint: constraints.maxTemp },
+            { id: 'naclSyringes', constraint: constraints.naclSyringes },
+            { id: 'pressureSets', constraint: constraints.pressureSets }
+        ];
+
+        fieldsToValidate.forEach(field => {
+            const el = document.getElementById(field.id);
+            if (!el) return;
+            this.applyValidation(el, field.constraint);
+        });
+
+        document.querySelectorAll('.ml-input').forEach(el => {
+            this.applyValidation(el, constraints.mlInput);
+        });
+
+        document.querySelectorAll('.kcal-output').forEach(el => {
+            if (el.classList.contains('calculated-output') && el.readOnly && el.dataset.manualOverride !== 'true') return;
+            this.applyValidation(el, constraints.kcalOutput);
+        });
+    },
+
+    applyValidation(el, constraint) {
+        const val = Utils.getSafeFloat(el.value, null);
+        if (el.value.trim() === '') {
+            el.classList.remove('warning-input');
+            el.title = '';
+            return;
+        }
+
+        if (val !== null && (val < constraint.min || val > constraint.max)) {
+            el.classList.add('warning-input');
+            el.title = `Varning: Värdet är utanför rimligt intervall (${constraint.min}-${constraint.max} ${constraint.unit}). Dubbelkolla inmatningen.`;
+        } else {
+            el.classList.remove('warning-input');
+            el.title = '';
+        }
     },
 
     setNow(elementId) {

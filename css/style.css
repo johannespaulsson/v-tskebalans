@@ -225,6 +225,16 @@ h2 {
     background-color: var(--filled-bg) !important;
     border-color: var(--filled-border) !important;
 }
+/* Stil för "varning" (orange bakgrund för osannolika värden) */
+.warning-input {
+    background-color: #fff3e0 !important;
+    border-color: #ffe0b2 !important;
+    box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2) !important;
+}
+body.dark-mode .warning-input {
+    background-color: #43302b !important;
+    border-color: #6d4c41 !important;
+}
 
 /* Stil för numeriska inmatningar med plus/minus-knappar */
 .number-input-buttons {

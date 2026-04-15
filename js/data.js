@@ -61,7 +61,7 @@ app.data = {
     medicine: {
         placeholder: 'Välj läkemedelsvätska', customOption: 'Övrigt läkemedel',
         categories: {
-            "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol 10mg/ml", kcal: 1.1 }, { name: "Propofol 20mg/ml", kcal: 1.1 }, { name: "Remifentanil", kcal: 0 }],
+            "Sedering": [{ name: "Dexdor", kcal: 0 }, { name: "Esketamin", kcal: 0 }, { name: "Klonidin", kcal: 0 }, { name: "Midazolam", kcal: 0 }, { name: "Propofol", kcal: 1.1 }, { name: "Remifentanil", kcal: 0 }],
             "Antibiotika": [{ name: "Pip/Taz 4g x 3", kcal: 0, defaultMl: 60 }, { name: "Vancomycin 1g x 1", kcal: 0, defaultMl: 270 }, { name: "Övrig Antibiotika", kcal: 0 }, { name: "Kaspofungin", kcal: 0, defaultMl: 250 }],
             "Vasoaktiva": [{ name: "Adrenalin", kcal: 0 }, { name: "Argipressin", kcal: 0 }, { name: "Dobutamin", kcal: 0 }, { name: "Levosimendan", kcal: 0.2 }, { name: "Milrinon", kcal: 0 }, { name: "Noradrenalin", kcal: 0 }],
             "Övrigt": [{ name: "Amiodarone", kcal: 0.2 }, { name: "EDA", kcal: 0 }, { name: "Kalium/Kaliumklorid", kcal: 0 }, { name: "Lispro", kcal: 0 }, { name: "Paracetamol", kcal: 0 }]
@@ -102,5 +102,17 @@ app.data = {
             ]
         }
     },
-    loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Kräkning', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä', 'VAC-pump'] }
+    loss: { placeholder: 'Välj förlusttyp', customOption: 'Annan förlust', options: ['Avföring', 'Blödning', 'Dialys (CRRT)', 'Dialys (IHD)', 'Diures', 'Drän 1', 'Drän 2', 'Drän 3', 'Kräkning', 'Sond', 'Stomi', 'Thoraxdrän hö', 'Thoraxdrän vä', 'VAC-pump'] },
+    
+    // Gränsvärden för sanity checks
+    constraints: {
+        initialWeight: { min: 3, max: 250, unit: 'kg' },
+        dailyWeight: { min: 3, max: 250, unit: 'kg' },
+        height: { min: 40, max: 220, unit: 'cm' },
+        maxTemp: { min: 34, max: 42, unit: '°C' },
+        naclSyringes: { min: 0, max: 50, unit: 'st' },
+        pressureSets: { min: 0, max: 10, unit: 'st' },
+        mlInput: { min: 0, max: 5000, unit: 'ml' },
+        kcalOutput: { min: 0, max: 5000, unit: 'kcal' }
+    }
 };
